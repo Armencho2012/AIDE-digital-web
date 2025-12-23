@@ -1,0 +1,5 @@
+git add .
+git commit -m "Replace old code with new version"
+git branch -M main
+git remote set-url origin https://github.com/Armencho2012/aide2
+git push -u origin main --force
