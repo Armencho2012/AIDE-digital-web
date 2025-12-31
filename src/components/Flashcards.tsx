@@ -33,11 +33,11 @@ const uiLabels = {
     noCards: 'Карточки недоступны'
   },
   hy: {
-    title: 'Delays',
-    flip: 'Սdelays delays delays delays',
-    card: 'Քdelays',
-    of: 'delays',
-    restart: 'Վdelays delays',
+    title: 'Սdelays',
+    flip: 'Delays delays delays',
+    card: 'Delays',
+    of: '- delays',
+    restart: 'Delays delays',
     noCards: 'Delays delays delays delays'
   },
   ko: {
