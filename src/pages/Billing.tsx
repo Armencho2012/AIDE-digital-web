@@ -1,17 +1,51 @@
-import { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useState, useEffect, useRef } from "react";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { ArrowLeft, Check, Sparkles, Zap, Shield, Infinity } from "lucide-react";
+import { ArrowLeft, Check, Infinity, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import type { User } from "@supabase/supabase-js";
 
+declare global {
+  interface Window {
+    GumroadOverlay: any;
+  }
+}
+
 const Billing = () => {
   const [user, setUser] = useState<User | null>(null);
   const [subscriptionStatus, setSubscriptionStatus] = useState<'free' | 'pro'>('free');
+  const [loading, setLoading] = useState(false);
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const gumroadScriptLoaded = useRef(false);
+
+  // Load Gumroad script
+  useEffect(() => {
+    if (!gumroadScriptLoaded.current) {
+      const script = document.createElement('script');
+      script.src = 'https://gumroad.com/js/gumroad.js';
+      script.async = true;
+      document.body.appendChild(script);
+      gumroadScriptLoaded.current = true;
+    }
+  }, []);
+
+  // Check for success redirect from Gumroad
+  useEffect(() => {
+    if (searchParams.get('status') === 'success') {
+      toast({
+        title: "Success!",
+        description: "Your subscription is now active. Please refresh to see your Pro status.",
+      });
+      // Refresh subscription status
+      if (user) {
+        fetchSubscriptionStatus();
+      }
+    }
+  }, [searchParams, user, toast]);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -19,8 +53,7 @@ const Billing = () => {
         navigate("/auth");
       } else {
         setUser(session.user);
-        // TODO: Check subscription status from database
-        setSubscriptionStatus('free');
+        fetchSubscriptionStatus();
       }
     });
 
@@ -29,11 +62,60 @@ const Billing = () => {
         navigate("/auth");
       } else {
         setUser(session.user);
+        if (session.user) fetchSubscriptionStatus();
       }
     });
 
     return () => subscription.unsubscribe();
   }, [navigate]);
+
+  const fetchSubscriptionStatus = async () => {
+    if (!user) return;
+    
+    try {
+      const { data, error } = await (supabase as any)
+        .from('subscriptions')
+        .select('status, plan_type, expires_at')
+        .eq('user_id', user.id)
+        .single() as { data: { status: string; plan_type: string; expires_at: string | null } | null; error: any };
+
+      if (error && error.code !== 'PGRST116') {
+        console.error('Error fetching subscription:', error);
+        return;
+      }
+
+      if (data) {
+        const isActive = data.status === 'active' && 
+          data.plan_type === 'pro' &&
+          (!data.expires_at || new Date(data.expires_at) > new Date());
+        setSubscriptionStatus(isActive ? 'pro' : 'free');
+      } else {
+        setSubscriptionStatus('free');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
+  const handleUpgrade = () => {
+    if (!user) return;
+
+    setLoading(true);
+    
+    // Open Gumroad overlay
+    if (window.GumroadOverlay) {
+      window.GumroadOverlay({
+        url: 'https://websmith82.gumroad.com/l/sceqs',
+        product: 'sceqs',
+        success_url: `${window.location.origin}/dashboard?status=success`,
+      });
+    } else {
+      // Fallback: redirect to Gumroad
+      window.open('https://websmith82.gumroad.com/l/sceqs?wanted=true', '_blank');
+    }
+    
+    setLoading(false);
+  };
 
   const features = {
     free: [
@@ -120,16 +202,19 @@ const Billing = () => {
             </ul>
             <Button 
               className={`w-full ${subscriptionStatus === 'pro' ? '' : 'bg-gradient-to-r from-primary to-accent'}`}
-              disabled={subscriptionStatus === 'pro'}
-              onClick={() => {
-                // TODO: Integrate with Stripe or payment processor
-                toast({
-                  title: "Coming Soon",
-                  description: "Payment integration will be available soon"
-                });
-              }}
+              disabled={subscriptionStatus === 'pro' || loading}
+              onClick={handleUpgrade}
             >
-              {subscriptionStatus === 'pro' ? 'Current Plan' : 'Upgrade to Pro'}
+              {loading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Processing...
+                </>
+              ) : subscriptionStatus === 'pro' ? (
+                'Current Plan'
+              ) : (
+                'Upgrade to Pro'
+              )}
             </Button>
           </Card>
         </div>

@@ -127,6 +127,24 @@ const Dashboard = () => {
     };
   }, [navigate]);
 
+  // Check for success parameter from Gumroad redirect
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('status') === 'success') {
+      toast({
+        title: "Success!",
+        description: "Your subscription is now active. Refreshing your account...",
+      });
+      // Refresh usage count and subscription status
+      if (user) {
+        fetchUsageCount(user.id);
+      }
+      
+      // Clean up URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, [user, toast]);
+
   const fetchUsageCount = async (userId: string) => {
     try {
       const { data, error } = await supabase.rpc('get_daily_usage_count', {

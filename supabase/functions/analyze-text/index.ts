@@ -75,25 +75,39 @@ Deno.serve(async (req: Request) => {
 
     console.log("Authenticated user:", user.id);
 
-    // --- 3. Check Usage Limit Server-Side ---
-    const { data: usageCount, error: usageError } = await supabase.rpc('get_daily_usage_count', {
+    // --- 3. Check if user has pro subscription ---
+    const { data: isPro, error: proError } = await supabase.rpc('is_pro_user', {
       p_user_id: user.id
     });
 
-    if (usageError) {
-      console.error("Usage check error:", usageError.message);
-      return new Response(JSON.stringify({ error: "Failed to check usage limits" }), {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" }
-      });
+    if (proError) {
+      console.error("Pro check error:", proError.message);
+      // Continue with free tier limits if check fails
     }
 
-    if (usageCount >= DAILY_LIMIT) {
-      console.log(`User ${user.id} exceeded daily limit: ${usageCount}/${DAILY_LIMIT}`);
-      return new Response(JSON.stringify({ error: "Daily analysis limit reached. Please upgrade or try again tomorrow." }), {
-        status: 429,
-        headers: { ...corsHeaders, "Content-Type": "application/json" }
+    const DAILY_LIMIT = isPro ? 999999 : 5; // Unlimited for pro users
+
+    // Only check usage limit for free users
+    if (!isPro) {
+      const { data: usageCount, error: usageError } = await supabase.rpc('get_daily_usage_count', {
+        p_user_id: user.id
       });
+
+      if (usageError) {
+        console.error("Usage check error:", usageError.message);
+        return new Response(JSON.stringify({ error: "Failed to check usage limits" }), {
+          status: 500,
+          headers: { ...corsHeaders, "Content-Type": "application/json" }
+        });
+      }
+
+      if (usageCount >= DAILY_LIMIT) {
+        console.log(`User ${user.id} exceeded daily limit: ${usageCount}/${DAILY_LIMIT}`);
+        return new Response(JSON.stringify({ error: "Daily analysis limit reached. Please upgrade or try again tomorrow." }), {
+          status: 429,
+          headers: { ...corsHeaders, "Content-Type": "application/json" }
+        });
+      }
     }
 
     // --- 4. Input Validation ---
