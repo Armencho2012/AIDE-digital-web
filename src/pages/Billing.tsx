@@ -41,7 +41,7 @@ const uiLabels = {
         "Basic support"
       ],
       pro: [
-        "Unlimited analyses",
+        "50 analyses per month",
         "Advanced AI analysis",
         "Priority processing",
         "Unlimited content archive",
@@ -177,14 +177,20 @@ declare global {
 
 const Billing = () => {
   const [user, setUser] = useState<User | null>(null);
-  const [subscriptionStatus, setSubscriptionStatus] = useState<'free' | 'pro'>('free');
+  const [subscriptionStatus, setSubscriptionStatus] = useState<'free' | 'pro' | 'class'>('free');
   const [loading, setLoading] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { toast } = useToast();
   const { language } = useSettings();
   const gumroadScriptLoaded = useRef(false);
   const labels = uiLabels[language];
+
+  // Fix FOUC - ensure component is mounted before rendering
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // Load Gumroad script
   useEffect(() => {
@@ -281,6 +287,25 @@ const Billing = () => {
     setLoading(false);
   };
 
+  // Show loading skeleton to prevent FOUC
+  if (!isMounted) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/20">
+        <div className="container max-w-5xl mx-auto px-4 py-8">
+          <div className="animate-pulse space-y-8">
+            <div className="h-10 bg-muted rounded w-32"></div>
+            <div className="h-16 bg-muted rounded"></div>
+            <div className="grid md:grid-cols-3 gap-6">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="h-96 bg-muted rounded"></div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/20">
       <div className="container max-w-5xl mx-auto px-4 py-8">
@@ -300,7 +325,7 @@ const Billing = () => {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-6 mb-8">
+        <div className="grid md:grid-cols-3 gap-6 mb-8">
           {/* Free Tier */}
           <Card className={`p-6 ${subscriptionStatus === 'free' ? 'border-2 border-primary' : ''}`}>
             <div className="text-center mb-6">
@@ -328,15 +353,18 @@ const Billing = () => {
           {/* Pro Tier */}
           <Card className={`p-6 relative ${subscriptionStatus === 'pro' ? 'border-2 border-primary' : 'border-2 border-accent'}`}>
             {subscriptionStatus !== 'pro' && (
-              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                <span className="bg-accent text-accent-foreground px-3 py-1 rounded-full text-sm font-semibold">
-                  {labels.recommended}
+              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 z-10">
+                <span className="bg-gradient-to-r from-primary to-accent text-primary-foreground px-3 py-1 rounded-full text-xs font-semibold shadow-md">
+                  Special Offer for You
                 </span>
               </div>
             )}
             <div className="text-center mb-6">
               <h3 className="text-2xl font-bold mb-2">{labels.pro}</h3>
-              <div className="text-4xl font-bold mb-1">$15.99</div>
+              <div className="flex items-center justify-center gap-2 mb-1">
+                <span className="text-2xl line-through text-muted-foreground">$24.99</span>
+                <div className="text-4xl font-bold">$15.99</div>
+              </div>
               <p className="text-sm text-muted-foreground">{labels.perMonth}</p>
             </div>
             <ul className="space-y-3 mb-6">
@@ -364,6 +392,48 @@ const Billing = () => {
               )}
             </Button>
           </Card>
+
+          {/* Class Tier (Unlimited) */}
+          <Card className={`p-6 relative ${subscriptionStatus === 'class' ? 'border-2 border-primary' : 'border-2 border-primary/30'}`}>
+            <div className="text-center mb-6">
+              <h3 className="text-2xl font-bold mb-2">Class</h3>
+              <div className="text-4xl font-bold mb-1">$99.67</div>
+              <p className="text-sm text-muted-foreground">{labels.perMonth}</p>
+            </div>
+            <ul className="space-y-3 mb-6">
+              <li className="flex items-center gap-2">
+                <Check className="h-5 w-5 text-primary flex-shrink-0" />
+                <span>Unlimited analyses</span>
+              </li>
+              <li className="flex items-center gap-2">
+                <Check className="h-5 w-5 text-primary flex-shrink-0" />
+                <span>All Pro features</span>
+              </li>
+              <li className="flex items-center gap-2">
+                <Check className="h-5 w-5 text-primary flex-shrink-0" />
+                <span>Priority processing</span>
+              </li>
+              <li className="flex items-center gap-2">
+                <Check className="h-5 w-5 text-primary flex-shrink-0" />
+                <span>Unlimited content archive</span>
+              </li>
+              <li className="flex items-center gap-2">
+                <Check className="h-5 w-5 text-primary flex-shrink-0" />
+                <span>Priority support</span>
+              </li>
+              <li className="flex items-center gap-2">
+                <Check className="h-5 w-5 text-primary flex-shrink-0" />
+                <span>Early access to new features</span>
+              </li>
+            </ul>
+            <Button 
+              variant={subscriptionStatus === 'class' ? 'default' : 'outline'}
+              className="w-full"
+              disabled={subscriptionStatus === 'class' || loading}
+            >
+              {subscriptionStatus === 'class' ? labels.currentPlan : 'Upgrade to Class'}
+            </Button>
+          </Card>
         </div>
 
         {/* Feature Comparison */}
@@ -376,12 +446,14 @@ const Billing = () => {
                   <th className="text-left p-2">{labels.feature}</th>
                   <th className="text-center p-2">{labels.free}</th>
                   <th className="text-center p-2">{labels.pro}</th>
+                  <th className="text-center p-2">Class</th>
                 </tr>
               </thead>
               <tbody>
                 <tr className="border-b">
                   <td className="p-2">{labels.dailyAnalyses}</td>
                   <td className="text-center p-2">5</td>
+                  <td className="text-center p-2">50/month</td>
                   <td className="text-center p-2">
                     <Infinity className="h-4 w-4 inline text-accent" />
                   </td>
@@ -390,15 +462,18 @@ const Billing = () => {
                   <td className="p-2">{labels.contentArchive}</td>
                   <td className="text-center p-2">✓</td>
                   <td className="text-center p-2">✓ {labels.unlimited}</td>
+                  <td className="text-center p-2">✓ {labels.unlimited}</td>
                 </tr>
                 <tr className="border-b">
                   <td className="p-2">{labels.prioritySupport}</td>
                   <td className="text-center p-2">✗</td>
                   <td className="text-center p-2">✓</td>
+                  <td className="text-center p-2">✓</td>
                 </tr>
                 <tr>
                   <td className="p-2">{labels.advancedFeatures}</td>
                   <td className="text-center p-2">✗</td>
+                  <td className="text-center p-2">✓</td>
                   <td className="text-center p-2">✓</td>
                 </tr>
               </tbody>

@@ -234,8 +234,8 @@ const Dashboard = () => {
       }
       
       toast({
-        title: language === 'en' ? 'Success!' : language === 'ru' ? 'Успешно!' : language === 'hy' ? 'Հաջողություն!' : '성공!',
-        description: language === 'en' ? 'Text analyzed successfully' : language === 'ru' ? 'Текст успешно проанализирован' : language === 'hy' ? 'Տեքստը հաջողությամբ վերլուծվել է' : '텍스트가 성공적으로 분석되었습니다'
+        title: language === 'en' ? 'Great job!' : language === 'ru' ? 'Отлично!' : language === 'hy' ? 'Հիանալի է!' : '훌륭합니다!',
+        description: language === 'en' ? "You're mastering this subject. Keep it up!" : language === 'ru' ? 'Вы осваиваете этот предмет. Продолжайте в том же духе!' : language === 'hy' ? 'Դուք տիրապետում եք այս առարկային: Շարունակեք այդպես!' : '이 주제를 잘 이해하고 있습니다. 계속 노력하세요!'
       });
     } catch (error) {
       console.error('Analysis error:', error);
@@ -293,6 +293,18 @@ const Dashboard = () => {
               className="shadow-sm"
             >
               <Settings className="h-5 w-5" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={async () => {
+                await supabase.auth.signOut();
+                navigate("/auth");
+              }}
+              className="text-xs sm:text-sm"
+            >
+              <LogOut className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+              <span className="hidden sm:inline">{labels.signOut}</span>
             </Button>
           </div>
         </header>

@@ -127,20 +127,29 @@ export const KnowledgeMap = ({ onNodeClick, activeNodeId, data }: KnowledgeMapPr
   const [nodes, setNodes, onNodesChange] = useNodesState(flowNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(flowEdges);
 
-  // Update nodes and edges when data changes - clear old data first
-  useEffect(() => {
-    setNodes(flowNodes);
-    setEdges(flowEdges);
-  }, [flowNodes, flowEdges, setNodes, setEdges]);
-
-  const handleClearMap = useCallback(() => {
+  // Clear state function to purge previous map data
+  const clearState = useCallback(() => {
     setNodes([]);
     setEdges([]);
+  }, [setNodes, setEdges]);
+
+  // Update nodes and edges when data changes - clear old data first
+  useEffect(() => {
+    if (!data || (!data.nodes || data.nodes.length === 0)) {
+      clearState();
+    } else {
+      setNodes(flowNodes);
+      setEdges(flowEdges);
+    }
+  }, [flowNodes, flowEdges, setNodes, setEdges, data, clearState]);
+
+  const handleClearMap = useCallback(() => {
+    clearState();
     toast({
       title: 'Map Cleared',
       description: 'The knowledge map has been reset.',
     });
-  }, [setNodes, setEdges, toast]);
+  }, [clearState, toast]);
 
   const handleExportImage = useCallback(async () => {
     if (!flowRef.current) return;

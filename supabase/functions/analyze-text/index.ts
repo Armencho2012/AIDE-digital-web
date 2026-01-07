@@ -138,7 +138,7 @@ Deno.serve(async (req: Request) => {
     }
 
     // --- 5. Gemini API Call Function (with Retry Logic) ---
-    const callGemini = async (promptText: string): Promise<AnalysisResult> => {
+    const callGemini = async (promptText: string, systemInstructionText: string): Promise<AnalysisResult> => {
       const sleep = (ms: number): Promise<void> => new Promise((r) => setTimeout(r, ms));
       const maxAttempts = 3;
       
@@ -150,6 +150,9 @@ Deno.serve(async (req: Request) => {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
+                systemInstruction: {
+                  parts: [{ text: systemInstructionText }]
+                },
                 contents: [{ role: "user", parts: [{ text: promptText }] }],
                 generationConfig: { temperature: 0.6 }
               })
@@ -198,7 +201,21 @@ Deno.serve(async (req: Request) => {
       return {}; // fallback empty object
     };
 
-    // --- 6. Prompt Definition ---
+    // --- 6. Prompt Definition with System Instructions ---
+    const systemInstruction = `You are a JSON generator. Your ONLY job is to analyze the user text about [Subject] and return a JSON object with 'nodes' and 'edges' for the knowledge_map field.
+
+CRITICAL RULES FOR KNOWLEDGE MAP:
+1. Extract entities and relationships STRICTLY from the provided text ONLY
+2. Do NOT use external knowledge or general information
+3. Do NOT add concepts that are not explicitly mentioned in the text
+4. If the text is about Math, the map must be about Math concepts from the text
+5. If the text is about History, the map must be about History concepts from the text
+6. NEVER add "Photosynthesis" or any other concept unless it is explicitly mentioned in the provided text
+7. Each node must represent a concept, term, or entity that appears in the text
+8. Each edge must represent a relationship that is described or implied in the text
+
+You are a JSON generator. Analyze the user text. Return ONLY a JSON object. Do NOT use external knowledge.`;
+
     const prompt = `You are an expert academic content analyst specializing in educational material structuring. Your task is to transform raw text into comprehensive, well-organized learning resources.
 
 PERSONA:
@@ -257,14 +274,23 @@ REQUIRED JSON STRUCTURE:
   }
 }
 
+CRITICAL KNOWLEDGE MAP RULES:
+- Extract key entities and relationships STRICTLY from the provided text
+- Do NOT add outside information, general knowledge, or concepts not mentioned in the text
+- Only include entities and relationships that are explicitly present in the provided text
+- If the text is about Math, the map must be about Math concepts from the text
+- If the text is about History, the map must be about History concepts from the text
+- NEVER add "Photosynthesis" or any other concept unless it is explicitly mentioned in the provided text
+- Each node must represent a concept, term, or entity that appears in the text
+- Each edge must represent a relationship that is described or implied in the text
+
 CRITICAL: 
 - Return ONLY valid JSON. No markdown formatting, no code blocks, no explanatory text. The JSON must be parseable.
-- For knowledge_map: Extract key entities and relationships STRICTLY from the provided text. Do not add outside information, general knowledge, or concepts not mentioned in the text. Only include entities and relationships that are explicitly present in the provided text.
 
 Text to analyze:
 ${text}`;
 
-    const mainAnalysis = await callGemini(prompt);
+    const mainAnalysis = await callGemini(prompt, systemInstruction);
 
     // --- 7. Normalization Functions ---
     const normalizeQuestion = (q: unknown): QuizQuestion | null => {

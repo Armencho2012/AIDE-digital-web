@@ -216,7 +216,45 @@ const Auth = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="signin-password">Password</Label>
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="signin-password">Password</Label>
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        if (!signInEmail.trim()) {
+                          toast({
+                            title: "Email Required",
+                            description: "Please enter your email address first",
+                            variant: "destructive"
+                          });
+                          return;
+                        }
+                        setLoading(true);
+                        try {
+                          const { error } = await supabase.auth.resetPasswordForEmail(signInEmail.trim(), {
+                            redirectTo: `${window.location.origin}/auth?reset=true`
+                          });
+                          if (error) throw error;
+                          toast({
+                            title: "Check your email",
+                            description: "We've sent you a password reset link. Please check your inbox."
+                          });
+                        } catch (error: any) {
+                          toast({
+                            title: "Error",
+                            description: error.message || "Failed to send reset email",
+                            variant: "destructive"
+                          });
+                        } finally {
+                          setLoading(false);
+                        }
+                      }}
+                      className="text-xs text-primary hover:underline"
+                      disabled={loading}
+                    >
+                      Forgot password?
+                    </button>
+                  </div>
                   <Input
                     id="signin-password"
                     type="password"

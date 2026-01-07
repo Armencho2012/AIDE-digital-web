@@ -1,9 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Slider } from "@/components/ui/slider";
+import { Label } from "@/components/ui/label";
 import { CheckCircle2, XCircle } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Flashcards } from "./Flashcards";
+import { MarkdownRenderer } from "./MarkdownRenderer";
 
 type Language = 'en' | 'ru' | 'hy' | 'ko';
 
@@ -92,11 +95,12 @@ const uiLabels = {
 
 export const AnalysisOutput = ({ data, language }: AnalysisOutputProps) => {
   const [questionStates, setQuestionStates] = useState<{ selectedAnswer: number | null; showResult: boolean; }[]>([]);
+  const [numQuestions, setNumQuestions] = useState<number>(10);
   const labels = uiLabels[language];
 
   const lessonSections = useMemo(() => (data.lesson_sections && data.lesson_sections.length > 0 ? data.lesson_sections : []), [data.lesson_sections]);
 
-  const quizQuestions = useMemo(
+  const allQuizQuestions = useMemo(
     () => (data.quiz_questions && data.quiz_questions.length > 0
       ? data.quiz_questions
       : data.quick_quiz_question
@@ -105,9 +109,23 @@ export const AnalysisOutput = ({ data, language }: AnalysisOutputProps) => {
     [data.quiz_questions, data.quick_quiz_question]
   );
 
+  const quizQuestions = useMemo(
+    () => allQuizQuestions.slice(0, Math.min(numQuestions, allQuizQuestions.length)),
+    [allQuizQuestions, numQuestions]
+  );
+
   useEffect(() => {
     setQuestionStates(quizQuestions.map(() => ({ selectedAnswer: null, showResult: false })));
   }, [quizQuestions]);
+
+  // Initialize numQuestions based on available questions
+  useEffect(() => {
+    if (allQuizQuestions.length > 0) {
+      const maxQuestions = Math.min(12, allQuizQuestions.length);
+      const minQuestions = Math.max(5, Math.min(10, allQuizQuestions.length));
+      setNumQuestions(Math.max(5, Math.min(12, maxQuestions)));
+    }
+  }, [allQuizQuestions.length]);
 
   const handleSelectOption = (questionIndex: number, optionIndex: number) => {
     setQuestionStates((prev) =>
@@ -138,7 +156,7 @@ export const AnalysisOutput = ({ data, language }: AnalysisOutputProps) => {
             {data.three_bullet_summary.map((point, index) => (
               <li key={index} className="flex gap-2">
                 <span className="text-primary font-bold">•</span>
-                <span>{point}</span>
+                <MarkdownRenderer content={point} />
               </li>
             ))}
           </ul>
@@ -154,7 +172,9 @@ export const AnalysisOutput = ({ data, language }: AnalysisOutputProps) => {
             {lessonSections.map((section, index) => (
               <div key={index} className="space-y-2">
                 <p className="font-semibold text-lg text-primary">{section.title}</p>
-                <p className="text-muted-foreground leading-relaxed">{section.summary}</p>
+                <div className="text-muted-foreground">
+                  <MarkdownRenderer content={section.summary} />
+                </div>
               </div>
             ))}
           </CardContent>
@@ -176,12 +196,30 @@ export const AnalysisOutput = ({ data, language }: AnalysisOutputProps) => {
         </CardContent>
       </Card>
 
-      {quizQuestions.length > 0 && (
+      {allQuizQuestions.length > 0 && (
         <Card className="border-primary/20 shadow-md">
           <CardHeader>
-            <CardTitle className="text-primary">
-              {labels.quiz} ({quizQuestions.length})
-            </CardTitle>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <CardTitle className="text-primary">
+                {labels.quiz} ({quizQuestions.length})
+              </CardTitle>
+              {allQuizQuestions.length >= 5 && (
+                <div className="flex items-center gap-3 sm:gap-4 min-w-[200px] sm:min-w-[250px]">
+                  <Label htmlFor="quiz-count" className="text-xs sm:text-sm whitespace-nowrap">
+                    Questions: {numQuestions}
+                  </Label>
+                  <Slider
+                    id="quiz-count"
+                    min={5}
+                    max={Math.min(12, allQuizQuestions.length)}
+                    step={1}
+                    value={[numQuestions]}
+                    onValueChange={(value) => setNumQuestions(value[0])}
+                    className="flex-1"
+                  />
+                </div>
+              )}
+            </div>
           </CardHeader>
           <CardContent className="space-y-6">
             {quizQuestions.map((question, questionIndex) => {
@@ -196,7 +234,9 @@ export const AnalysisOutput = ({ data, language }: AnalysisOutputProps) => {
                     <span className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
                       {labels.questionPrefix} {questionIndex + 1}
                     </span>
-                    <p className="font-medium text-lg leading-relaxed">{question.question}</p>
+                    <div className="font-medium text-lg leading-relaxed">
+                      <MarkdownRenderer content={question.question} />
+                    </div>
                   </div>
 
                   <div className="space-y-2">
@@ -216,7 +256,7 @@ export const AnalysisOutput = ({ data, language }: AnalysisOutputProps) => {
                         } ${showResult && optionIndex === question.correct_answer_index ? 'border-green-500 bg-green-50 dark:bg-green-950' : ''}`}
                       >
                         <div className="flex items-center justify-between">
-                          <span>{option}</span>
+                          <MarkdownRenderer content={option} />
                           {showResult && optionIndex === question.correct_answer_index && (
                             <CheckCircle2 className="h-5 w-5 text-green-600" />
                           )}
@@ -243,9 +283,9 @@ export const AnalysisOutput = ({ data, language }: AnalysisOutputProps) => {
                           <p className={`font-bold mb-2 ${isCorrect ? 'text-green-700 dark:text-green-300' : 'text-red-700 dark:text-red-300'}`}>
                             {isCorrect ? labels.correct : labels.incorrect}
                           </p>
-                          <p className="text-sm leading-relaxed">
-                            <strong>{labels.explanation}:</strong> {question.explanation}
-                          </p>
+                          <div className="text-sm leading-relaxed">
+                            <strong>{labels.explanation}:</strong> <MarkdownRenderer content={question.explanation} />
+                          </div>
                         </div>
                         <Button
                           onClick={() => handleRetry(questionIndex)}

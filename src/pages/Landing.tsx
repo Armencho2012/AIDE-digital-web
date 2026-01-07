@@ -247,12 +247,11 @@ const Landing = () => {
             </div>
           </Card>
 
-          {/* Quick Stats Card */}
-          <Card className="md:col-span-4 p-6 md:p-8 bg-gradient-to-br from-accent/20 to-primary/10 border-2 border-accent/30 flex flex-col justify-center items-center text-center">
-            <div className="space-y-2">
-              <div className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">5</div>
-              <p className="text-sm md:text-base text-muted-foreground font-medium">Free Analyses</p>
-              <p className="text-xs text-muted-foreground">Per Day</p>
+          {/* Quick Stats Card - Subtle utility hint */}
+          <Card className="md:col-span-4 p-3 md:p-4 bg-gradient-to-br from-accent/10 to-primary/5 border border-accent/20 flex flex-col justify-center items-center text-center">
+            <div className="space-y-1">
+              <div className="text-2xl md:text-3xl font-semibold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">5</div>
+              <p className="text-xs md:text-sm text-muted-foreground">Free Analyses Per Day</p>
             </div>
           </Card>
         </div>
