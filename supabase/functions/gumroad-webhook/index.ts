@@ -5,22 +5,87 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Rate limiting map (in-memory, resets on cold starts)
+const requestCounts = new Map<string, { count: number; resetTime: number }>();
+const RATE_LIMIT = 10; // Max requests per window
+const RATE_WINDOW_MS = 60000; // 1 minute window
+
+function isRateLimited(identifier: string): boolean {
+  const now = Date.now();
+  const record = requestCounts.get(identifier);
+  
+  if (!record || now > record.resetTime) {
+    requestCounts.set(identifier, { count: 1, resetTime: now + RATE_WINDOW_MS });
+    return false;
+  }
+  
+  record.count++;
+  return record.count > RATE_LIMIT;
+}
+
+// Verify sale with Gumroad API
+async function verifySaleWithGumroad(saleId: string, accessToken: string): Promise<boolean> {
+  try {
+    const response = await fetch(`https://api.gumroad.com/v2/sales/${saleId}`, {
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+      },
+    });
+    
+    if (!response.ok) {
+      console.error(`Gumroad API returned status ${response.status}`);
+      return false;
+    }
+    
+    const data = await response.json();
+    return data.success === true && data.sale != null;
+  } catch (error) {
+    console.error("Error verifying sale with Gumroad:", error);
+    return false;
+  }
+}
+
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
+  // Only accept POST requests
+  if (req.method !== "POST") {
+    return new Response("Method not allowed", {
+      status: 405,
+      headers: { ...corsHeaders, "Content-Type": "text/plain" }
+    });
+  }
+
   try {
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const gumroadProductId = Deno.env.get("GUMROAD_PRODUCT_ID")!;
+    const supabaseUrl = Deno.env.get("SUPABASE_URL");
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+    const gumroadProductId = Deno.env.get("GUMROAD_PRODUCT_ID");
+    const gumroadAccessToken = Deno.env.get("GUMROAD_ACCESS_TOKEN");
 
     if (!supabaseUrl || !supabaseServiceKey) {
-      throw new Error("Supabase configuration missing");
+      console.error("Supabase configuration missing");
+      return new Response("Server configuration error", {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "text/plain" }
+      });
     }
 
     if (!gumroadProductId) {
-      throw new Error("GUMROAD_PRODUCT_ID not configured");
+      console.error("GUMROAD_PRODUCT_ID not configured");
+      return new Response("Server configuration error", {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "text/plain" }
+      });
+    }
+
+    if (!gumroadAccessToken) {
+      console.error("GUMROAD_ACCESS_TOKEN not configured");
+      return new Response("Server configuration error", {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "text/plain" }
+      });
     }
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
@@ -33,30 +98,82 @@ Deno.serve(async (req: Request) => {
       webhookData[key] = value.toString();
     }
 
+    const email = webhookData.email?.toLowerCase().trim();
+    const saleId = webhookData.sale_id;
+    const productId = webhookData.product_id;
+    const event = webhookData.event;
+
+    // Rate limiting by IP or email
+    const clientIdentifier = email || req.headers.get('x-forwarded-for') || 'unknown';
+    if (isRateLimited(clientIdentifier)) {
+      console.warn(`Rate limit exceeded for: ${clientIdentifier}`);
+      return new Response("Rate limit exceeded", {
+        status: 429,
+        headers: { ...corsHeaders, "Content-Type": "text/plain" }
+      });
+    }
+
+    // Log webhook attempt (excluding sensitive data)
     console.log("Gumroad webhook received:", {
-      product_id: webhookData.product_id,
-      sale_id: webhookData.sale_id,
-      email: webhookData.email,
-      event: webhookData.event
+      product_id: productId,
+      sale_id: saleId,
+      event: event,
+      has_email: !!email
     });
 
+    // Input validation
+    if (!saleId || typeof saleId !== 'string' || saleId.length > 100) {
+      console.warn("Invalid sale_id in webhook");
+      return new Response("Invalid request data", {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "text/plain" }
+      });
+    }
+
+    if (!productId || typeof productId !== 'string') {
+      console.warn("Invalid product_id in webhook");
+      return new Response("Invalid request data", {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "text/plain" }
+      });
+    }
+
     // Verify product ID matches our Aide Pro plan
-    if (webhookData.product_id !== gumroadProductId) {
+    if (productId !== gumroadProductId) {
       console.log("Product ID mismatch, ignoring webhook");
-      return new Response("Product ID mismatch", {
+      return new Response("OK", {
         status: 200,
         headers: { ...corsHeaders, "Content-Type": "text/plain" }
       });
     }
 
-    // Handle sale event
-    if (webhookData.event === 'sale' || webhookData.event === 'subscription_payment_succeeded') {
-      const email = webhookData.email;
-      const saleId = webhookData.sale_id;
+    // CRITICAL: Verify the sale is legitimate by checking with Gumroad API
+    const isValidSale = await verifySaleWithGumroad(saleId, gumroadAccessToken);
+    if (!isValidSale) {
+      console.error(`Sale verification failed for sale_id: ${saleId}`);
+      return new Response("Sale verification failed", {
+        status: 403,
+        headers: { ...corsHeaders, "Content-Type": "text/plain" }
+      });
+    }
 
+    console.log(`Sale ${saleId} verified successfully with Gumroad API`);
+
+    // Handle sale event
+    if (event === 'sale' || event === 'subscription_payment_succeeded') {
       if (!email) {
         console.error("No email in webhook data");
         return new Response("Missing email", {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "text/plain" }
+        });
+      }
+
+      // Validate email format
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email) || email.length > 255) {
+        console.error("Invalid email format");
+        return new Response("Invalid email format", {
           status: 400,
           headers: { ...corsHeaders, "Content-Type": "text/plain" }
         });
@@ -66,17 +183,17 @@ Deno.serve(async (req: Request) => {
       const { data: authUsers, error: authError } = await supabase.auth.admin.listUsers();
       
       if (authError) {
-        console.error("Error fetching users:", authError);
-        return new Response("Error fetching users", {
+        console.error("Error fetching users");
+        return new Response("Internal server error", {
           status: 500,
           headers: { ...corsHeaders, "Content-Type": "text/plain" }
         });
       }
 
-      const user = authUsers.users.find(u => u.email === email);
+      const user = authUsers.users.find(u => u.email?.toLowerCase() === email);
 
       if (!user) {
-        console.log(`User not found for email: ${email}`);
+        console.log("User not found for provided email, recording sale for later");
         // Store the sale for later when user signs up
         await supabase
           .from('subscriptions')
@@ -88,16 +205,15 @@ Deno.serve(async (req: Request) => {
             purchased_at: new Date().toISOString(),
           });
         
-        return new Response("User not found, sale recorded", {
+        return new Response("OK", {
           status: 200,
           headers: { ...corsHeaders, "Content-Type": "text/plain" }
         });
       }
 
-      // Calculate expiration (if it's a subscription, set to 1 month from now)
-      // For one-time purchases, you might want to set a longer expiration or lifetime
+      // Calculate expiration (1 month subscription)
       const expiresAt = new Date();
-      expiresAt.setMonth(expiresAt.getMonth() + 1); // 1 month subscription
+      expiresAt.setMonth(expiresAt.getMonth() + 1);
 
       // Update or create subscription
       const { error: subError } = await supabase
@@ -115,23 +231,21 @@ Deno.serve(async (req: Request) => {
         });
 
       if (subError) {
-        console.error("Error updating subscription:", subError);
-        return new Response("Error updating subscription", {
+        console.error("Error updating subscription");
+        return new Response("Internal server error", {
           status: 500,
           headers: { ...corsHeaders, "Content-Type": "text/plain" }
         });
       }
 
-      console.log(`Successfully upgraded user ${user.id} to Pro`);
+      console.log(`Successfully upgraded user to Pro`);
     }
 
     // Handle refund/cancellation
-    if (webhookData.event === 'refund' || webhookData.event === 'subscription_cancelled') {
-      const email = webhookData.email;
-      
+    if (event === 'refund' || event === 'subscription_cancelled') {
       if (email) {
         const { data: authUsers } = await supabase.auth.admin.listUsers();
-        const user = authUsers?.users.find(u => u.email === email);
+        const user = authUsers?.users.find(u => u.email?.toLowerCase() === email);
 
         if (user) {
           await supabase
@@ -148,15 +262,11 @@ Deno.serve(async (req: Request) => {
       status: 200,
       headers: { ...corsHeaders, "Content-Type": "text/plain" }
     });
-  } catch (error: any) {
-    console.error("Webhook error:", error);
-    return new Response(
-      JSON.stringify({ error: error.message }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
+  } catch (error) {
+    console.error("Webhook processing error");
+    return new Response("Internal server error", {
+      status: 500,
+      headers: { ...corsHeaders, "Content-Type": "text/plain" }
+    });
   }
 });
-
-
-
-
