@@ -26,14 +26,40 @@ interface Flashcard {
   back: string;
 }
 
+interface KnowledgeMapNode {
+  id: string;
+  label: string;
+  category: string;
+  description?: string;
+}
+
+interface KnowledgeMapEdge {
+  id?: string;
+  source: string;
+  target: string;
+  label?: string;
+  strength?: string | number;
+}
+
+interface KnowledgeMap {
+  nodes: KnowledgeMapNode[];
+  edges: KnowledgeMapEdge[];
+}
+
 interface AnalysisResult {
+  metadata?: {
+    language?: string;
+    subject_domain?: string;
+    complexity_level?: string;
+  };
   language_detected?: string;
   three_bullet_summary?: string[];
-  key_terms?: string[];
+  key_terms?: string[] | Array<{ term: string; definition: string; importance?: string }>;
   lesson_sections?: LessonSection[];
   quiz_questions?: QuizQuestion[];
   flashcards?: Flashcard[];
   quick_quiz_question?: QuizQuestion;
+  knowledge_map?: KnowledgeMap;
   error?: string;
 }
 
@@ -202,93 +228,107 @@ Deno.serve(async (req: Request) => {
     };
 
     // --- 6. Prompt Definition with System Instructions ---
-    const systemInstruction = `You are a JSON generator. Your ONLY job is to analyze the user text about [Subject] and return a JSON object with 'nodes' and 'edges' for the knowledge_map field.
+    const systemInstruction = `### ROLE: SENIOR PEDAGOGICAL ARCHITECT & KNOWLEDGE ENGINEER
+You are an expert system designed to deconstruct complex information into structured, machine-readable educational modules. Your intelligence combines the accuracy of a research scientist with the clarity of a master educator. You specialize in "Concept Mapping" and "Semantic Interoperability."
 
-CRITICAL RULES FOR KNOWLEDGE MAP:
-1. Extract entities and relationships STRICTLY from the provided text ONLY
-2. Do NOT use external knowledge or general information
-3. Do NOT add concepts that are not explicitly mentioned in the text
-4. If the text is about Math, the map must be about Math concepts from the text
-5. If the text is about History, the map must be about History concepts from the text
-6. NEVER add "Photosynthesis" or any other concept unless it is explicitly mentioned in the provided text
-7. Each node must represent a concept, term, or entity that appears in the text
-8. Each edge must represent a relationship that is described or implied in the text
+### MANDATE
+Your objective is to ingest the [INPUT TEXT] and synthesize it into a highly sophisticated JSON object. You must act as a bridge between the raw text and the user's need for a comprehensive understanding of the subject.
 
-You are a JSON generator. Analyze the user text. Return ONLY a JSON object. Do NOT use external knowledge.`;
+### CORE OPERATIONAL PRINCIPLES
+1.  **Linguistic Mirroring:** You MUST detect the primary language of the [INPUT TEXT] and generate every single string within the JSON in that EXACT language. Do not translate terms unless they are industry standard in English (e.g., specific scientific or technical terms).
+2.  **The "Expert-in-the-Loop" Logic (External Knowledge):** You are NOT limited to the provided text. You must use your internal global training data to enhance the output. If the text mentions a concept that requires prerequisite knowledge to understand, you are AUTHORIZED and ENCOURAGED to inject "Contextual Nodes" and "Bridge Explanations" to ensure the learner has a complete picture.
+3.  **No-Chat Constraint:** You are a pure JSON engine. Do not provide greetings, markdown code fences (\`\`\`json), or post-processing commentary. Return only the raw, minified string.
 
-    const prompt = `You are an expert academic content analyst specializing in educational material structuring. Your task is to transform raw text into comprehensive, well-organized learning resources.
+### KNOWLEDGE MAP (THE GRAPH ENGINE) SPECIFICATIONS
+The 'knowledge_map' is the most critical part of this task. You must create a "Semantic Web" of the topic.
+-   **Node Density:** Aim for a high density of nodes (15-25 nodes). 
+-   **Categories:** Categorize nodes as 'Core Concept', 'Supporting Detail', 'Historical Context', 'Mathematical Formula', or 'Related Entity'.
+-   **Edge Intelligence:** Edges must not be generic. Every edge requires a 'label' that defines the semantic relationship (e.g., "inhibits", "derives from", "quantifies", "contradicts", "precedes").
+-   **Network Connectivity:** Avoid "islands." Ensure the graph is logically interconnected. Use your internal logic to create connections that might be implied but not explicitly stated in the text.
 
-PERSONA:
-- Academic and professional
-- Detail-oriented and thorough
-- Focused on educational value
-- Ensures accuracy and clarity
+### DETAILED CONTENT REQUIREMENTS
+-   **Three-Bullet Summary:** These must be "Mega-Bullets." Each point should be a 2-3 sentence synthesis of a major theme, focusing on the "Why" and "How," not just the "What."
+-   **Key Terms:** Provide 10 terms. The definition must be sophisticated, including the term's significance in the broader field.
+-   **Lesson Sections:** Create a narrative flow. Divide the content into 5-6 logical modules. Each summary should be roughly 150-200 words of high-value instructional content.
+-   **Quiz Questions:** 10 questions of varying difficulty. 
+    - 3 Recall (Factual)
+    - 4 Application (Scenario-based)
+    - 3 Analysis (Relational logic)
+-   **Flashcards:** 15 cards. Use the "Active Recall" style. The front should be a provocative question or a key term, and the back should be a concise, "memory-anchoring" explanation.
 
-OUTPUT CONSTRAINTS:
-- All content MUST be in the SAME LANGUAGE as the input text
-- Maintain academic tone appropriate to the subject matter
-- Ensure all quiz questions are meaningful and test understanding, not just recall
-- Flashcards should cover key concepts, not trivial details
-- Lesson sections should be logically organized and comprehensive
-- Knowledge map entities and relationships MUST be extracted ONLY from the provided text - do not add outside information or general knowledge
-
-REQUIRED JSON STRUCTURE:
+### JSON SCHEMA STRUCTURE (STRICT ADHERENCE REQUIRED)
 {
-  "language_detected": "detected language code",
-  "three_bullet_summary": ["point 1", "point 2", ...], // 3-7 comprehensive summary points
-  "key_terms": ["term1", "term2", ...], // 6-10 essential terms with clear definitions
+  "metadata": {
+    "language": "string",
+    "subject_domain": "string",
+    "complexity_level": "Beginner|Intermediate|Advanced"
+  },
+  "three_bullet_summary": [
+    "Comprehensive synthesis point 1",
+    "Comprehensive synthesis point 2",
+    "..."
+  ],
+  "key_terms": [
+    {
+      "term": "string",
+      "definition": "string",
+      "importance": "string"
+    }
+  ],
   "lesson_sections": [
-    {"title": "section title", "summary": "detailed summary"},
-    ...
-  ], // 3-6 well-structured sections
+    {
+      "order": 1,
+      "title": "string",
+      "summary": "minimum 3-5 sentence detailed instructional text",
+      "key_takeaway": "string"
+    }
+  ],
   "quiz_questions": [
     {
-      "question": "clear, meaningful question",
-      "options": ["option A", "option B", "option C", "option D"], // exactly 4 options
-      "correct_answer_index": 0, // 0-3
-      "explanation": "detailed explanation of why this is correct"
-    },
-    ...
-  ], // exactly 10 high-quality questions
+      "question_id": 1,
+      "question": "string",
+      "options": ["Option A", "Option B", "Option C", "Option D"],
+      "correct_answer_index": 0,
+      "explanation": "Detailed pedagogical explanation of why the answer is correct and why distractors are wrong.",
+      "difficulty": "Easy|Medium|Hard"
+    }
+  ],
   "flashcards": [
-    {"front": "term or concept", "back": "clear definition/explanation"},
-    ...
-  ], // exactly 15 flashcards covering key concepts
-  "quick_quiz_question": {same structure as first quiz_question},
+    {
+      "front": "string",
+      "back": "string"
+    }
+  ],
+  "quick_quiz_question": {
+    "question": "string",
+    "options": ["A", "B", "C", "D"],
+    "correct_answer_index": 0,
+    "explanation": "string"
+  },
   "knowledge_map": {
     "nodes": [
       {
-        "id": "unique-id",
-        "label": "Entity name from text",
-        "category": "general",
-        "connectedTo": ["other-node-id"]
+        "id": "node_001",
+        "label": "string",
+        "category": "string",
+        "description": "Short 1-sentence context for the node"
       }
     ],
     "edges": [
       {
-        "id": "edge-id",
-        "source": "node-id-1",
-        "target": "node-id-2"
+        "source": "node_001",
+        "target": "node_002",
+        "label": "descriptive relationship verb/phrase",
+        "strength": "1-10"
       }
     ]
   }
 }
 
-CRITICAL KNOWLEDGE MAP RULES:
-- Extract key entities and relationships STRICTLY from the provided text
-- Do NOT add outside information, general knowledge, or concepts not mentioned in the text
-- Only include entities and relationships that are explicitly present in the provided text
-- If the text is about Math, the map must be about Math concepts from the text
-- If the text is about History, the map must be about History concepts from the text
-- NEVER add "Photosynthesis" or any other concept unless it is explicitly mentioned in the provided text
-- Each node must represent a concept, term, or entity that appears in the text
-- Each edge must represent a relationship that is described or implied in the text
+### FINAL INSTRUCTION
+Analyze the input text below. Apply your expert knowledge. Construct the map efficiently. Output only the JSON.`;
 
-CRITICAL: 
-- Return ONLY valid JSON. No markdown formatting, no code blocks, no explanatory text. The JSON must be parseable.
-
-Text to analyze:
-${text}`;
+    const prompt = `[INPUT TEXT TO ANALYZE]:\n${text}`;
 
     const mainAnalysis = await callGemini(prompt, systemInstruction);
 
@@ -315,11 +355,20 @@ ${text}`;
           if (!s || typeof s !== "object") return null;
           const section = s as Record<string, unknown>;
           if (section?.title && section?.summary) {
-            return { title: String(section.title), summary: String(section.summary) };
+            return { 
+              title: String(section.title), 
+              summary: String(section.summary) 
+            };
           }
           return null;
         })
-        .filter((s): s is LessonSection => s !== null);
+        .filter((s): s is LessonSection => s !== null)
+        .sort((a, b) => {
+          // Sort by order if available, otherwise by title
+          const aOrder = (a as any).order ?? 0;
+          const bOrder = (b as any).order ?? 0;
+          return aOrder - bOrder;
+        });
     };
 
     const dedupeByQuestion = (arr: (QuizQuestion | null)[]): QuizQuestion[] => {
@@ -372,16 +421,48 @@ ${text}`;
       ? (mainAnalysis as any).flashcards.slice(0, MAX_FLASHCARDS_FREE) 
       : [];
 
-    // Normalize knowledge map data
-    const normalizeKnowledgeMap = (km: any) => {
-      if (!km || typeof km !== 'object') return null;
-      const nodes = Array.isArray(km.nodes) ? km.nodes.slice(0, 20) : [];
-      const edges = Array.isArray(km.edges) ? km.edges.slice(0, 30) : [];
+    // Normalize knowledge map data - handle new structure with label and strength on edges
+    const normalizeKnowledgeMap = (km: any): KnowledgeMap | undefined => {
+      if (!km || typeof km !== 'object') return undefined;
+      const nodes = Array.isArray(km.nodes) 
+        ? km.nodes.slice(0, 25).map((node: any) => ({
+            id: node.id || String(Math.random()),
+            label: node.label || '',
+            category: node.category || 'general',
+            description: node.description || ''
+          }))
+        : [];
+      const edges = Array.isArray(km.edges) 
+        ? km.edges.slice(0, 30).map((edge: any, index: number) => ({
+            id: edge.id || `${edge.source}-${edge.target}-${index}`,
+            source: edge.source || '',
+            target: edge.target || '',
+            label: edge.label || '',
+            strength: edge.strength || '5'
+          }))
+        : [];
       return { nodes, edges };
+    };
+
+    // Handle new metadata structure
+    const metadata = (mainAnalysis as any).metadata || {};
+    const language_detected = metadata.language || (mainAnalysis as any).language_detected || 'en';
+    
+    // Normalize key_terms - handle both old format (string[]) and new format (object[])
+    const normalizeKeyTerms = (terms: any): string[] => {
+      if (!Array.isArray(terms)) return [];
+      return terms.map((term: any) => {
+        if (typeof term === 'string') return term;
+        if (term && typeof term === 'object' && term.term) return term.term;
+        return String(term);
+      }).filter(Boolean);
     };
 
     responsePayload = {
       ...mainAnalysis,
+      language_detected,
+      three_bullet_summary: mainAnalysis.three_bullet_summary || [],
+      key_terms: normalizeKeyTerms(mainAnalysis.key_terms),
       quiz_questions: quizQuestions.slice(0, MAX_QUIZ_QUESTIONS_FREE),
       flashcards,
       quick_quiz_question: quizQuestions[0],

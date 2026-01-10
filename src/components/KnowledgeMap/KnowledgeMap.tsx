@@ -66,26 +66,38 @@ const createFlowNodes = (
   });
 };
 
-// Convert ConceptEdges to React Flow edges
-const createFlowEdges = (conceptEdges: typeof initialEdges): Edge[] => {
-  return conceptEdges.map((edge) => ({
-    id: edge.id,
-    source: edge.source,
-    target: edge.target,
-    type: 'smoothstep',
-    animated: false,
-    style: {
-      stroke: 'hsl(215, 25%, 45%)',
-      strokeWidth: 2,
-      opacity: 0.6,
-    },
-    markerEnd: {
-      type: MarkerType.ArrowClosed,
-      color: 'hsl(215, 25%, 45%)',
-      width: 15,
-      height: 15,
-    },
-  }));
+// Convert ConceptEdges to React Flow edges - handle new structure with label and strength
+const createFlowEdges = (conceptEdges: ConceptEdge[]): Edge[] => {
+  return conceptEdges.map((edge) => {
+    const strength = edge.strength ? (typeof edge.strength === 'string' ? parseInt(edge.strength) : edge.strength) : 5;
+    const opacity = 0.4 + (strength / 10) * 0.4; // Opacity based on strength (0.4 to 0.8)
+    const strokeWidth = 1 + (strength / 10) * 2; // Stroke width based on strength (1 to 3)
+    
+    return {
+      id: edge.id,
+      source: edge.source,
+      target: edge.target,
+      type: 'smoothstep',
+      animated: false,
+      label: edge.label || '',
+      labelStyle: {
+        fill: 'hsl(215, 25%, 75%)',
+        fontWeight: 500,
+        fontSize: 11,
+      },
+      style: {
+        stroke: 'hsl(215, 25%, 45%)',
+        strokeWidth,
+        opacity,
+      },
+      markerEnd: {
+        type: MarkerType.ArrowClosed,
+        color: 'hsl(215, 25%, 45%)',
+        width: 15,
+        height: 15,
+      },
+    };
+  });
 };
 
 export const KnowledgeMap = ({ onNodeClick, activeNodeId, data }: KnowledgeMapProps) => {
@@ -93,16 +105,30 @@ export const KnowledgeMap = ({ onNodeClick, activeNodeId, data }: KnowledgeMapPr
   const flowRef = useRef<HTMLDivElement>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
   
-  // Use provided data or fallback to mock data
+  // Use provided data or fallback to mock data - handle new structure with description
   const conceptNodes: ConceptNode[] = useMemo(() => {
     if (data?.nodes && Array.isArray(data.nodes) && data.nodes.length > 0) {
-      return data.nodes.map(node => ({
-        id: node.id || String(Math.random()),
-        label: node.label || '',
-        category: (node.category || 'general') as NodeCategory,
-        isActive: node.isActive || false,
-        connectedTo: node.connectedTo || []
-      }));
+      return data.nodes.map(node => {
+        // Map new category strings to NodeCategory type
+        let category: NodeCategory = 'general';
+        const catStr = String(node.category || 'general').toLowerCase();
+        if (['core concept', 'supporting detail', 'historical context', 'mathematical formula', 'related entity'].includes(catStr)) {
+          // Map new categories to existing ones or use general
+          if (catStr.includes('historical')) category = 'history';
+          else if (catStr.includes('mathematical') || catStr.includes('formula')) category = 'math';
+          else category = 'general';
+        } else if (['science', 'history', 'math', 'language', 'technology', 'philosophy', 'art', 'general'].includes(catStr)) {
+          category = catStr as NodeCategory;
+        }
+        
+        return {
+          id: node.id || String(Math.random()),
+          label: node.label || '',
+          category,
+          isActive: node.isActive || false,
+          connectedTo: [] // Not used in new structure, but keep for compatibility
+        };
+      });
     }
     // Return initialNodes if no data provided
     return initialNodes;
@@ -110,10 +136,12 @@ export const KnowledgeMap = ({ onNodeClick, activeNodeId, data }: KnowledgeMapPr
   
   const conceptEdges: ConceptEdge[] = useMemo(() => {
     if (data?.edges && Array.isArray(data.edges) && data.edges.length > 0) {
-      return data.edges.map(edge => ({
-        id: edge.id || `${edge.source}-${edge.target}`,
+      return data.edges.map((edge, index) => ({
+        id: edge.id || `${edge.source}-${edge.target}-${index}`,
         source: edge.source,
-        target: edge.target
+        target: edge.target,
+        label: edge.label,
+        strength: edge.strength
       }));
     }
     // Return initial edges if we're using initial nodes

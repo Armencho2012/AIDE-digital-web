@@ -28,9 +28,9 @@ interface Flashcard {
 }
 
 interface AnalysisData {
-  language_detected: string;
+  language_detected?: string;
   three_bullet_summary: string[];
-  key_terms: string[];
+  key_terms: string[] | Array<{ term: string; definition: string; importance?: string }>;
   lesson_sections?: LessonSection[];
   quick_quiz_question?: QuizQuestion;
   quiz_questions?: QuizQuestion[];
@@ -187,11 +187,15 @@ export const AnalysisOutput = ({ data, language }: AnalysisOutputProps) => {
         </CardHeader>
         <CardContent>
           <div className="flex flex-wrap gap-2">
-            {data.key_terms.map((term, index) => (
-              <Badge key={index} variant="secondary" className="px-4 py-2 text-base">
-                {term}
-              </Badge>
-            ))}
+            {data.key_terms.map((termItem, index) => {
+              // Handle both old format (string) and new format (object with term, definition, importance)
+              const term = typeof termItem === 'string' ? termItem : termItem.term;
+              return (
+                <Badge key={index} variant="secondary" className="px-4 py-2 text-base" title={typeof termItem === 'object' ? termItem.definition : undefined}>
+                  {term}
+                </Badge>
+              );
+            })}
           </div>
         </CardContent>
       </Card>

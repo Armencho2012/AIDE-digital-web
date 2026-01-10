@@ -20,6 +20,8 @@ export interface ConceptEdge {
   id: string;
   source: string;
   target: string;
+  label?: string;
+  strength?: string | number;
 }
 
 export interface KnowledgeMapData {
