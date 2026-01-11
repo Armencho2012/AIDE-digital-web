@@ -123,26 +123,82 @@ You are analyzing a set of related documents.
 
     console.log(`Processing analysis for user ${user.id}, current usage: ${currentUsage}`);
 
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
-      {
+    // Try a small set of known-good model IDs (Google occasionally deprecates older names)
+    const modelsToTry = [
+      "gemini-3-flash-preview",
+      "gemini-2.5-flash",
+      "gemini-2.0-flash-001",
+    ];
+
+    let result: any = null;
+    let lastStatus = 0;
+
+    for (const model of modelsToTry) {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+
+      // v1beta supports systemInstruction + responseMimeType
+      const payload: any = {
+        systemInstruction: { parts: [{ text: systemInstruction }] },
+        contents: [{ role: "user", parts }],
+        generationConfig: {
+          temperature: 0.2,
+          responseMimeType: "application/json",
+        },
+      };
+
+      console.log(`Calling Gemini model: ${model}`);
+
+      const response = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          systemInstruction: { parts: [{ text: systemInstruction }] },
-          contents: [{ role: "user", parts }],
-          generationConfig: {
-            temperature: 0.2,
-            responseMimeType: "application/json"
-          }
-        })
-      }
-    );
+        body: JSON.stringify(payload),
+      });
 
-    const result = await response.json();
+      lastStatus = response.status;
+      result = await response.json().catch(() => null);
+
+      if (response.ok) {
+        break;
+      }
+
+      console.error("Gemini API non-2xx:", model, lastStatus, JSON.stringify(result));
+
+      // If responseMimeType isn't supported for this model/version, retry once without it.
+      const msg = result?.error?.message as string | undefined;
+      if (msg && msg.includes("responseMimeType")) {
+        const retryPayload = {
+          ...payload,
+          generationConfig: { temperature: 0.2 },
+        };
+        const retryResponse = await fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(retryPayload),
+        });
+
+        lastStatus = retryResponse.status;
+        result = await retryResponse.json().catch(() => null);
+
+        if (retryResponse.ok) {
+          break;
+        }
+
+        console.error("Gemini retry non-2xx:", model, lastStatus, JSON.stringify(result));
+      }
+    }
+
+    // All attempts failed
+    if (!result || result?.error) {
+      const msg = result?.error?.message || `AI provider error (HTTP ${lastStatus})`;
+      return new Response(JSON.stringify({ error: msg }), {
+        status: 502,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const rawContent = result?.candidates?.[0]?.content?.parts?.[0]?.text;
     if (!rawContent) {
-      console.error('Gemini API response:', JSON.stringify(result));
+      console.error("Gemini API empty content:", JSON.stringify(result));
       throw new Error("Failed to generate analysis");
     }
 
