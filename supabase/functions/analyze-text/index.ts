@@ -202,7 +202,28 @@ You are analyzing a set of related documents.
       throw new Error("Failed to generate analysis");
     }
 
-    const analysis = JSON.parse(rawContent);
+    // Sanitize JSON: remove trailing commas before ] or } (common Gemini issue)
+    let sanitizedContent = rawContent
+      .replace(/,\s*]/g, ']')   // Remove trailing commas before ]
+      .replace(/,\s*}/g, '}');  // Remove trailing commas before }
+
+    // Try to extract JSON from markdown code blocks if present
+    const jsonMatch = sanitizedContent.match(/```json\s*([\s\S]*?)\s*```/);
+    if (jsonMatch) {
+      sanitizedContent = jsonMatch[1];
+    }
+    
+    // Remove any leading/trailing whitespace and potential BOM
+    sanitizedContent = sanitizedContent.trim().replace(/^\uFEFF/, '');
+
+    let analysis: AnalysisResult;
+    try {
+      analysis = JSON.parse(sanitizedContent);
+    } catch (parseError) {
+      console.error('JSON parse error, raw content:', rawContent.substring(0, 500));
+      console.error('Parse error:', parseError);
+      throw new Error("Failed to parse AI response. Please try again.");
+    }
 
     // Filter flashcards for free tier
     if (analysis.flashcards) {
