@@ -15,6 +15,7 @@ import FlashcardsPage from "./pages/FlashcardsPage";
 import ChatPage from "./pages/ChatPage";
 import Billing from "./pages/Billing";
 import Settings from "./pages/Settings";
+import Help from "./pages/Help";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -38,6 +39,7 @@ const App = () => (
           <Route path="/library/:id/chat" element={<ChatPage />} />
           <Route path="/billing" element={<Billing />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/help" element={<Help />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
