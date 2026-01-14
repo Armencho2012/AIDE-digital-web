@@ -132,11 +132,10 @@ REMINDER: You MUST generate at least 10 quiz_questions and 15 flashcards. This i
 
     console.log(`Processing analysis for user ${user.id}, current usage: ${currentUsage}`);
 
-    // Try a small set of known-good model IDs (Google occasionally deprecates older names)
+    // Use Gemini 3 Flash as primary model
     const modelsToTry = [
-      "gemini-3-flash-preview",
       "gemini-2.5-flash",
-      "gemini-2.0-flash-001",
+      "gemini-2.0-flash",
     ];
 
     let result: any = null;

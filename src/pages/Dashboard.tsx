@@ -391,7 +391,7 @@ const Dashboard = () => {
                   disabled={isLocked}
                 >
                   <Sparkles className="h-4 w-4" />
-                  Attach PDF/Image (Gemini 1.5)
+                  Attach PDF/Image
                 </Button>
                 {media && <Badge variant="secondary">File Attached</Badge>}
               </div>

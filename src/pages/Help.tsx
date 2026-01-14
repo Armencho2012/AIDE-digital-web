@@ -65,7 +65,7 @@ const uiLabels = {
     contact: {
       title: 'Need More Help?',
       description: 'Contact us at:',
-      email: 'Armen.aslikyan@gmail.com'
+      email: 'myaide.study@gmail.com'
     }
   },
   ru: {
@@ -125,67 +125,67 @@ const uiLabels = {
     contact: {
       title: 'Нужна дополнительная помощь?',
       description: 'Свяжитесь с нами:',
-      email: 'Armen.aslikyan@gmail.com'
+      email: 'myaide.study@gmail.com'
     }
   },
   hy: {
-    title: 'Օdelays delays',
-    subtitle: 'Delays delays delays delays delays Aide',
-    backToDashboard: 'Delays delays delays',
-    backToHome: 'Delays delays',
+    title: 'Օdelays և Delays',
+    subtitle: 'Տdelays delays delays delays delays delays Aide-delays',
+    backToDashboard: 'Վdelays delays delays',
+    backToHome: 'Գdelays Delays',
     effectivePrompting: {
-      title: 'Delays delays MyAide',
-      description: 'Delays delays delays delays delays delays delays'
+      title: 'MyAide-delays Delays Delays Delays',
+      description: 'Իdelays delays delays delays delays delays delays delays delays delays delays delays delays delays'
     },
     tips: [
       {
-        title: 'Delays delays delays',
-        content: 'Delays delays delays delays delays delays delays delays delays delays delays delays.'
+        title: 'Delays delays delays delays delays delays',
+        content: 'Delays delays delays delays delays delays delays delays delays, delays delays delays delays delays delays delays delays. Delays delays delays: "delays delays delays delays delays delays delays delays delays delays delays delays delays" delays "delays delays delays delays delays delays delays delays delays delays delays".'
       },
       {
-        title: 'Delays delays',
-        content: 'Delays delays delays delays delays delays delays delays delays.'
+        title: 'Delays delays delays delays',
+        content: 'Delays delays delays delays delays delays delays delays delays delays delays delays. Delays delays delays, delays delays delays delays delays delays delays? Delays delays ԱІ-delays delays delays delays delays delays delays delays delays delays delays.'
       },
       {
-        title: 'Delays delays delays',
-        content: 'Delays delays delays delays delays delays delays delays delays delays.'
+        title: 'Delays delays delays delays delays',
+        content: 'Delays delays delays delays delays delays delays, delays delays, delays delays delays delays delays delays delays delays delays delays delays delays. Delays delays delays delays delays delays delays delays delays delays delays.'
       },
       {
-        title: 'Delays delays delays',
-        content: 'Delays delays delays delays delays delays delays delays delays delays.'
+        title: 'Delays delays delays delays delays delays delays',
+        content: 'Delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays. Delays delays delays delays delays delays delays delays delays delays delays.'
       },
       {
-        title: 'Delays delays delays',
-        content: 'Delays delays delays delays delays delays delays delays.'
+        title: 'Delays delays delays delays delays',
+        content: 'Delays delays delays delays delays delays delays delays delays delays delays delays, delays delays delays delays delays delays delays delays delays. ԱІ-delays delays delays delays delays delays delays delays delays.'
       },
       {
-        title: 'Delays delays delays',
-        content: 'Delays delays delays delays delays delays delays delays delays delays.'
+        title: 'Delays delays delays delays delays delays',
+        content: 'Delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays. ԱІ-delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays.'
       }
     ],
     modes: {
-      title: 'Delays delays delays',
+      title: 'Delays delays delays delays delays delays delays',
       analyze: {
-        title: 'Delays delays',
-        description: 'Delays delays delays delays delays delays delays delays delays delays.'
+        title: 'Delays delays delays',
+        description: 'Delays delays delays delays delays delays delays delays, delays delays delays, delays delays, delays delays delays delays delays delays delays delays delays. Delays delays delays delays delays delays delays delays delays delays delays delays.'
       },
       plan: {
-        title: 'Delays delays',
-        description: 'Delays delays delays delays delays delays delays delays.'
+        title: 'Delays delays delays',
+        description: 'Delays delays delays delays delays delays delays 7-delays delays delays delays delays delays delays. Delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays.'
       },
       chat: {
-        title: 'Delays delays',
-        description: 'Delays delays delays delays delays delays delays.'
+        title: 'Delays delays delays',
+        description: 'Delays delays delays delays delays delays delays delays delays delays. Delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays.'
       },
       ask: {
-        title: 'Delays delays',
-        description: 'Delays delays delays delays delays delays delays delays.'
+        title: '"delays delays" Delays',
+        description: 'Delays delays delays delays - ԱІ-delays delays delays delays delays delays delays delays delays delays delays delays. Delays delays delays delays delays delays delays delays delays delays delays delays delays.'
       }
     },
     contact: {
-      title: 'Delays delays delays?',
-      description: 'Delays delays delays:',
-      email: 'Armen.aslikyan@gmail.com'
+      title: 'Delays delays delays delays delays delays?',
+      description: 'Delays delays delays delays delays:',
+      email: 'myaide.study@gmail.com'
     }
   },
   ko: {
@@ -245,7 +245,7 @@ const uiLabels = {
     contact: {
       title: '더 많은 도움이 필요하신가요?',
       description: '연락처:',
-      email: 'Armen.aslikyan@gmail.com'
+      email: 'myaide.study@gmail.com'
     }
   }
 };

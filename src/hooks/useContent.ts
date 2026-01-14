@@ -3,8 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import type { User } from '@supabase/supabase-js';
 
-const STORAGE_KEY = 'aide_user_content';
-
 export interface ContentItem {
   id: string;
   title: string | null;
@@ -26,7 +24,7 @@ interface UseContentResult {
   contentList: ContentItem[];
   isLoading: boolean;
   isAuthChecked: boolean;
-  deleteContent: (id: string) => void;
+  deleteContent: (id: string) => Promise<void>;
   refetch: () => void;
 }
 
@@ -39,20 +37,27 @@ export const useContent = (options: UseContentOptions = {}): UseContentResult =>
   const [isAuthChecked, setIsAuthChecked] = useState(false);
   const navigate = useNavigate();
 
-  const fetchContent = useCallback((userId: string, contentId?: string) => {
+  const fetchContent = useCallback(async (userId: string, contentId?: string) => {
     try {
-      const stored = localStorage.getItem(`${STORAGE_KEY}_${userId}`);
-      const items: ContentItem[] = stored ? JSON.parse(stored) : [];
-      
-      // Sort by date
-      const sortedItems = items.sort((a, b) => 
-        new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime()
-      );
-      
-      setContentList(sortedItems);
+      // Fetch from Supabase instead of localStorage
+      const { data: items, error } = await supabase
+        .from('user_content')
+        .select('*')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching content from Supabase:', error);
+        setContentList([]);
+        setIsLoading(false);
+        return;
+      }
+
+      const typedItems: ContentItem[] = items || [];
+      setContentList(typedItems);
 
       if (contentId) {
-        const item = sortedItems.find(i => i.id === contentId);
+        const item = typedItems.find(i => i.id === contentId);
         if (!item && redirectOnNotFound) {
           navigate('/library');
           return;
@@ -69,14 +74,21 @@ export const useContent = (options: UseContentOptions = {}): UseContentResult =>
     }
   }, [navigate, redirectOnNotFound, id]);
 
-  const deleteContent = useCallback((contentId: string) => {
+  const deleteContent = useCallback(async (contentId: string) => {
     if (!user) return;
     
     try {
-      const stored = localStorage.getItem(`${STORAGE_KEY}_${user.id}`);
-      const items: ContentItem[] = stored ? JSON.parse(stored) : [];
-      const updatedItems = items.filter(item => item.id !== contentId);
-      localStorage.setItem(`${STORAGE_KEY}_${user.id}`, JSON.stringify(updatedItems));
+      // Delete from Supabase
+      const { error } = await supabase
+        .from('user_content')
+        .delete()
+        .eq('id', contentId)
+        .eq('user_id', user.id);
+
+      if (error) {
+        console.error('Error deleting content from Supabase:', error);
+        return;
+      }
       
       setContentList(prev => prev.filter(item => item.id !== contentId));
       if (content?.id === contentId) {
@@ -112,7 +124,7 @@ export const useContent = (options: UseContentOptions = {}): UseContentResult =>
 
         setUser(session.user);
         setIsAuthChecked(true);
-        fetchContent(session.user.id, id);
+        await fetchContent(session.user.id, id);
       } catch (error) {
         console.error('Auth error:', error);
         if (isMounted) {
