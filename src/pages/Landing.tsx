@@ -111,54 +111,54 @@ const uiLabels = {
     contact: 'Контакт'
   },
   hy: {
-    subtitle: 'Կառdelays AI delays delays',
-    description: 'Delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays.',
-    getStarted: 'Delays delays',
-    signIn: 'Delays',
-    featuresTitle: 'Delays delays delays delays delays',
+    subtitle: 'Կառուցվածքային AI ուսումնական համակարգ',
+    description: 'Վերածեք ցանկացած տեքստ համապարփակ ուսումնական նյութերի՝ AI-ի վրա հիմնված վերլուծությամբ, հիմնական ամփոփագրերով, բառապաշարի դուրսբերմամբ և բազմալեզու պրակտիկ թեստերով:',
+    getStarted: 'Սկսեք անվճար',
+    signIn: 'Մուտք',
+    featuresTitle: 'Հզոր հնարավորություններ խելացի ուսուցման համար',
     aiAnalysis: {
-      title: 'AI-delays',
-      description: 'Delays delays delays delays delays delays delays delays delays delays.'
+      title: 'AI-ով աշխատող վերլուծություն',
+      description: 'AI-ի առաջադեմ տեխնոլոգիան ակնթարթորեն դուրս է բերում հիմնական գաղափարները, ամփոփագրերը և ուսումնական կետերը ցանկացած տեքստից:'
     },
     multilingual: {
-      title: 'Delays delays',
-      description: 'Delays delays delays delays delays delays delays delays delays delays.'
+      title: 'Բազմալեզու աջակցություն',
+      description: 'Սովորեք անգլերեն, ռուսերեն, հայերեն կամ կորեերեն՝ լեզուների անխափան փոխարկմամբ և թարգմանությամբ:'
     },
     instantResults: {
-      title: 'Delays delays',
-      description: 'Delays delays delays delays delays delays delays delays.'
+      title: 'Ակնթարթային արդյունքներ',
+      description: 'Ստացեք համապարփակ ուսումնական նյութեր վայրկյանների ընթացքում: Առանց սպասելու, առանց ձեռքով աշխատանքի:'
     },
     smartVocabulary: {
-      title: 'Delays delays',
-      description: 'Delays delays delays delays delays delays delays delays delays.'
+      title: 'Խելացի բառապաշար',
+      description: 'Ավտոմատ կերպով դուրս բերեք և սահմանեք հիմնական տերմիններն ու հասկացությունները՝ համատեքստային իմաստներով:'
     },
     practiceQuizzes: {
-      title: 'Delays delays',
-      description: 'Delays delays delays delays delays delays delays delays.'
+      title: 'Պրակտիկ թեստեր',
+      description: 'Ավտոմատ կերպով ստեղծեք հատուկ թեստեր՝ ձեր հասկացողությունն ու հիշողությունը ստուգելու համար:'
     },
     structuredLearning: {
-      title: 'Delays delays',
-      description: 'Delays delays delays delays delays delays delays delays delays.'
+      title: 'Կառուցվածքային ուսուցում',
+      description: 'Կազմակերպված արդյունք՝ հստակ բաժիններով. ամփոփում, հիմնական կետեր, բառապաշար և հարցաշարի հարցեր:'
     },
-    howItWorksTitle: 'Delays delays Aide delays',
+    howItWorksTitle: 'Ինչպես է աշխատում Aide-ը',
     step1: {
-      title: 'Delays delays delays',
-      description: 'Delays delays delays delays delays delays delays delays.'
+      title: 'Տեղադրեք ձեր տեքստը',
+      description: 'Պատճենեք և տեղադրեք ցանկացած հոդված, ուսումնական նյութ կամ փաստաթուղթ, որից ցանկանում եք սովորել:'
     },
     step2: {
-      title: 'AI delays',
-      description: 'Delays delays delays delays delays delays delays delays delays.'
+      title: 'AI վերլուծություն',
+      description: 'Մեր AI շարժիչը մշակում է ձեր տեքստը՝ դուրս բերելով հիմնական տեղեկատվությունը և ստեղծելով կառուցվածքային ուսումնական նյութեր:'
     },
     step3: {
-      title: 'Delays delays delays',
-      description: 'Delays delays delays delays delays delays delays delays delays.'
+      title: 'Սովորեք և վարժվեք',
+      description: 'Վերանայեք ամփոփագրերը, ուսումնասիրեք բառապաշարը և ստուգեք ինքներդ ձեզ ավտոմատ ստեղծված թեստերով:'
     },
-    ctaTitle: 'Delays delays delays delays?',
-    ctaDescription: 'Delays 5 delays delays delays delays. Delays delays delays.',
-    startLearning: 'Delays delays delays',
-    footer: '© 2025 Aide. Delays delays delays delays delays.',
-    help: 'Delays',
-    contact: 'Delays'
+    ctaTitle: 'Պատրա՞ստ եք փոխել ձեր ուսուցումը:',
+    ctaDescription: 'Սկսեք օրական 5 անվճար վերլուծությամբ: Վարկային քարտ չի պահանջվում:',
+    startLearning: 'Սկսեք սովորել հիմա',
+    footer: '© 2025 Aide. Հզորացնելով սովորողներին AI-ի վրա հիմնված ուսումնական գործիքներով:',
+    help: 'Օգնություն',
+    contact: 'Կապ'
   },
   ko: {
     subtitle: 'AI 기반 학습 엔진',
@@ -215,7 +215,7 @@ const uiLabels = {
 const Landing = () => {
   const { language, theme, setLanguage, setTheme } = useSettings();
   const [settingsOpen, setSettingsOpen] = useState(false);
-  
+
   const labels = uiLabels[language];
 
   return (
@@ -223,7 +223,7 @@ const Landing = () => {
       {/* Glassmorphism Nav */}
       <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-background/70 border-b border-border/50">
         <div className="container max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             className="flex items-center gap-2"
@@ -235,14 +235,14 @@ const Landing = () => {
               Aide
             </span>
           </motion.div>
-          
-          <motion.div 
+
+          <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             className="flex items-center gap-2"
           >
-            <Button 
-              variant="ghost" 
+            <Button
+              variant="ghost"
               size="sm"
               asChild
               className="hidden sm:flex gap-1.5"
@@ -252,8 +252,8 @@ const Landing = () => {
                 {labels.contact}
               </a>
             </Button>
-            <Button 
-              variant="ghost" 
+            <Button
+              variant="ghost"
               size="sm"
               asChild
               className="hidden sm:flex gap-1.5"
@@ -263,8 +263,8 @@ const Landing = () => {
                 {labels.help}
               </Link>
             </Button>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               size="icon"
               onClick={() => setSettingsOpen(true)}
               className="backdrop-blur-sm"
@@ -314,14 +314,14 @@ const Landing = () => {
         <div className="container max-w-7xl mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
             {/* Main Hero Content */}
-            <motion.div 
+            <motion.div
               className="lg:col-span-7"
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
             >
               <Card className="p-8 md:p-12 backdrop-blur-xl bg-card/80 border-2 border-primary/20 shadow-2xl">
-                <motion.h1 
+                <motion.h1
                   className="text-5xl md:text-6xl lg:text-7xl font-bold mb-4"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -331,7 +331,7 @@ const Landing = () => {
                     Aide
                   </span>
                 </motion.h1>
-                <motion.p 
+                <motion.p
                   className="text-xl md:text-2xl font-semibold text-foreground mb-3"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
@@ -339,7 +339,7 @@ const Landing = () => {
                 >
                   {labels.subtitle}
                 </motion.p>
-                <motion.p 
+                <motion.p
                   className="text-base md:text-lg text-muted-foreground mb-8 max-w-2xl"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
@@ -347,15 +347,15 @@ const Landing = () => {
                 >
                   {labels.description}
                 </motion.p>
-                <motion.div 
+                <motion.div
                   className="flex flex-col sm:flex-row gap-3"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.5 }}
                 >
-                  <Button 
-                    asChild 
-                    size="lg" 
+                  <Button
+                    asChild
+                    size="lg"
                     className="bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-all shadow-lg hover:shadow-xl text-base group"
                   >
                     <Link to="/auth">
@@ -363,10 +363,10 @@ const Landing = () => {
                       <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
                     </Link>
                   </Button>
-                  <Button 
-                    asChild 
-                    variant="outline" 
-                    size="lg" 
+                  <Button
+                    asChild
+                    variant="outline"
+                    size="lg"
                     className="shadow-md backdrop-blur-sm text-base"
                   >
                     <Link to="/auth">{labels.signIn}</Link>
@@ -376,7 +376,7 @@ const Landing = () => {
             </motion.div>
 
             {/* Stats Cards */}
-            <motion.div 
+            <motion.div
               className="lg:col-span-5 space-y-4"
               initial={{ opacity: 0, x: 30 }}
               animate={{ opacity: 1, x: 0 }}
@@ -407,7 +407,7 @@ const Landing = () => {
 
       {/* Features Bento Grid */}
       <section className="container max-w-7xl mx-auto px-4 py-16 md:py-24">
-        <motion.h2 
+        <motion.h2
           className="text-3xl md:text-4xl font-bold text-center mb-12"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -507,7 +507,7 @@ const Landing = () => {
 
       {/* How It Works */}
       <section className="container max-w-7xl mx-auto px-4 py-16 md:py-24">
-        <motion.h2 
+        <motion.h2
           className="text-3xl md:text-4xl font-bold text-center mb-12"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -571,9 +571,9 @@ const Landing = () => {
               <p className="text-base md:text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
                 {labels.ctaDescription}
               </p>
-              <Button 
-                asChild 
-                size="lg" 
+              <Button
+                asChild
+                size="lg"
                 className="bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-all shadow-lg hover:shadow-xl text-base md:text-lg px-8 py-6 group"
               >
                 <Link to="/auth">
@@ -591,15 +591,15 @@ const Landing = () => {
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-muted-foreground text-sm">{labels.footer}</p>
           <div className="flex items-center gap-4">
-            <a 
-              href="mailto:Armen.aslikyan@gmail.com" 
+            <a
+              href="mailto:Armen.aslikyan@gmail.com"
               className="text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5"
             >
               <Mail className="h-4 w-4" />
               {labels.contact}
             </a>
-            <Link 
-              to="/help" 
+            <Link
+              to="/help"
               className="text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5"
             >
               <HelpCircle className="h-4 w-4" />
