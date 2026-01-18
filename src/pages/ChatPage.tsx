@@ -38,13 +38,13 @@ const uiLabels = {
     backToContent: 'Назад к контенту'
   },
   hy: {
-    title: 'AI Chat',
-    placeholder: 'Ask a question about this material...',
-    send: 'Send',
-    thinking: 'Thinking...',
-    error: 'Failed to get response. Please try again.',
-    welcome: 'Hi! I can answer questions about this content. What would you like to know?',
-    backToContent: 'Back to Content'
+    title: 'AI Զրուցարան',
+    placeholder: 'Հարց տվեք այս նյութի մասին...',
+    send: 'Ուղարկել',
+    thinking: 'Մտածում եմ...',
+    error: 'Չհաջողվեց պատասխան ստանալ: Խնդրում ենք կրկին փորձել:',
+    welcome: 'Բարև: Ես կարող եմ պատասխանել այս բովանդակության վերաբերյալ հարցերին: Ի՞նչ կցանկանայիք իմանալ:',
+    backToContent: 'Վերադառնալ բովանդակությանը'
   },
   ko: {
     title: 'AI 채팅',
@@ -332,6 +332,7 @@ const ChatPage = () => {
                 activeNodeId={activeNode}
                 data={content?.analysis_data?.knowledge_map}
                 highlightedNodes={highlightedNodes}
+                language={language}
               />
             </div>
           )}
@@ -343,6 +344,7 @@ const ChatPage = () => {
               data={content?.analysis_data?.knowledge_map}
               highlightedNodes={highlightedNodes}
               isMobile={true}
+              language={language}
             />
           </div>
         </div>

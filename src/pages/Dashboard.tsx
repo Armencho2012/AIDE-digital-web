@@ -23,7 +23,21 @@ const uiLabels = {
     usage: 'Analyses Left Today:',
     analyzing: 'Analyzing...',
     signOut: 'Sign Out',
-    errorNoInput: 'Please enter text or attach a file to analyze'
+    errorNoInput: 'Please enter text or attach a file to analyze',
+    freeTierUsage: 'Free Tier Usage',
+    remainingAnalyses: 'free analyses remaining today',
+    limitReached: "You've reached your daily limit",
+    dailyLimitReached: 'Daily Limit Reached',
+    upgradeDesc: 'You\'ve used all free analyses for today. Upgrade to Pro for unlimited access!',
+    upgradeToPro: 'Upgrade to Pro',
+    attach: 'Attach PDF/Image',
+    fileAttached: 'File Attached',
+    courseMode: 'Course Mode',
+    upgradeToContinue: 'Upgrade to Continue',
+    library: 'Library',
+    upgrade: 'Upgrade',
+    profile: 'Profile',
+    of: 'of'
   },
   ru: {
     title: 'Aide',
@@ -33,7 +47,21 @@ const uiLabels = {
     usage: 'Анализов осталось сегодня:',
     analyzing: 'Анализируем...',
     signOut: 'Выйти',
-    errorNoInput: 'Введите текст или прикрепите файл для анализа'
+    errorNoInput: 'Введите текст или прикрепите файл для анализа',
+    freeTierUsage: 'Использование бесплатного тарифа',
+    remainingAnalyses: 'бесплатных анализов осталось сегодня',
+    limitReached: 'Вы достигли дневного лимита',
+    dailyLimitReached: 'Дневной лимит исчерпан',
+    upgradeDesc: 'Вы использовали все бесплатные анализы на сегодня. Обновитесь до Pro для неограниченного доступа!',
+    upgradeToPro: 'Обновить до Pro',
+    attach: 'Прикрепить PDF/Изображение',
+    fileAttached: 'Файл прикреплен',
+    courseMode: 'Курсовой режим',
+    upgradeToContinue: 'Обновитесь для продолжения',
+    library: 'Библиотека',
+    upgrade: 'Обновить',
+    profile: 'Профиль',
+    of: 'из'
   },
   hy: {
     title: 'Aide',
@@ -43,7 +71,21 @@ const uiLabels = {
     usage: 'Մնացել է վերլուծություն այսօր:',
     analyzing: 'Վերլուծում...',
     signOut: 'Դուրս գալ',
-    errorNoInput: 'Խնդրում ենք մուտքագրել տեքստ կամ կցել ֆայլ վերլուծության համար'
+    errorNoInput: 'Խնդրում ենք մուտքագրել տեքստ կամ կցել ֆայլ վերլուծության համար',
+    freeTierUsage: 'Անվճար տարբերակի օգտագործում',
+    remainingAnalyses: 'անվճար վերլուծություն է մնացել այսօր',
+    limitReached: 'Դուք հասել եք ձեր օրական սահմանաչափին',
+    dailyLimitReached: 'Օրական սահմանաչափը լրացել է',
+    upgradeDesc: 'Դուք օգտագործել եք բոլոր անվճար վերլուծությունները այսօր: Թարմացրեք Pro-ի անսահմանափակ հասանելիության համար:',
+    upgradeToPro: 'Թարմացնել Pro',
+    attach: 'Կցել PDF/Պատկեր',
+    fileAttached: 'Ֆայլը կցված է',
+    courseMode: 'Դասընթացի ռեժիմ',
+    upgradeToContinue: 'Թարմացրեք շարունակելու համար',
+    library: 'Գրադարան',
+    upgrade: 'Թարմացնել',
+    profile: 'Պրոֆիլ',
+    of: '/' // using clean separator or 'hy' correct form 'ից' but logic is formatted {count} of {limit}.
   },
   ko: {
     title: 'Aide',
@@ -53,9 +95,24 @@ const uiLabels = {
     usage: '오늘 남은 분석:',
     analyzing: '분석 중...',
     signOut: '로그아웃',
-    errorNoInput: '분석할 텍스트를 입력하거나 파일을 첨부하세요'
+    errorNoInput: '분석할 텍스트를 입력하거나 파일을 첨부하세요',
+    freeTierUsage: '무료 요금제 사용량',
+    remainingAnalyses: '회의 무료 분석이 남았습니다',
+    limitReached: '일일 한도에 도달했습니다',
+    dailyLimitReached: '일일 한도 도달',
+    upgradeDesc: '오늘의 무료 분석을 모두 사용했습니다. 무제한 액세스를 위해 Pro로 업그레이드하세요!',
+    upgradeToPro: 'Pro로 업그레이드',
+    attach: 'PDF/이미지 첨부',
+    fileAttached: '파일 첨부됨',
+    courseMode: '코스 모드',
+    upgradeToContinue: '계속하려면 업그레이드',
+    library: '라이브러리',
+    upgrade: '업그레이드',
+    profile: '프로필',
+    of: '/'
   }
 };
+
 
 const DAILY_LIMIT = 1; // Freemium limit: 1 free use per day
 
@@ -296,19 +353,19 @@ const Dashboard = () => {
             <Button variant="ghost" asChild size="sm" className="text-xs sm:text-sm">
               <Link to="/library">
                 <BookOpen className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-                <span className="hidden sm:inline">Library</span>
+                <span className="hidden sm:inline">{labels.library}</span>
               </Link>
             </Button>
             <Button variant="ghost" asChild size="sm" className="text-xs sm:text-sm">
               <Link to="/billing">
                 <CreditCard className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-                <span className="hidden sm:inline">Upgrade</span>
+                <span className="hidden sm:inline">{labels.upgrade}</span>
               </Link>
             </Button>
             <Button variant="ghost" asChild size="sm" className="text-xs sm:text-sm">
               <Link to="/settings">
                 <UserIcon className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-                <span className="hidden sm:inline">Profile</span>
+                <span className="hidden sm:inline">{labels.profile}</span>
               </Link>
             </Button>
             <Card className="px-2 sm:px-4 py-1.5 sm:py-2 shadow-sm">
@@ -344,11 +401,11 @@ const Dashboard = () => {
         <Card className="p-4 sm:p-6 mb-4 sm:mb-6 bg-gradient-to-r from-primary/10 to-accent/10 border-2 border-primary/20">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
             <div>
-              <h3 className="text-base sm:text-lg font-semibold mb-1">Free Tier Usage</h3>
+              <h3 className="text-base sm:text-lg font-semibold mb-1">{labels.freeTierUsage}</h3>
               <p className="text-xs sm:text-sm text-muted-foreground">
                 {usageCount > 0
-                  ? `${usageCount} of ${DAILY_LIMIT} free analyses remaining today`
-                  : 'You\'ve reached your daily limit'}
+                  ? `${usageCount} ${labels.of} ${DAILY_LIMIT} ${labels.remainingAnalyses}`
+                  : labels.limitReached}
               </p>
             </div>
             <div className="text-left sm:text-right">
@@ -364,14 +421,14 @@ const Dashboard = () => {
           <Card className="p-8 mb-8 bg-gradient-to-br from-destructive/10 to-destructive/5 border-2 border-destructive/20">
             <div className="text-center space-y-4">
               <Lock className="h-16 w-16 mx-auto text-destructive" />
-              <h2 className="text-2xl font-bold">Daily Limit Reached</h2>
+              <h2 className="text-2xl font-bold">{labels.dailyLimitReached}</h2>
               <p className="text-muted-foreground">
-                You've used all {DAILY_LIMIT} free analyses for today. Upgrade to Pro for unlimited access!
+                {labels.upgradeDesc}
               </p>
               <Button asChild size="lg" className="bg-gradient-to-r from-primary to-accent">
                 <Link to="/billing">
                   <CreditCard className="mr-2 h-5 w-5" />
-                  Upgrade to Pro
+                  {labels.upgradeToPro}
                 </Link>
               </Button>
             </div>
@@ -398,13 +455,13 @@ const Dashboard = () => {
                   disabled={isLocked}
                 >
                   <Sparkles className="h-4 w-4" />
-                  Attach PDF/Image
+                  {labels.attach}
                 </Button>
-                {media && <Badge variant="secondary">File Attached</Badge>}
+                {media && <Badge variant="secondary">{labels.fileAttached}</Badge>}
               </div>
 
               <div className="flex items-center space-x-2">
-                <Label htmlFor="course-mode">Course Mode</Label>
+                <Label htmlFor="course-mode">{labels.courseMode}</Label>
                 <input
                   type="checkbox"
                   id="course-mode"
@@ -416,7 +473,7 @@ const Dashboard = () => {
             </div>
 
             <Textarea
-              placeholder={isLocked ? "Upgrade to Pro to continue analyzing..." : labels.placeholder}
+              placeholder={isLocked ? labels.upgradeToContinue : labels.placeholder}
               value={text}
               onChange={(e) => setText(e.target.value)}
               className="min-h-[150px] sm:min-h-[200px] text-sm sm:text-base resize-none"
@@ -431,7 +488,7 @@ const Dashboard = () => {
               {isLocked ? (
                 <>
                   <Lock className="mr-2 h-5 w-5" />
-                  Upgrade to Continue
+                  {labels.upgradeToContinue}
                 </>
               ) : isAnalyzing ? (
                 <>

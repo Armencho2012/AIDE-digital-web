@@ -113,7 +113,7 @@ const uiLabels = {
     successDescription: 'Ձեր բաժանորդագրությունը այժմ ակտիվ է: Խնդրում ենք թարմացնել՝ Pro կարգավիճակը տեսնելու համար:',
     features: {
       free: [
-        "5 վերլուծություն օրական",
+        "1 վերլուծություն օրական",
         "Հիմնական AI վերլուծություն",
         "Բովանդակության արխիվ",
         "Հիմնական աջակցություն"
@@ -241,7 +241,7 @@ const Billing = () => {
 
   const fetchSubscriptionStatus = async () => {
     if (!user) return;
-    
+
     try {
       const { data, error } = await (supabase as any)
         .from('subscriptions')
@@ -255,7 +255,7 @@ const Billing = () => {
       }
 
       if (data) {
-        const isActive = data.status === 'active' && 
+        const isActive = data.status === 'active' &&
           data.plan_type === 'pro' &&
           (!data.expires_at || new Date(data.expires_at) > new Date());
         setSubscriptionStatus(isActive ? 'pro' : 'free');
@@ -271,14 +271,14 @@ const Billing = () => {
     if (!user) return;
 
     setLoading(true);
-    
+
     // Always use direct link - Gumroad overlay is unreliable
     const successUrl = encodeURIComponent(`${window.location.origin}/billing?status=success`);
     const email = encodeURIComponent(user.email || '');
     const gumroadUrl = `${productUrl}?wanted=true&email=${email}&success_url=${successUrl}`;
-    
+
     window.open(gumroadUrl, '_blank');
-    
+
     setLoading(false);
   };
 
@@ -339,8 +339,8 @@ const Billing = () => {
                 </li>
               ))}
             </ul>
-            <Button 
-              variant={subscriptionStatus === 'free' ? 'default' : 'outline'} 
+            <Button
+              variant={subscriptionStatus === 'free' ? 'default' : 'outline'}
               className="w-full"
               disabled={subscriptionStatus === 'free'}
             >
@@ -373,7 +373,7 @@ const Billing = () => {
                 </li>
               ))}
             </ul>
-            <Button 
+            <Button
               className={`w-full ${subscriptionStatus === 'pro' ? '' : 'bg-gradient-to-r from-primary to-accent'}`}
               disabled={subscriptionStatus === 'pro' || loading}
               onClick={handleProUpgrade}
@@ -424,7 +424,7 @@ const Billing = () => {
                 <span>Early access to new features</span>
               </li>
             </ul>
-            <Button 
+            <Button
               variant={subscriptionStatus === 'class' ? 'default' : 'outline'}
               className="w-full"
               disabled={subscriptionStatus === 'class' || loading}

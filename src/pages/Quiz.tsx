@@ -40,15 +40,15 @@ const uiLabels = {
     backToContent: 'Назад к контенту'
   },
   hy: {
-    title: 'Practice Quiz',
-    questionPrefix: 'Question',
-    checkAnswer: 'Check Answer',
-    retry: 'Try Again',
-    correct: 'Correct!',
-    incorrect: 'Incorrect',
-    explanation: 'Explanation',
-    noQuestions: 'No quiz questions available',
-    backToContent: 'Back to Content'
+    title: 'Պրակտիկ թեստ',
+    questionPrefix: 'Հարց',
+    checkAnswer: 'Ստուգել պատասխանը',
+    retry: 'Կրկին փորձել',
+    correct: 'Ճիշտ է!',
+    incorrect: 'Սխալ է',
+    explanation: 'Բացատրություն',
+    noQuestions: 'Հարցեր չկան',
+    backToContent: 'Վերադառնալ բովանդակությանը'
   },
   ko: {
     title: '연습 퀴즈',

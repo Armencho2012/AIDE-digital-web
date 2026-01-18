@@ -33,13 +33,13 @@ const uiLabels = {
     backToContent: 'Назад к контенту'
   },
   hy: {
-    title: 'Flashcards',
-    flip: 'Click to flip',
-    card: 'Card',
-    of: 'of',
-    restart: 'Restart',
-    noCards: 'No flashcards available',
-    backToContent: 'Back to Content'
+    title: 'Քարտեր',
+    flip: 'Սեղմեք՝ շրջելու համար',
+    card: 'Քարտ',
+    of: '/',
+    restart: 'Վերսկսել',
+    noCards: 'Քարտեր չկան',
+    backToContent: 'Վերադառնալ բովանդակությանը'
   },
   ko: {
     title: '플래시카드',

@@ -36,16 +36,16 @@ const labels = {
     maybeLater: "Позже"
   },
   hy: {
-    title: "Դուdelays delays delaysdelays delays delays delays delays delays delays delays delays delays delays delays delays delays delaysdelays delays delaysdelays delays delaysdelays delays delays delays delays delays delays delays delaysdelay delays delays delays delays delays delays delays delays delays delays delays",
-    subtitle: "Բdelays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays",
+    title: "Դուք հասել եք ձեր օրական սահմանաչափին",
+    subtitle: "Բացեք անսահմանափակ նեյրոնային քարտեզագրում և խորը վերլուծություն Aide Pro-ի միջոցով",
     features: [
-      "Անdelays delays delays delays delaysdelays delays delays",
-      "delays delays delays delays delays delays delays",
-      "delays delays delays delays delays",
-      "delays delays delays delays delays"
+      "Անսահմանափակ AI վերլուծություններ",
+      "Ընդլայնված Նեյրոնային Գիտելիքների Քարտեզներ",
+      "Առաջնահերթ մշակման արագություն",
+      "Անսահմանափակ բովանդակության արխիվ"
     ],
-    cta: "delays delays delays",
-    maybeLater: "delays delays"
+    cta: "Թարմացրեք Pro-ի",
+    maybeLater: "Գուցե ավելի ուշ"
   },
   ko: {
     title: "일일 한도에 도달했습니다",

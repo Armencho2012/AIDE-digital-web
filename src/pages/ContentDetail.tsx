@@ -54,21 +54,21 @@ const uiLabels = {
     overview: 'Обзор'
   },
   hy: {
-    backToLibrary: 'Վdelays delays delays',
-    summary: 'delays delays delays',
-    sections: 'delays delays delays',
-    terms: 'delays delays delays',
-    studyTools: 'delays delays delays',
-    quiz: 'delays',
-    flashcards: 'delays delays',
-    chat: 'delays delays',
-    neuralMap: 'delays delays',
-    exportPdf: 'delays delays',
-    exporting: 'delays delays...',
-    notFound: 'delays delays delays',
-    commandCenter: 'delays delays',
-    startCourse: 'delays delays',
-    overview: 'delays'
+    backToLibrary: 'Վերադառնալ գրադարան',
+    summary: 'Կարևոր Ամփոփում',
+    sections: 'Դասի բաժիններ',
+    terms: 'Հիմնական Տերմիններ',
+    studyTools: 'Ուսումնական գործիքներ',
+    quiz: 'Թեստ',
+    flashcards: 'Քարտեր',
+    chat: 'Հարցնել AI-ին',
+    neuralMap: 'Նեյրոնային քարտեզ',
+    exportPdf: 'Արտահանել PDF',
+    exporting: 'Արտահանում...',
+    notFound: 'Բովանդակությունը չի գտնվել',
+    commandCenter: 'Հրամանատարական կենտրոն',
+    startCourse: 'Սկսել դասընթացը',
+    overview: 'Ակնարկ'
   },
   ko: {
     backToLibrary: '라이브러리로 돌아가기',
@@ -443,7 +443,7 @@ const ContentDetail = () => {
               </CardHeader>
               <CardContent className="p-0">
                 <div className="h-[500px] sm:h-[600px] md:h-[700px]">
-                  <KnowledgeMap 
+                  <KnowledgeMap
                     data={analysisData?.knowledge_map}
                     onNodeClick={(label, description) => {
                       toast({

@@ -12,21 +12,31 @@ interface KnowledgeMapPanelProps {
   data?: KnowledgeMapData | null;
   highlightedNodes?: Set<string>;
   isMobile?: boolean;
+  language?: 'en' | 'ru' | 'hy' | 'ko';
 }
 
-export const KnowledgeMapPanel = ({ onAskAboutNode, activeNodeId, data, highlightedNodes, isMobile }: KnowledgeMapPanelProps) => {
+export const KnowledgeMapPanel = ({ onAskAboutNode, activeNodeId, data, highlightedNodes, isMobile, language = 'en' }: KnowledgeMapPanelProps) => {
   const [isOpen, setIsOpen] = useState(true);
   const [mobileSheetOpen, setMobileSheetOpen] = useState(false);
   const isMobileDevice = useIsMobile();
   const isSmallScreen = window.innerWidth < 1024;
 
+  const labels = {
+    en: 'Knowledge Map',
+    ru: 'Карта Знаний',
+    hy: 'Գիտելիքների Քարտեզ',
+    ko: '지식 맵'
+  };
+
+  const title = labels[language] || labels.en;
+
   const handleNodeClick = (nodeName: string, description?: string, category?: string) => {
     // Contextual injection: pass description and category as metadata for more precise deep dives
-    const contextualPrompt = description 
+    const contextualPrompt = description
       ? `Tell me more about ${nodeName}. Context: ${description}. Category: ${category || 'general'}.`
       : `Tell me more about ${nodeName}`;
     onAskAboutNode?.(contextualPrompt, description, category);
-    
+
     // Close mobile sheet after clicking
     if (isMobileDevice || isMobile) {
       setMobileSheetOpen(false);
@@ -49,12 +59,12 @@ export const KnowledgeMapPanel = ({ onAskAboutNode, activeNodeId, data, highligh
             className="gap-2 lg:hidden"
           >
             <Map className="h-4 w-4" />
-            Knowledge Map
+            {title}
           </Button>
         </SheetTrigger>
         <SheetContent side="bottom" className="h-[90vh] overflow-hidden p-0">
           <SheetHeader className="px-6 py-4 border-b">
-            <SheetTitle>Knowledge Map</SheetTitle>
+            <SheetTitle>{title}</SheetTitle>
           </SheetHeader>
           <div className="h-[calc(90vh-5rem)] p-4 overflow-auto">
             <KnowledgeMap
@@ -62,6 +72,7 @@ export const KnowledgeMapPanel = ({ onAskAboutNode, activeNodeId, data, highligh
               activeNodeId={activeNodeId}
               data={data}
               highlightedNodes={highlightedNodes}
+              language={language}
             />
           </div>
         </SheetContent>
@@ -72,9 +83,8 @@ export const KnowledgeMapPanel = ({ onAskAboutNode, activeNodeId, data, highligh
   // Desktop: Side panel with toggle
   return (
     <div
-      className={`relative h-full transition-all duration-300 ease-out ${
-        isOpen ? 'w-full sm:w-[350px] md:w-[400px] lg:w-[500px]' : 'w-12'
-      }`}
+      className={`relative h-full transition-all duration-300 ease-out ${isOpen ? 'w-full sm:w-[350px] md:w-[400px] lg:w-[500px]' : 'w-12'
+        }`}
     >
       {/* Toggle Button */}
       <Button
@@ -96,7 +106,7 @@ export const KnowledgeMapPanel = ({ onAskAboutNode, activeNodeId, data, highligh
           <div className="flex flex-col items-center gap-2">
             <Map className="h-5 w-5 text-muted-foreground" />
             <span className="text-xs text-muted-foreground writing-mode-vertical transform rotate-180" style={{ writingMode: 'vertical-rl' }}>
-              Knowledge Map
+              {title}
             </span>
           </div>
         </div>
@@ -110,6 +120,7 @@ export const KnowledgeMapPanel = ({ onAskAboutNode, activeNodeId, data, highligh
             activeNodeId={activeNodeId}
             data={data}
             highlightedNodes={highlightedNodes}
+            language={language}
           />
         </div>
       )}

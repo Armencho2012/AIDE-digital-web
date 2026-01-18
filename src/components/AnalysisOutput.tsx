@@ -62,7 +62,9 @@ const uiLabels = {
     incorrect: 'Incorrect',
     explanation: 'Explanation',
     studyPlan: '7-Day Study Plan',
-    day: 'Day'
+    day: 'Day',
+    topics: 'Topics',
+    count: 'Count'
   },
   ru: {
     summary: 'Ключевое Резюме',
@@ -76,7 +78,9 @@ const uiLabels = {
     incorrect: 'Неправильно',
     explanation: 'Объяснение',
     studyPlan: '7-дневный план обучения',
-    day: 'День'
+    day: 'День',
+    topics: 'Темы',
+    count: 'Количество'
   },
   hy: {
     summary: 'Կարևոր Ամփոփում',
@@ -90,7 +94,9 @@ const uiLabels = {
     incorrect: 'Սխալ',
     explanation: 'Բացատրություն',
     studyPlan: '7-օրյա ուսումնական պլան',
-    day: 'Օր'
+    day: 'Օր',
+    topics: 'Թեմաներ',
+    count: 'Քանակ'
   },
   ko: {
     summary: '주요 요약',
@@ -104,7 +110,9 @@ const uiLabels = {
     incorrect: '오답입니다',
     explanation: '설명',
     studyPlan: '7일 학습 계획',
-    day: '일차'
+    day: '일차',
+    topics: '주제',
+    count: '개수'
   }
 };
 
@@ -178,7 +186,7 @@ export const AnalysisOutput = ({ data, language }: AnalysisOutputProps) => {
                     <GraduationCap className="h-4 w-4 text-primary opacity-40" />
                   </div>
                   <div className="space-y-2">
-                    <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-tighter">Topics</p>
+                    <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-tighter">{labels.topics}</p>
                     <ul className="text-xs space-y-1.5">
                       {day.topics.map((t, i) => (
                         <li key={i} className="flex gap-2 items-start leading-tight">
@@ -272,7 +280,7 @@ export const AnalysisOutput = ({ data, language }: AnalysisOutputProps) => {
               {allQuizQuestions.length >= 5 && (
                 <div className="flex items-center gap-3 sm:gap-4 min-w-[200px] sm:min-w-[250px]">
                   <Label htmlFor="quiz-count" className="text-xs sm:text-sm whitespace-nowrap">
-                    Count: {numQuestions}
+                    {labels.count}: {numQuestions}
                   </Label>
                   <Slider
                     id="quiz-count"
@@ -312,12 +320,12 @@ export const AnalysisOutput = ({ data, language }: AnalysisOutputProps) => {
                         onClick={() => !showResult && handleSelectOption(questionIndex, optionIndex)}
                         disabled={showResult}
                         className={`w-full text-left p-4 rounded-xl border-2 transition-all duration-200 ${selectedAnswer === optionIndex
-                            ? showResult
-                              ? isCorrect
-                                ? 'border-green-500 bg-green-500/10'
-                                : 'border-red-500 bg-red-500/10'
-                              : 'border-primary bg-primary/5 ring-2 ring-primary/20'
-                            : 'border-border hover:border-primary/30 hover:bg-muted/30'
+                          ? showResult
+                            ? isCorrect
+                              ? 'border-green-500 bg-green-500/10'
+                              : 'border-red-500 bg-red-500/10'
+                            : 'border-primary bg-primary/5 ring-2 ring-primary/20'
+                          : 'border-border hover:border-primary/30 hover:bg-muted/30'
                           } ${showResult && optionIndex === question.correct_answer_index ? 'border-green-500 bg-green-500/5' : ''}`}
                       >
                         <div className="flex items-center justify-between">

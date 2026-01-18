@@ -4,11 +4,11 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
-import { 
-  Sparkles, 
-  Loader2, 
-  Calendar, 
-  MessageSquare, 
+import {
+  Sparkles,
+  Loader2,
+  Calendar,
+  MessageSquare,
   HelpCircle,
   Lock,
   Paperclip
@@ -89,33 +89,33 @@ const uiLabels = {
   },
   hy: {
     placeholder: {
-      analyze: 'Տdelays delays delays delays delays delays delays delays delays delays...',
-      plan: 'Տdelay delays delays delays 7-delays delays delays...',
-      chat: 'Հdelay delays delays delays delays delays...',
-      ask: 'Տdelay delays delays delays delays delays delays delays...'
+      analyze: 'Տեղադրեք ձեր տեքստը՝ ամփոփագրերով, բառապաշարով և թեստերով ամբողջական վերլուծություն ստանալու համար...',
+      plan: 'Տեղադրեք բովանդակություն՝ 7-օրյա ուսումնական ժամանակացույց ստեղծելու համար...',
+      chat: 'Հարց տվեք ցանկացած թեմայի մասին կամ տեղադրեք տեքստ քննարկելու համար...',
+      ask: 'Տեղադրեք տեքստ, և ես ձեզ հարցեր կտամ՝ ստուգելու ձեր հասկացողությունը...'
     },
     buttons: {
-      analyze: 'Delays',
-      plan: 'Delays',
-      chat: 'Delays',
-      ask: 'Delays'
+      analyze: 'Վերլուծել',
+      plan: 'Պլան',
+      chat: 'Զրույց',
+      ask: 'Հարցրու ինձ'
     },
     tooltips: {
-      analyze: 'Delays delays delays',
-      plan: '7-delays delays delays',
-      chat: 'Delays delays',
-      ask: 'Delays delays'
+      analyze: 'Լիարժեք մանկավարժական վերլուծություն',
+      plan: '7-օրյա ուսումնական օրացույց',
+      chat: 'Ընդհանուր Հ&Պ',
+      ask: 'Սոկրատեսյան հարցադրում'
     },
     submit: {
-      analyze: 'Delays',
-      plan: 'Delays delays',
-      chat: 'Delays',
-      ask: 'Delays delays'
+      analyze: 'Վերլուծել տեքստը',
+      plan: 'Ստեղծել պլան',
+      chat: 'Ուղարկել հաղորդագրություն',
+      ask: 'Սկսել թեստը'
     },
-    processing: 'Delays...',
-    attachFile: 'Delays',
-    fileAttached: 'Delays delays',
-    upgradeTooltip: 'Delays delays delays'
+    processing: 'Մշակվում է...',
+    attachFile: 'Կցել',
+    fileAttached: 'Ֆայլը կցված է',
+    upgradeTooltip: 'Թարմացրեք՝ շարունակելու համար'
   },
   ko: {
     placeholder: {
@@ -186,16 +186,16 @@ export const MultiActionInput = ({
       <div className="space-y-4">
         {/* Mode Toggle */}
         <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
-          <ToggleGroup 
-            type="single" 
-            value={mode} 
+          <ToggleGroup
+            type="single"
+            value={mode}
             onValueChange={(value) => value && setMode(value as ActionMode)}
             className="flex-wrap justify-start"
           >
             {(['analyze', 'plan', 'chat', 'ask'] as const).map((m) => (
-              <ToggleGroupItem 
+              <ToggleGroupItem
                 key={m}
-                value={m} 
+                value={m}
                 aria-label={labels.tooltips[m]}
                 className="gap-1.5 px-3 data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
                 disabled={isLocked}
