@@ -97,31 +97,121 @@ const getNodeColor = (node: Node): string => {
 
 const createFlowNodes = (
   conceptNodes: ConceptNode[],
+  conceptEdges: ConceptEdge[],
   activeNodeId?: string,
   highlightedNodes?: Set<string>
 ): Node[] => {
-  const baseRadius = 350;
-  const nodeCount = conceptNodes.length;
-  
-  return conceptNodes.map((node, index) => {
-    const ringIndex = Math.floor(index / 8);
-    const positionInRing = index % 8;
-    const nodesInRing = Math.min(8, nodeCount - ringIndex * 8);
-    const radius = baseRadius + ringIndex * 200;
-    const angle = (2 * Math.PI * positionInRing) / nodesInRing - Math.PI / 2;
-    
-    const x = Math.cos(angle) * radius;
-    const y = Math.sin(angle) * radius;
+  // 1. Build Adjacency List
+  const adj = new Map<string, string[]>();
+  conceptNodes.forEach(node => {
+    adj.set(node.id, []);
+  });
 
+  conceptEdges.forEach(edge => {
+    if (adj.has(edge.source)) adj.get(edge.source)?.push(edge.target);
+    if (adj.has(edge.target)) adj.get(edge.target)?.push(edge.source);
+  });
+
+  // 2. Identify Root
+  let rootId = conceptNodes[0]?.id;
+  const mainNode = conceptNodes.find(n => n.category === 'main');
+  if (mainNode) {
+    rootId = mainNode.id;
+  } else {
+    let maxDegree = -1;
+    conceptNodes.forEach(node => {
+      const degree = adj.get(node.id)?.length || 0;
+      if (degree > maxDegree) {
+        maxDegree = degree;
+        rootId = node.id;
+      }
+    });
+  }
+
+  // 3. Build Spanning Tree (BFS)
+  const childrenMap = new Map<string, string[]>();
+  const visited = new Set<string>();
+  const queue = [rootId];
+  visited.add(rootId);
+  childrenMap.set(rootId, []);
+
+  while (queue.length > 0) {
+    const u = queue.shift()!;
+    const neighbors = adj.get(u) || [];
+    for (const v of neighbors) {
+      if (!visited.has(v)) {
+        visited.add(v);
+        childrenMap.get(u)?.push(v);
+        childrenMap.set(v, []);
+        queue.push(v);
+      }
+    }
+  }
+
+  // Handle disconnected nodes
+  conceptNodes.forEach(node => {
+    if (!visited.has(node.id)) {
+      visited.add(node.id);
+      childrenMap.get(rootId)?.push(node.id);
+      childrenMap.set(node.id, []);
+    }
+  });
+
+  // 4. Calculate Subtree Sizes (DFS Post-Order)
+  const subtreeSizes = new Map<string, number>();
+  const calcSize = (u: string): number => {
+    let size = 1;
+    const children = childrenMap.get(u) || [];
+    for (const v of children) {
+      size += calcSize(v);
+    }
+    subtreeSizes.set(u, size);
+    return size;
+  };
+  if (rootId) calcSize(rootId);
+
+  // 5. Assign Positions (Radial Layout)
+  const positions = new Map<string, { x: number, y: number }>();
+
+  const layoutNode = (u: string, startAngle: number, endAngle: number, radius: number) => {
+    const midAngle = (startAngle + endAngle) / 2;
+    positions.set(u, {
+      x: Math.cos(midAngle) * radius,
+      y: Math.sin(midAngle) * radius
+    });
+
+    const children = childrenMap.get(u) || [];
+    if (children.length === 0) return;
+
+    const totalWeight = children.reduce((sum, v) => sum + (subtreeSizes.get(v) || 1), 0);
+    let currentStart = startAngle;
+    const totalSweep = endAngle - startAngle;
+
+    for (const v of children) {
+      const weight = subtreeSizes.get(v) || 1;
+      const share = weight / totalWeight;
+      const angleWidth = totalSweep * share;
+      layoutNode(v, currentStart, currentStart + angleWidth, radius + 300);
+      currentStart += angleWidth;
+    }
+  };
+
+  if (rootId) {
+    layoutNode(rootId, 0, 2 * Math.PI, 0);
+  }
+
+  // 6. Return Nodes
+  return conceptNodes.map((node) => {
+    const pos = positions.get(node.id) || { x: 0, y: 0 };
     const isActive = node.id === activeNodeId;
     const isHighlighted = highlightedNodes?.has(node.id);
     const baseSize = 120 + (node.label?.length || 0) * 2;
-    const size = Math.min(Math.max(baseSize, 100), 200);
+    const size = Math.min(Math.max(baseSize, 100), 220);
 
     return {
       id: node.id,
       type: 'conceptNode',
-      position: { x, y },
+      position: pos,
       data: {
         label: node.label,
         category: node.category,
@@ -173,7 +263,8 @@ export const KnowledgeMap = ({ onNodeClick, activeNodeId, data, highlightedNodes
 
   const initialFlowNodes = useMemo(() => {
     const sourceNodes = data?.nodes || initialNodes;
-    return createFlowNodes(sourceNodes, activeNodeId, highlightedNodes);
+    const sourceEdges = data?.edges || initialEdges;
+    return createFlowNodes(sourceNodes, sourceEdges, activeNodeId, highlightedNodes);
   }, [data, activeNodeId, highlightedNodes]);
 
   const initialFlowEdges = useMemo(() => {
