@@ -15,7 +15,7 @@ import {
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { toPng } from 'html-to-image';
-import { Trash2, Download, Maximize2, Minimize2, Map as MapIcon, X } from 'lucide-react';
+import { Trash2, Download, Maximize2, Minimize2, Map as MapIcon, X, Info, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import ConceptNodeComponent from './ConceptNodeComponent';
@@ -296,6 +296,7 @@ export const KnowledgeMap = ({ onNodeClick, activeNodeId, data, highlightedNodes
   const { toast } = useToast();
   const flowRef = useRef<HTMLDivElement>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [selectedNode, setSelectedNode] = useState<{ label: string; category: string; description?: string } | null>(null);
   const labels = uiLabels[language] || uiLabels.en;
 
   const layoutResult = useMemo(() => {
@@ -311,6 +312,21 @@ export const KnowledgeMap = ({ onNodeClick, activeNodeId, data, highlightedNodes
     setNodes(layoutResult.nodes);
     setEdges(layoutResult.edges);
   }, [layoutResult, setNodes, setEdges]);
+
+  // Handle node click - show info panel and call parent handler
+  const handleNodeClick = useCallback((_event: React.MouseEvent, node: Node) => {
+    const nodeData = node.data as { label: string; category: string; description?: string };
+    setSelectedNode({
+      label: nodeData.label,
+      category: nodeData.category,
+      description: nodeData.description || `Learn more about "${nodeData.label}"`,
+    });
+    onNodeClick?.(nodeData.label, nodeData.description, nodeData.category);
+  }, [onNodeClick]);
+
+  const closeInfoPanel = useCallback(() => {
+    setSelectedNode(null);
+  }, []);
 
   const clearState = useCallback(() => {
     setNodes([]);
@@ -380,6 +396,7 @@ export const KnowledgeMap = ({ onNodeClick, activeNodeId, data, highlightedNodes
             edges={edges}
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
+            onNodeClick={handleNodeClick}
             nodeTypes={nodeTypes}
             connectionLineType={ConnectionLineType.SmoothStep}
             fitView
@@ -464,6 +481,47 @@ export const KnowledgeMap = ({ onNodeClick, activeNodeId, data, highlightedNodes
         >
           <X className="h-4 w-4" />
         </Button>
+      )}
+
+      {/* Node Info Panel */}
+      {selectedNode && (
+        <div className="absolute bottom-4 left-4 right-4 sm:left-auto sm:right-4 sm:w-80 z-20">
+          <div
+            className="rounded-xl p-4 backdrop-blur-xl border animate-in slide-in-from-bottom-4 duration-300"
+            style={{
+              background: 'linear-gradient(135deg, hsl(265 70% 20% / 0.95), hsl(265 60% 15% / 0.98))',
+              borderColor: 'hsl(265 60% 50% / 0.5)',
+              boxShadow: '0 20px 50px -10px hsl(265 60% 30% / 0.5)',
+            }}
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-2">
+                  <Sparkles className="h-4 w-4 text-purple-400" />
+                  <span className="text-xs uppercase tracking-wider text-purple-300 font-medium">
+                    {selectedNode.category}
+                  </span>
+                </div>
+                <h3 className="text-lg font-bold text-white mb-2">{selectedNode.label}</h3>
+                <p className="text-sm text-purple-200/80">{selectedNode.description}</p>
+              </div>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={closeInfoPanel}
+                className="h-8 w-8 text-purple-300 hover:text-white hover:bg-purple-500/20 shrink-0"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+            <div className="mt-4 pt-3 border-t border-purple-500/30">
+              <div className="flex items-center gap-2 text-xs text-purple-300">
+                <Info className="h-3 w-3" />
+                <span>Click to explore related concepts</span>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
