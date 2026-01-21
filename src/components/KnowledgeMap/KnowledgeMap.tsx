@@ -15,11 +15,11 @@ import {
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { toPng } from 'html-to-image';
-import { Trash2, Download, Maximize2, Minimize2, Map as MapIcon, X, Info, Sparkles } from 'lucide-react';
+import { Trash2, Download, Maximize2, Minimize2, Map as MapIcon, X, Info, Sparkles, ArrowRight, BookOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import ConceptNodeComponent from './ConceptNodeComponent';
-import { initialNodes, initialEdges } from './mockData';
+import { initialNodes, initialEdges, nodeDescriptions, edgeRelationships } from './mockData';
 import { ConceptNode, ConceptEdge, KnowledgeMapData, categoryColors, NodeCategory } from './types';
 
 interface KnowledgeMapProps {
@@ -271,23 +271,44 @@ const createTreeLayout = (
     };
   });
 
-  // 8. Create STRAIGHT tree edges ONLY - these NEVER cross in radial layout
-  const flowEdges: Edge[] = treeEdges.map((edge, index) => ({
-    id: `tree-edge-${index}`,
-    source: edge.source,
-    target: edge.target,
-    type: 'straight', // Straight lines - cleaner, no crossing
-    style: {
-      stroke: 'hsl(265, 60%, 55%)',
-      strokeWidth: 2,
-    },
-    markerEnd: {
-      type: MarkerType.ArrowClosed,
-      color: 'hsl(265, 60%, 55%)',
-      width: 15,
-      height: 15,
-    },
-  }));
+  // 8. Create STRAIGHT tree edges ONLY with labels - these NEVER cross in radial layout
+  const flowEdges: Edge[] = treeEdges.map((edge, index) => {
+    // Get relationship label from the original edge data
+    const relationKey = `${edge.source}-${edge.target}`;
+    const reverseKey = `${edge.target}-${edge.source}`;
+    const label = edgeRelationships[relationKey] || edgeRelationships[reverseKey] || 'relates to';
+    
+    return {
+      id: `tree-edge-${index}`,
+      source: edge.source,
+      target: edge.target,
+      type: 'straight',
+      label: label,
+      labelStyle: { 
+        fill: 'hsl(265, 80%, 80%)', 
+        fontWeight: 600, 
+        fontSize: 11,
+        textShadow: '0 1px 3px hsl(0 0% 0% / 0.8)',
+      },
+      labelBgStyle: { 
+        fill: 'hsl(265, 40%, 15%)', 
+        fillOpacity: 0.9,
+        rx: 4,
+        ry: 4,
+      },
+      labelBgPadding: [6, 4] as [number, number],
+      style: {
+        stroke: 'hsl(265, 60%, 55%)',
+        strokeWidth: 2,
+      },
+      markerEnd: {
+        type: MarkerType.ArrowClosed,
+        color: 'hsl(265, 60%, 55%)',
+        width: 15,
+        height: 15,
+      },
+    };
+  });
 
   return { nodes: flowNodes, edges: flowEdges };
 };
@@ -296,7 +317,14 @@ export const KnowledgeMap = ({ onNodeClick, activeNodeId, data, highlightedNodes
   const { toast } = useToast();
   const flowRef = useRef<HTMLDivElement>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [selectedNode, setSelectedNode] = useState<{ label: string; category: string; description?: string } | null>(null);
+  const [selectedNode, setSelectedNode] = useState<{ 
+    id: string;
+    label: string; 
+    category: string; 
+    description?: string;
+    details?: string[];
+    connections?: string[];
+  } | null>(null);
   const labels = uiLabels[language] || uiLabels.en;
 
   const layoutResult = useMemo(() => {
@@ -313,16 +341,36 @@ export const KnowledgeMap = ({ onNodeClick, activeNodeId, data, highlightedNodes
     setEdges(layoutResult.edges);
   }, [layoutResult, setNodes, setEdges]);
 
-  // Handle node click - show info panel and call parent handler
+  // Handle node click - show comprehensive info panel
   const handleNodeClick = useCallback((_event: React.MouseEvent, node: Node) => {
     const nodeData = node.data as { label: string; category: string; description?: string };
+    const nodeId = node.id;
+    
+    // Get description and details from nodeDescriptions
+    const nodeInfo = nodeDescriptions[nodeId] || { 
+      description: `Learn more about "${nodeData.label}"`,
+      details: []
+    };
+    
+    // Find connected nodes
+    const sourceNodes = data?.nodes || initialNodes;
+    const currentNode = sourceNodes.find(n => n.id === nodeId);
+    const connections = currentNode?.connectedTo || [];
+    const connectionLabels = connections.map(connId => {
+      const connNode = sourceNodes.find(n => n.id === connId);
+      return connNode?.label || connId;
+    });
+    
     setSelectedNode({
+      id: nodeId,
       label: nodeData.label,
       category: nodeData.category,
-      description: nodeData.description || `Learn more about "${nodeData.label}"`,
+      description: nodeInfo.description,
+      details: nodeInfo.details,
+      connections: connectionLabels,
     });
-    onNodeClick?.(nodeData.label, nodeData.description, nodeData.category);
-  }, [onNodeClick]);
+    onNodeClick?.(nodeData.label, nodeInfo.description, nodeData.category);
+  }, [onNodeClick, data]);
 
   const closeInfoPanel = useCallback(() => {
     setSelectedNode(null);
@@ -483,27 +531,27 @@ export const KnowledgeMap = ({ onNodeClick, activeNodeId, data, highlightedNodes
         </Button>
       )}
 
-      {/* Node Info Panel */}
+      {/* Node Info Panel - Comprehensive Details */}
       {selectedNode && (
-        <div className="absolute bottom-4 left-4 right-4 sm:left-auto sm:right-4 sm:w-80 z-20">
+        <div className="absolute bottom-4 left-4 right-4 sm:left-auto sm:right-4 sm:w-96 z-20 max-h-[70vh] overflow-y-auto">
           <div
-            className="rounded-xl p-4 backdrop-blur-xl border animate-in slide-in-from-bottom-4 duration-300"
+            className="rounded-xl p-5 backdrop-blur-xl border animate-in slide-in-from-bottom-4 duration-300"
             style={{
               background: 'linear-gradient(135deg, hsl(265 70% 20% / 0.95), hsl(265 60% 15% / 0.98))',
               borderColor: 'hsl(265 60% 50% / 0.5)',
               boxShadow: '0 20px 50px -10px hsl(265 60% 30% / 0.5)',
             }}
           >
-            <div className="flex items-start justify-between gap-3">
+            {/* Header */}
+            <div className="flex items-start justify-between gap-3 mb-4">
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-2">
                   <Sparkles className="h-4 w-4 text-purple-400" />
-                  <span className="text-xs uppercase tracking-wider text-purple-300 font-medium">
+                  <span className="text-xs uppercase tracking-wider text-purple-300 font-medium px-2 py-0.5 rounded-full bg-purple-500/20">
                     {selectedNode.category}
                   </span>
                 </div>
-                <h3 className="text-lg font-bold text-white mb-2">{selectedNode.label}</h3>
-                <p className="text-sm text-purple-200/80">{selectedNode.description}</p>
+                <h3 className="text-xl font-bold text-white">{selectedNode.label}</h3>
               </div>
               <Button
                 variant="ghost"
@@ -514,12 +562,53 @@ export const KnowledgeMap = ({ onNodeClick, activeNodeId, data, highlightedNodes
                 <X className="h-4 w-4" />
               </Button>
             </div>
-            <div className="mt-4 pt-3 border-t border-purple-500/30">
-              <div className="flex items-center gap-2 text-xs text-purple-300">
-                <Info className="h-3 w-3" />
-                <span>Click to explore related concepts</span>
+
+            {/* Description */}
+            <div className="mb-4">
+              <div className="flex items-center gap-2 mb-2">
+                <BookOpen className="h-4 w-4 text-purple-400" />
+                <span className="text-sm font-semibold text-purple-200">Description</span>
               </div>
+              <p className="text-sm text-purple-100/90 leading-relaxed">{selectedNode.description}</p>
             </div>
+
+            {/* Key Details */}
+            {selectedNode.details && selectedNode.details.length > 0 && (
+              <div className="mb-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <Info className="h-4 w-4 text-purple-400" />
+                  <span className="text-sm font-semibold text-purple-200">Key Facts</span>
+                </div>
+                <ul className="space-y-1.5">
+                  {selectedNode.details.map((detail, index) => (
+                    <li key={index} className="flex items-start gap-2 text-sm text-purple-100/80">
+                      <span className="text-purple-400 mt-0.5">•</span>
+                      <span>{detail}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* Connected Concepts */}
+            {selectedNode.connections && selectedNode.connections.length > 0 && (
+              <div className="pt-3 border-t border-purple-500/30">
+                <div className="flex items-center gap-2 mb-2">
+                  <ArrowRight className="h-4 w-4 text-purple-400" />
+                  <span className="text-sm font-semibold text-purple-200">Connected To</span>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {selectedNode.connections.map((conn, index) => (
+                    <span 
+                      key={index} 
+                      className="text-xs px-2.5 py-1 rounded-full bg-purple-500/20 text-purple-200 border border-purple-500/30"
+                    >
+                      {conn}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
