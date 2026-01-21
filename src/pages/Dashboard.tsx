@@ -1,14 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Label } from "@/components/ui/label";
-import { Settings, Sparkles, Loader2, LogOut, BookOpen, CreditCard, User as UserIcon, Lock } from "lucide-react";
+import { Settings, LogOut, BookOpen, CreditCard, User as UserIcon, Lock, Pause, Play } from "lucide-react";
 import { SettingsModal } from "@/components/SettingsModal";
 import { AnalysisOutput } from "@/components/AnalysisOutput";
 import { UpgradeModal } from "@/components/UpgradeModal";
+import { BottomInputBar, ActionMode, MediaFile } from "@/components/BottomInputBar";
 import { useToast } from "@/hooks/use-toast";
 import { useSettings } from "@/hooks/useSettings";
 import { supabase } from "@/integrations/supabase/client";
@@ -121,29 +119,18 @@ const Dashboard = () => {
   const [user, setUser] = useState<User | null>(null);
   const { language, theme, setLanguage, setTheme, isLoaded: settingsLoaded } = useSettings();
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const [text, setText] = useState('');
   const [analysisData, setAnalysisData] = useState<any>(null);
-  const [media, setMedia] = useState<{ data: string; mimeType: string } | null>(null);
-  const [isCourseMode, setIsCourseMode] = useState(false);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
   const [usageCount, setUsageCount] = useState(1);
   const [dailyLimit, setDailyLimit] = useState(DAILY_LIMIT_FREE);
   const [userPlan, setUserPlan] = useState<'free' | 'pro' | 'class'>('free');
   const [isLocked, setIsLocked] = useState(false);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
-
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64String = (reader.result as string).split(',')[1];
-        setMedia({ data: base64String, mimeType: file.type });
-        toast({ title: "File attached", description: file.name });
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+  
+  // Podcast audio state
+  const [podcastAudio, setPodcastAudio] = useState<string | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -283,26 +270,26 @@ const Dashboard = () => {
     }
   };
 
-  const handleAnalyze = async () => {
+  const handleSubmit = async (text: string, mode: ActionMode, media?: MediaFile[] | null) => {
     if (!user) {
       toast({
         title: "Error",
-        description: "Please sign in to analyze text",
+        description: "Please sign in",
         variant: "destructive"
       });
       return;
     }
 
-    if (!text.trim() && !media) {
+    if (!text.trim() && (!media || media.length === 0)) {
       toast({
-        title: language === 'en' ? 'Error' : language === 'ru' ? 'Ошибка' : language === 'hy' ? 'Սխալ' : '오류',
+        title: language === 'en' ? 'Error' : language === 'ru' ? 'Ошибка' : language === 'hy' ? 'Սխdelays' : '오류',
         description: labels.errorNoInput,
         variant: 'destructive'
       });
       return;
     }
 
-    if (usageCount <= 0) {
+    if (usageCount <= 0 && userPlan !== 'class') {
       toast({
         title: language === 'en' ? 'Limit Reached' : language === 'ru' ? 'Лимит достигнут' : language === 'hy' ? 'Սdelays' : '한도 도달',
         description: language === 'en' ? `You have reached your daily limit of ${dailyLimit} analyses` : language === 'ru' ? `Вы достигли дневного лимита в ${dailyLimit} анализов` : language === 'hy' ? `Delays ${dailyLimit}` : `일일 ${dailyLimit}회 분석 한도에 도달했습니다`,
@@ -311,69 +298,132 @@ const Dashboard = () => {
       return;
     }
 
-    setIsAnalyzing(true);
+    setIsProcessing(true);
+    
+    // Clear previous podcast audio
+    if (podcastAudio) {
+      setPodcastAudio(null);
+      setIsPlaying(false);
+    }
 
     try {
-      const { data, error } = await supabase.functions.invoke('analyze-text', {
-        body: {
-          text,
-          media, // Multi-modal support
-          isCourse: isCourseMode
+      if (mode === 'podcast') {
+        // Handle podcast generation
+        const { data, error } = await supabase.functions.invoke('generate-podcast', {
+          body: { prompt: text, language }
+        });
+
+        if (error) {
+          console.error('Podcast generation error:', error);
+          throw new Error(error.message || 'Failed to generate podcast');
         }
-      });
 
-      if (error) {
-        console.error('Edge function error:', error);
-        throw new Error(error.message || 'Failed to analyze content');
-      }
-
-      if (!data) {
-        throw new Error('No data returned from analysis');
-      }
-
-      setAnalysisData(data);
-      setMedia(null); // Clear media after successful analysis
-
-      // Refetch usage count from server to get accurate value
-      if (user) {
-        await fetchUsageCount(user.id);
-      }
-
-      // Save to user_content archive
-      if (user) {
-        try {
-          await (supabase as any).from('user_content').insert({
-            user_id: user.id,
-            original_text: text,
-            analysis_data: data,
-            language: language,
-            title: text.substring(0, 50) + (text.length > 50 ? '...' : '')
-          });
-        } catch (saveError) {
-          console.error('Error saving to archive:', saveError);
-          // Non-critical, don't show error to user
+        if (!data?.audio) {
+          throw new Error('No audio returned from podcast generation');
         }
-      }
 
-      toast({
-        title: language === 'en' ? 'Great job!' : language === 'ru' ? 'Отлично!' : language === 'hy' ? 'Հիանալի է!' : '훌륭합니다!',
-        description: language === 'en' ? "You're mastering this subject. Keep it up!" : language === 'ru' ? 'Вы осваиваете этот предмет. Продолжайте в том же духе!' : language === 'hy' ? 'Դուք տիրապետում եք այս առարկային: Շարունակեք այդպես!' : '이 주제를 잘 이해하고 있습니다. 계속 노력하세요!'
-      });
+        // Convert base64 to audio URL
+        const audioBlob = new Blob(
+          [Uint8Array.from(atob(data.audio), c => c.charCodeAt(0))],
+          { type: data.mimeType || 'audio/wav' }
+        );
+        const audioUrl = URL.createObjectURL(audioBlob);
+        setPodcastAudio(audioUrl);
+
+        toast({
+          title: language === 'en' ? 'Podcast Ready!' : language === 'ru' ? 'Подкаст готов!' : language === 'hy' ? 'Delays delays!' : '팟캐스트 준비됨!',
+          description: language === 'en' ? 'Your audio podcast is ready to play' : language === 'ru' ? 'Ваш аудио подкаст готов к воспроизведению' : language === 'hy' ? 'Delays delays delays' : '오디오 팟캐스트가 재생 준비되었습니다'
+        });
+
+        // Refetch usage count
+        if (user) {
+          await fetchUsageCount(user.id);
+        }
+
+      } else if (mode === 'chat') {
+        // Handle chat mode - navigate to chat page or show inline chat
+        toast({
+          title: language === 'en' ? 'Chat Mode' : language === 'ru' ? 'Режим чата' : language === 'hy' ? 'Delays delays' : '채팅 모드',
+          description: language === 'en' ? 'Opening chat...' : language === 'ru' ? 'Открытие чата...' : language === 'hy' ? 'Delays...' : '채팅 열기...'
+        });
+        // For now, just show a message - can be expanded to full chat UI
+        
+      } else {
+        // Handle analyze and course modes
+        const mediaPayload = media && media.length > 0 
+          ? { data: media[0].data, mimeType: media[0].mimeType }
+          : null;
+
+        const { data, error } = await supabase.functions.invoke('analyze-text', {
+          body: {
+            text,
+            media: mediaPayload,
+            isCourse: mode === 'course'
+          }
+        });
+
+        if (error) {
+          console.error('Edge function error:', error);
+          throw new Error(error.message || 'Failed to analyze content');
+        }
+
+        if (!data) {
+          throw new Error('No data returned from analysis');
+        }
+
+        setAnalysisData(data);
+
+        // Refetch usage count from server
+        if (user) {
+          await fetchUsageCount(user.id);
+        }
+
+        // Save to user_content archive
+        if (user) {
+          try {
+            await (supabase as any).from('user_content').insert({
+              user_id: user.id,
+              original_text: text,
+              analysis_data: data,
+              language: language,
+              title: text.substring(0, 50) + (text.length > 50 ? '...' : '')
+            });
+          } catch (saveError) {
+            console.error('Error saving to archive:', saveError);
+          }
+        }
+
+        toast({
+          title: language === 'en' ? 'Great job!' : language === 'ru' ? 'Отлично!' : language === 'hy' ? 'Հdelays!' : '훌륭합니다!',
+          description: language === 'en' ? "You're mastering this subject. Keep it up!" : language === 'ru' ? 'Вы осваиваете этот предмет. Продолжайте в том же духе!' : language === 'hy' ? 'Դուdelays delays delays delays delays!' : '이 주제를 잘 이해하고 있습니다. 계속 노력하세요!'
+        });
+      }
     } catch (error) {
-      console.error('Analysis error:', error);
+      console.error('Processing error:', error);
       toast({
-        title: language === 'en' ? 'Error' : language === 'ru' ? 'Ошибка' : language === 'hy' ? 'Սխալ' : '오류',
-        description: error instanceof Error ? error.message : 'Failed to analyze text',
+        title: language === 'en' ? 'Error' : language === 'ru' ? 'Ошибка' : language === 'hy' ? 'Սdelays' : '오류',
+        description: error instanceof Error ? error.message : 'Failed to process request',
         variant: 'destructive'
       });
     } finally {
-      setIsAnalyzing(false);
+      setIsProcessing(false);
+    }
+  };
+
+  const toggleAudioPlayback = () => {
+    if (audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.pause();
+      } else {
+        audioRef.current.play();
+      }
+      setIsPlaying(!isPlaying);
     }
   };
 
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/20">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/20 pb-24">
       <div className="container max-w-5xl mx-auto px-4 py-8">
         {/* Header */}
         <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 sm:mb-8 animate-in fade-in-50 slide-in-from-top-4">
@@ -473,75 +523,35 @@ const Dashboard = () => {
           </Card>
         )}
 
-        {/* Input Area */}
-        <Card className={`p-4 sm:p-6 mb-6 sm:mb-8 shadow-lg animate-in fade-in-50 slide-in-from-bottom-4 ${isLocked ? 'opacity-50' : ''}`}>
-          <div className="space-y-4">
-            <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-              <div className="flex items-center gap-2">
-                <input
-                  type="file"
-                  id="media-upload"
-                  className="hidden"
-                  onChange={handleFileChange}
-                  accept="image/*,application/pdf"
-                />
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => document.getElementById('media-upload')?.click()}
-                  className="gap-2"
-                  disabled={isLocked}
-                >
-                  <Sparkles className="h-4 w-4" />
-                  {labels.attach}
-                </Button>
-                {media && <Badge variant="secondary">{labels.fileAttached}</Badge>}
+        {/* Podcast Audio Player */}
+        {podcastAudio && (
+          <Card className="p-6 mb-6 bg-gradient-to-r from-primary/10 to-accent/10 border-2 border-primary/20">
+            <div className="flex items-center gap-4">
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={toggleAudioPlayback}
+                className="h-14 w-14 rounded-full"
+              >
+                {isPlaying ? <Pause className="h-6 w-6" /> : <Play className="h-6 w-6" />}
+              </Button>
+              <div className="flex-1">
+                <h3 className="font-semibold">
+                  {language === 'en' ? 'Generated Podcast' : language === 'ru' ? 'Сгенерированный подкаст' : language === 'hy' ? 'Delays delays' : '생성된 팟캐스트'}
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  {language === 'en' ? 'Click play to listen' : language === 'ru' ? 'Нажмите для воспроизведения' : language === 'hy' ? 'Delays delays' : '재생하려면 클릭'}
+                </p>
               </div>
-
-              <div className="flex items-center space-x-2">
-                <Label htmlFor="course-mode">{labels.courseMode}</Label>
-                <input
-                  type="checkbox"
-                  id="course-mode"
-                  checked={isCourseMode}
-                  onChange={(e) => setIsCourseMode(e.target.checked)}
-                  className="w-4 h-4 cursor-pointer"
-                />
-              </div>
+              <audio
+                ref={audioRef}
+                src={podcastAudio}
+                onEnded={() => setIsPlaying(false)}
+                className="hidden"
+              />
             </div>
-
-            <Textarea
-              placeholder={isLocked ? labels.upgradeToContinue : labels.placeholder}
-              value={text}
-              onChange={(e) => setText(e.target.value)}
-              className="min-h-[150px] sm:min-h-[200px] text-sm sm:text-base resize-none"
-              disabled={isLocked}
-            />
-            <Button
-              onClick={handleAnalyze}
-              disabled={isAnalyzing || (!text.trim() && !media) || isLocked}
-              className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity shadow-md"
-              size="lg"
-            >
-              {isLocked ? (
-                <>
-                  <Lock className="mr-2 h-5 w-5" />
-                  {labels.upgradeToContinue}
-                </>
-              ) : isAnalyzing ? (
-                <>
-                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                  {labels.analyzing}
-                </>
-              ) : (
-                <>
-                  <Sparkles className="mr-2 h-5 w-5" />
-                  {labels.analyze}
-                </>
-              )}
-            </Button>
-          </div>
-        </Card>
+          </Card>
+        )}
 
         {/* Output Area */}
         {analysisData && (
@@ -565,6 +575,14 @@ const Dashboard = () => {
           language={language}
         />
       </div>
+      
+      {/* Bottom Input Bar */}
+      <BottomInputBar
+        language={language}
+        onSubmit={handleSubmit}
+        isProcessing={isProcessing}
+        isLocked={isLocked}
+      />
     </div>
   );
 };
