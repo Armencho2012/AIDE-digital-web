@@ -126,8 +126,8 @@ Begin the podcast dialogue now:`;
 
     console.log(`Generating podcast for user ${user.id}, topic: ${prompt.substring(0, 50)}...`);
 
-    // Call Gemini TTS API with multi-speaker configuration
-    const ttsUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro-preview-tts:generateContent?key=${apiKey}`;
+    // Call Gemini TTS API with multi-speaker configuration (using flash for better quota limits)
+    const ttsUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`;
     
     const ttsPayload = {
       contents: [{
