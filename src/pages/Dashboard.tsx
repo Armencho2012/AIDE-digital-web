@@ -7,6 +7,7 @@ import { SettingsModal } from "@/components/SettingsModal";
 import { AnalysisOutput } from "@/components/AnalysisOutput";
 import { UpgradeModal } from "@/components/UpgradeModal";
 import { BottomInputBar, ActionMode, MediaFile } from "@/components/BottomInputBar";
+import { ChatPanel } from "@/components/ChatPanel";
 import { useToast } from "@/hooks/use-toast";
 import { useSettings } from "@/hooks/useSettings";
 import { supabase } from "@/integrations/supabase/client";
@@ -131,6 +132,10 @@ const Dashboard = () => {
   const [podcastAudio, setPodcastAudio] = useState<string | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  
+  // Chat state
+  const [showChat, setShowChat] = useState(false);
+  const [chatInitialMessage, setChatInitialMessage] = useState<string | undefined>();
   const { toast } = useToast();
   const navigate = useNavigate();
 

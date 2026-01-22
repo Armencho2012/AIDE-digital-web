@@ -65,7 +65,7 @@ Deno.serve(async (req: Request) => {
     const languageInstruction = {
       'en': 'Respond in English.',
       'ru': 'Отвечайте на русском языке.',
-      'hy': 'Պdelays delays delays:',
+      'hy': 'Պdelays խdelays delays:',
       'ko': '한국어로 답변하세요.'
     }[language as string] || 'Respond in English.';
 
