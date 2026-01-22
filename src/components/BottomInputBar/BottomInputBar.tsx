@@ -120,7 +120,7 @@ export const BottomInputBar = ({
 
   return (
     <div 
-      className={`fixed inset-0 z-50 flex items-center justify-center pointer-events-none ${isDragging ? 'bg-primary/5' : ''}`}
+      className={`fixed bottom-0 left-0 right-0 z-50 p-4 transition-all ${isDragging ? 'bg-primary/5' : ''}`}
       onDragOver={handleDragOver}
       onDragEnter={handleDragEnter}
       onDragLeave={handleDragLeave}
@@ -128,7 +128,7 @@ export const BottomInputBar = ({
     >
       {/* Drag overlay */}
       {isDragging && (
-        <div className="absolute inset-0 z-10 flex items-center justify-center bg-primary/10 border-2 border-dashed border-primary pointer-events-auto">
+        <div className="absolute inset-0 z-10 flex items-center justify-center bg-primary/10 border-2 border-dashed border-primary">
           <div className="flex flex-col items-center gap-2 text-primary">
             <Upload className="h-10 w-10" />
             <span className="font-medium">{labels.dropFiles}</span>
@@ -136,8 +136,8 @@ export const BottomInputBar = ({
         </div>
       )}
 
-      <div className="pointer-events-auto w-full max-w-3xl mx-auto px-4">
-        <div className="bg-card/95 backdrop-blur-xl border border-border/50 rounded-2xl shadow-2xl p-4 sm:p-6 transition-all">
+      <div className="container max-w-3xl mx-auto">
+        <div className="bg-card/95 backdrop-blur-xl border border-border/50 rounded-2xl shadow-2xl p-4 sm:p-5">
           {/* Mode Selector - Centered at top */}
           <div className="flex justify-center mb-4">
             <ToggleGroup
@@ -173,9 +173,9 @@ export const BottomInputBar = ({
               value={text}
               onChange={(e) => setText(e.target.value)}
               onKeyDown={handleKeyDown}
-              className="min-h-[120px] sm:min-h-[140px] max-h-[300px] resize-none text-base sm:text-lg p-4 pr-14 rounded-xl border-border/30 bg-background/50 focus:bg-background transition-colors"
+              className="min-h-[100px] sm:min-h-[120px] max-h-[200px] resize-none text-base p-4 pr-14 rounded-xl border-border/30 bg-background/50 focus:bg-background transition-colors"
               disabled={isLocked}
-              rows={4}
+              rows={3}
             />
             
             {/* Voice Input Button (inside textarea) */}
