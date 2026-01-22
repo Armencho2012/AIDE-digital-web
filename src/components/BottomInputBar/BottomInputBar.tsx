@@ -120,7 +120,7 @@ export const BottomInputBar = ({
 
   return (
     <div 
-      className={`fixed bottom-0 left-0 right-0 z-50 p-4 bg-card/90 backdrop-blur-sm border-t transition-all ${isDragging ? 'ring-2 ring-primary ring-offset-2 bg-primary/5' : ''}`}
+      className={`fixed inset-0 z-50 flex items-center justify-center pointer-events-none ${isDragging ? 'bg-primary/5' : ''}`}
       onDragOver={handleDragOver}
       onDragEnter={handleDragEnter}
       onDragLeave={handleDragLeave}
@@ -128,7 +128,7 @@ export const BottomInputBar = ({
     >
       {/* Drag overlay */}
       {isDragging && (
-        <div className="absolute inset-0 z-10 flex items-center justify-center bg-primary/10 border-2 border-dashed border-primary">
+        <div className="absolute inset-0 z-10 flex items-center justify-center bg-primary/10 border-2 border-dashed border-primary pointer-events-auto">
           <div className="flex flex-col items-center gap-2 text-primary">
             <Upload className="h-10 w-10" />
             <span className="font-medium">{labels.dropFiles}</span>
@@ -136,53 +136,35 @@ export const BottomInputBar = ({
         </div>
       )}
 
-      <div className="container max-w-5xl mx-auto">
-        <div className="flex items-end gap-3">
-          {/* File Picker Button */}
-          <input
-            type="file"
-            ref={fileInputRef}
-            className="hidden"
-            onChange={handleFileInputChange}
-            accept="image/*,application/pdf"
-            multiple
-          />
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => fileInputRef.current?.click()}
-            disabled={isLocked}
-            className="shrink-0 h-10 w-10"
-            title={labels.attachFile}
-          >
-            <Plus className="h-5 w-5" />
-          </Button>
+      <div className="pointer-events-auto w-full max-w-3xl mx-auto px-4">
+        <div className="bg-card/95 backdrop-blur-xl border border-border/50 rounded-2xl shadow-2xl p-4 sm:p-6 transition-all">
+          {/* Mode Selector - Centered at top */}
+          <div className="flex justify-center mb-4">
+            <ToggleGroup
+              type="single"
+              value={mode}
+              onValueChange={(value) => value && setMode(value as ActionMode)}
+              className="bg-muted/50 rounded-xl p-1.5"
+            >
+              {(['analyze', 'chat', 'podcast', 'course'] as const).map((m) => (
+                <ToggleGroupItem
+                  key={m}
+                  value={m}
+                  aria-label={labels.tooltips[m]}
+                  className="gap-2 px-3 sm:px-4 py-2 text-sm data-[state=on]:bg-primary data-[state=on]:text-primary-foreground rounded-lg transition-all"
+                  disabled={isLocked}
+                >
+                  {modeIcons[m]}
+                  <span className="hidden sm:inline">{labels.modes[m]}</span>
+                </ToggleGroupItem>
+              ))}
+            </ToggleGroup>
+          </div>
 
-          {/* Mode Selector */}
-          <ToggleGroup
-            type="single"
-            value={mode}
-            onValueChange={(value) => value && setMode(value as ActionMode)}
-            className="shrink-0 bg-muted/50 rounded-lg p-1"
-          >
-            {(['analyze', 'chat', 'podcast', 'course'] as const).map((m) => (
-              <ToggleGroupItem
-                key={m}
-                value={m}
-                aria-label={labels.tooltips[m]}
-                className="gap-1.5 px-2 sm:px-3 text-xs sm:text-sm data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
-                disabled={isLocked}
-              >
-                {modeIcons[m]}
-                <span className="hidden sm:inline">{labels.modes[m]}</span>
-              </ToggleGroupItem>
-            ))}
-          </ToggleGroup>
-
-          {/* Text Input Area */}
-          <div className="flex-1 relative">
+          {/* Main Input Area */}
+          <div className="relative">
             {media && media.length > 0 && (
-              <Badge variant="secondary" className="absolute -top-6 left-0 gap-1 text-xs">
+              <Badge variant="secondary" className="absolute -top-3 left-3 gap-1 text-xs z-10">
                 {media.length} {media.length === 1 ? labels.fileAttached : labels.filesAttached}
               </Badge>
             )}
@@ -191,9 +173,9 @@ export const BottomInputBar = ({
               value={text}
               onChange={(e) => setText(e.target.value)}
               onKeyDown={handleKeyDown}
-              className="min-h-[44px] max-h-[120px] resize-none py-2.5 pr-12"
+              className="min-h-[120px] sm:min-h-[140px] max-h-[300px] resize-none text-base sm:text-lg p-4 pr-14 rounded-xl border-border/30 bg-background/50 focus:bg-background transition-colors"
               disabled={isLocked}
-              rows={1}
+              rows={4}
             />
             
             {/* Voice Input Button (inside textarea) */}
@@ -203,32 +185,57 @@ export const BottomInputBar = ({
                 size="icon"
                 onClick={toggleListening}
                 disabled={isLocked}
-                className={`absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 ${isListening ? 'text-destructive animate-pulse' : 'text-muted-foreground hover:text-foreground'}`}
+                className={`absolute right-3 top-3 h-10 w-10 rounded-lg ${isListening ? 'text-destructive bg-destructive/10 animate-pulse' : 'text-muted-foreground hover:text-foreground hover:bg-muted'}`}
                 title={isListening ? labels.listening : labels.voiceInput}
               >
-                {isListening ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
+                {isListening ? <MicOff className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
               </Button>
             )}
           </div>
 
-          {/* Send Button */}
-          <Button
-            onClick={handleSubmit}
-            disabled={isProcessing || (!text.trim() && (!media || media.length === 0)) || isLocked}
-            className="shrink-0 h-10 w-10 sm:w-auto sm:px-4 bg-gradient-to-r from-primary to-accent hover:opacity-90"
-            size="icon"
-          >
-            {isLocked ? (
-              <Lock className="h-5 w-5" />
-            ) : isProcessing ? (
-              <Loader2 className="h-5 w-5 animate-spin" />
-            ) : (
-              <>
-                <Send className="h-5 w-5 sm:mr-2" />
-                <span className="hidden sm:inline">{labels.submit}</span>
-              </>
-            )}
-          </Button>
+          {/* Bottom Actions Row */}
+          <div className="flex items-center justify-between mt-4 gap-3">
+            {/* File Picker Button */}
+            <input
+              type="file"
+              ref={fileInputRef}
+              className="hidden"
+              onChange={handleFileInputChange}
+              accept="image/*,application/pdf"
+              multiple
+            />
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={isLocked}
+              className="shrink-0 h-11 w-11 rounded-xl border-border/50"
+              title={labels.attachFile}
+            >
+              <Plus className="h-5 w-5" />
+            </Button>
+
+            {/* Spacer */}
+            <div className="flex-1" />
+
+            {/* Send Button */}
+            <Button
+              onClick={handleSubmit}
+              disabled={isProcessing || (!text.trim() && (!media || media.length === 0)) || isLocked}
+              className="shrink-0 h-11 px-6 sm:px-8 rounded-xl bg-gradient-to-r from-primary to-accent hover:opacity-90 text-base font-medium shadow-lg shadow-primary/25"
+            >
+              {isLocked ? (
+                <Lock className="h-5 w-5" />
+              ) : isProcessing ? (
+                <Loader2 className="h-5 w-5 animate-spin" />
+              ) : (
+                <>
+                  <Send className="h-5 w-5 sm:mr-2" />
+                  <span className="hidden sm:inline">{labels.submit}</span>
+                </>
+              )}
+            </Button>
+          </div>
         </div>
       </div>
     </div>
