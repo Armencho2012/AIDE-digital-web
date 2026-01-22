@@ -100,35 +100,35 @@ const uiLabels = {
   },
   hy: {
     placeholder: {
-      analyze: 'Տdelays delays delays delays, delays delays delays delays delays delays...',
-      plan: 'Տdelays delays 7-delays delays delays delays delays...',
-      chat: 'Delays delays delays delays delays delays delays delays delays delays...',
-      ask: 'Տdelays delays, delays delays delays delays delays delays delays delays...'
+      analyze: 'Տեղադրեք տեքստ՝ ամփոփագրերով, բառապաշարով և թեստերով ամբողջական վերլուծություն ստանալու համար...',
+      plan: 'Տեղադրեք բովանդակություն՝ 7-օրյա ուսումնական պլան ստեղծելու համար...',
+      chat: 'Հարցրեք ցանկացած թեմայի մասին կամ տեղադրեք տեքստ՝ քննարկելու համար...',
+      ask: 'Տեղադրեք տեքստ, և ես հարցեր կտամ ՁԵԶ՝ ձեր հասկացողությունը ստուգելու համար...'
     },
     buttons: {
-      analyze: 'Delays delays',
-      plan: 'Delays',
-      chat: 'Delays delays',
-      ask: 'Delays delays'
+      analyze: 'Վերլուծել',
+      plan: 'Պլանավորել',
+      chat: 'Զրուցել',
+      ask: 'Հարցնել'
     },
     tooltips: {
-      analyze: 'Delays delays delays delays delays',
-      plan: '7-delays delays delays delays',
-      chat: 'Delays delays delays',
-      ask: 'Delays delays delays delays'
+      analyze: 'Ամբողջական մանկավարժական վերլուծություն',
+      plan: '7-օրյա ուսումնական օրացույց',
+      chat: 'Ընդհանուր հարց ու պատասխան',
+      ask: 'Սոկրատեսյան հարցադրում'
     },
     submit: {
-      analyze: 'Delays delays delays delays',
-      plan: 'Delays delays delays',
-      chat: 'Delays delays delays delays',
-      ask: 'Delays delays delays delays'
+      analyze: 'Վերլուծել տեքստը',
+      plan: 'Ստեղծել պլան',
+      chat: 'Ուղարկել հաղորդագրություն',
+      ask: 'Սկսել թեստը'
     },
-    processing: 'Delays delays...',
-    attachFile: 'Delays',
-    fileAttached: ' delays delays',
-    filesAttached: 'delays delays',
-    upgradeTooltip: 'Delays delays',
-    dropFiles: 'Delays delays delays'
+    processing: 'Մշակվում է...',
+    attachFile: 'Կցել',
+    fileAttached: 'ֆայլ կցված է',
+    filesAttached: 'ֆայլեր կցված են',
+    upgradeTooltip: 'Թարմացրեք շարունակելու համար',
+    dropFiles: 'Գցեք ֆայլերը այստեղ'
   },
   ko: {
     placeholder: {
@@ -231,7 +231,7 @@ export const MultiActionInput = ({
   };
 
   return (
-    <Card 
+    <Card
       className={`p-4 sm:p-6 shadow-lg animate-in fade-in-50 slide-in-from-bottom-4 relative transition-all ${isLocked ? 'opacity-50' : ''} ${isDragging ? 'ring-2 ring-primary ring-offset-2 bg-primary/5' : ''}`}
       onDragOver={handleDragOver}
       onDragEnter={handleDragEnter}
@@ -247,7 +247,7 @@ export const MultiActionInput = ({
           </div>
         </div>
       )}
-      
+
       <div className="space-y-4">
         {/* Mode Toggle */}
         <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">

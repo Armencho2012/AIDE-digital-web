@@ -108,8 +108,8 @@ export const SettingsModal = ({
       await supabase.auth.signOut();
 
       toast({
-        title: "Account Deleted",// TODO: Add translation
-        description: "Your account has been successfully deleted.", // TODO: Add translation
+        title: t('accountDeletedTitle'),
+        description: t('accountDeletedDescription'),
       });
 
       navigate("/");

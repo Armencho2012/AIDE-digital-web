@@ -126,7 +126,7 @@ const Dashboard = () => {
   const [userPlan, setUserPlan] = useState<'free' | 'pro' | 'class'>('free');
   const [isLocked, setIsLocked] = useState(false);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
-  
+
   // Podcast audio state
   const [podcastAudio, setPodcastAudio] = useState<string | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -282,7 +282,7 @@ const Dashboard = () => {
 
     if (!text.trim() && (!media || media.length === 0)) {
       toast({
-        title: language === 'en' ? 'Error' : language === 'ru' ? 'Ошибка' : language === 'hy' ? 'Սխdelays' : '오류',
+        title: language === 'en' ? 'Error' : language === 'ru' ? 'Ошибка' : language === 'hy' ? 'Սխալ' : '오류',
         description: labels.errorNoInput,
         variant: 'destructive'
       });
@@ -291,15 +291,15 @@ const Dashboard = () => {
 
     if (usageCount <= 0 && userPlan !== 'class') {
       toast({
-        title: language === 'en' ? 'Limit Reached' : language === 'ru' ? 'Лимит достигнут' : language === 'hy' ? 'Սdelays' : '한도 도달',
-        description: language === 'en' ? `You have reached your daily limit of ${dailyLimit} analyses` : language === 'ru' ? `Вы достигли дневного лимита в ${dailyLimit} анализов` : language === 'hy' ? `Delays ${dailyLimit}` : `일일 ${dailyLimit}회 분석 한도에 도달했습니다`,
+        title: language === 'en' ? 'Limit Reached' : language === 'ru' ? 'Лимит достигнут' : language === 'hy' ? 'Սահմանաչափը հասել է' : '한도 도달',
+        description: language === 'en' ? `You have reached your daily limit of ${dailyLimit} analyses` : language === 'ru' ? `Вы достигли дневного лимита в ${dailyLimit} анализов` : language === 'hy' ? `Դուք հասել եք ${dailyLimit} վերլուծության օրական սահմանաչափին` : `일일 ${dailyLimit}회 분석 한도에 도달했습니다`,
         variant: 'destructive'
       });
       return;
     }
 
     setIsProcessing(true);
-    
+
     // Clear previous podcast audio
     if (podcastAudio) {
       setPodcastAudio(null);
@@ -331,8 +331,8 @@ const Dashboard = () => {
         setPodcastAudio(audioUrl);
 
         toast({
-          title: language === 'en' ? 'Podcast Ready!' : language === 'ru' ? 'Подкаст готов!' : language === 'hy' ? 'Delays delays!' : '팟캐스트 준비됨!',
-          description: language === 'en' ? 'Your audio podcast is ready to play' : language === 'ru' ? 'Ваш аудио подкаст готов к воспроизведению' : language === 'hy' ? 'Delays delays delays' : '오디오 팟캐스트가 재생 준비되었습니다'
+          title: language === 'en' ? 'Podcast Ready!' : language === 'ru' ? 'Подкаст готов!' : language === 'hy' ? 'Պոդկաստը պատրաստ է!' : '팟캐스트 준비됨!',
+          description: language === 'en' ? 'Your audio podcast is ready to play' : language === 'ru' ? 'Ваш аудио подкаст готов к воспроизведению' : language === 'hy' ? 'Ձեր աուդիո պոդկաստը պատրաստ է լսելու համար' : '오디오 팟캐스트가 재생 준비되었습니다'
         });
 
         // Refetch usage count
@@ -343,14 +343,14 @@ const Dashboard = () => {
       } else if (mode === 'chat') {
         // Handle chat mode - navigate to chat page or show inline chat
         toast({
-          title: language === 'en' ? 'Chat Mode' : language === 'ru' ? 'Режим чата' : language === 'hy' ? 'Delays delays' : '채팅 모드',
-          description: language === 'en' ? 'Opening chat...' : language === 'ru' ? 'Открытие чата...' : language === 'hy' ? 'Delays...' : '채팅 열기...'
+          title: language === 'en' ? 'Chat Mode' : language === 'ru' ? 'Режим чата' : language === 'hy' ? 'Զրուցարանի ռեժիմ' : '채팅 모드',
+          description: language === 'en' ? 'Opening chat...' : language === 'ru' ? 'Открытие чата...' : language === 'hy' ? 'Բացվում է զրուցարանը...' : '채팅 열기...'
         });
         // For now, just show a message - can be expanded to full chat UI
-        
+
       } else {
         // Handle analyze and course modes
-        const mediaPayload = media && media.length > 0 
+        const mediaPayload = media && media.length > 0
           ? { data: media[0].data, mimeType: media[0].mimeType }
           : null;
 
@@ -394,14 +394,14 @@ const Dashboard = () => {
         }
 
         toast({
-          title: language === 'en' ? 'Great job!' : language === 'ru' ? 'Отлично!' : language === 'hy' ? 'Հdelays!' : '훌륭합니다!',
-          description: language === 'en' ? "You're mastering this subject. Keep it up!" : language === 'ru' ? 'Вы осваиваете этот предмет. Продолжайте в том же духе!' : language === 'hy' ? 'Դուdelays delays delays delays delays!' : '이 주제를 잘 이해하고 있습니다. 계속 노력하세요!'
+          title: language === 'en' ? 'Great job!' : language === 'ru' ? 'Отлично!' : language === 'hy' ? 'Հիանալի աշխատանք!' : '훌륭합니다!',
+          description: language === 'en' ? "You're mastering this subject. Keep it up!" : language === 'ru' ? 'Вы осваиваете этот предмет. Продолжайте в том же духе!' : language === 'hy' ? 'Դուք տիրապետում եք այս թեմային: Շարունակեք նույն ոգով!' : '이 주제를 잘 이해하고 있습니다. 계속 노력하세요!'
         });
       }
     } catch (error) {
       console.error('Processing error:', error);
       toast({
-        title: language === 'en' ? 'Error' : language === 'ru' ? 'Ошибка' : language === 'hy' ? 'Սdelays' : '오류',
+        title: language === 'en' ? 'Error' : language === 'ru' ? 'Ошибка' : language === 'hy' ? 'Սխալ' : '오류',
         description: error instanceof Error ? error.message : 'Failed to process request',
         variant: 'destructive'
       });
@@ -489,7 +489,7 @@ const Dashboard = () => {
                 {userPlan === 'free' ? labels.freeTierUsage : userPlan === 'pro' ? 'Pro Plan' : 'Class Plan'}
               </h3>
               <p className="text-xs sm:text-sm text-muted-foreground">
-                {userPlan === 'class' 
+                {userPlan === 'class'
                   ? 'Unlimited analyses'
                   : usageCount > 0
                     ? `${usageCount} ${labels.of} ${dailyLimit} ${labels.remainingAnalyses}`
@@ -537,10 +537,10 @@ const Dashboard = () => {
               </Button>
               <div className="flex-1">
                 <h3 className="font-semibold">
-                  {language === 'en' ? 'Generated Podcast' : language === 'ru' ? 'Сгенерированный подкаст' : language === 'hy' ? 'Delays delays' : '생성된 팟캐스트'}
+                  {language === 'en' ? 'Generated Podcast' : language === 'ru' ? 'Сгенерированный подкаст' : language === 'hy' ? 'Ստեղծված Պոդկաստ' : '생성된 팟캐스트'}
                 </h3>
                 <p className="text-sm text-muted-foreground">
-                  {language === 'en' ? 'Click play to listen' : language === 'ru' ? 'Нажмите для воспроизведения' : language === 'hy' ? 'Delays delays' : '재생하려면 클릭'}
+                  {language === 'en' ? 'Click play to listen' : language === 'ru' ? 'Нажмите для воспроизведения' : language === 'hy' ? 'Սեղմեք լսելու համար' : '재생하려면 클릭'}
                 </p>
               </div>
               <audio
@@ -575,7 +575,7 @@ const Dashboard = () => {
           language={language}
         />
       </div>
-      
+
       {/* Bottom Input Bar */}
       <BottomInputBar
         language={language}

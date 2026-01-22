@@ -68,19 +68,19 @@ const uiLabels = {
     zenMode: 'Режим Дзен'
   },
   hy: {
-    knowledgeMap: 'Գdelays delays delays Քdelays delays',
-    clearMap: 'Մdelays delays Delays',
-    clear: 'Մdelays delays',
-    export: 'Արdelays',
-    save: 'Պdelays delays',
-    reset: 'Վերdelays',
-    mapCleared: 'Քdelays delays delays',
-    mapClearedDesc: 'Գdelays delays քdelays delays delays է:',
-    exportSuccess: 'Delays delays delays',
-    exportSuccessDesc: ' Delays delays delays delays delays է delays delays:',
-    exportFail: 'Delays delays delays',
-    exportFailDesc: 'Չdelays delays delays: Delays delays delays delays:',
-    zenMode: 'Zen Mode'
+    knowledgeMap: 'Գիտելիքների Քարտեզ',
+    clearMap: 'Մաքրել Քարտեզը',
+    clear: 'Մաքրել',
+    export: 'Արտահանել',
+    save: 'Պահպանել',
+    reset: 'Վերականգնել',
+    mapCleared: 'Քարտեզը մաքրված է',
+    mapClearedDesc: 'Գիտելիքների քարտեզը վերականգնվել է սկզբնական վիճակի:',
+    exportSuccess: 'Արտահանումը հաջողվեց',
+    exportSuccessDesc: 'Ձեր գիտելիքների քարտեզը արտահանվել է որպես պատկեր:',
+    exportFail: 'Արտահանումը ձախողվեց',
+    exportFailDesc: 'Չհաջողվեց արտահանել քարտեզը: Խնդրում ենք փորձել կրկին:',
+    zenMode: 'Զեն ռեժիմ'
   },
   ko: {
     knowledgeMap: '지식 맵',
@@ -225,7 +225,7 @@ const createTreeLayout = (
     const depth = depths.get(u) || 0;
     const radius = depth * LAYER_SPACING;
     const midAngle = (startAngle + endAngle) / 2;
-    
+
     positions.set(u, {
       x: Math.cos(midAngle) * radius,
       y: Math.sin(midAngle) * radius
@@ -236,20 +236,20 @@ const createTreeLayout = (
 
     const totalWeight = children.reduce((sum, v) => sum + (subtreeSizes.get(v) || 1), 0);
     const totalSweep = endAngle - startAngle;
-    
+
     // Ensure minimum spacing between children
     const requiredPadding = MIN_NODE_SPACING * (children.length - 1);
     const availableSweep = Math.max(totalSweep - requiredPadding, totalSweep * 0.7);
     const actualPadding = (totalSweep - availableSweep) / Math.max(1, children.length - 1);
-    
+
     let currentAngle = startAngle;
-    
+
     for (let i = 0; i < children.length; i++) {
       const v = children[i];
       const weight = subtreeSizes.get(v) || 1;
       const share = weight / totalWeight;
       const angleWidth = availableSweep * share;
-      
+
       layoutNode(v, currentAngle, currentAngle + angleWidth);
       currentAngle += angleWidth + actualPadding;
     }
@@ -264,7 +264,7 @@ const createTreeLayout = (
     const isActive = node.id === activeNodeId;
     const isHighlighted = highlightedNodes?.has(node.id);
     const isRoot = node.id === rootId;
-    
+
     let size: number;
     if (isRoot) {
       size = 240 * scaleFactor; // Big central node
@@ -296,21 +296,21 @@ const createTreeLayout = (
     const relationKey = `${edge.source}-${edge.target}`;
     const reverseKey = `${edge.target}-${edge.source}`;
     const label = edgeRelationships[relationKey] || edgeRelationships[reverseKey] || 'relates to';
-    
+
     return {
       id: `tree-edge-${index}`,
       source: edge.source,
       target: edge.target,
       type: 'straight',
       label: label,
-      labelStyle: { 
-        fill: 'hsl(265, 80%, 80%)', 
-        fontWeight: 600, 
+      labelStyle: {
+        fill: 'hsl(265, 80%, 80%)',
+        fontWeight: 600,
         fontSize: isZenMode ? 14 : 11,
         textShadow: '0 1px 3px hsl(0 0% 0% / 0.8)',
       },
-      labelBgStyle: { 
-        fill: 'hsl(265, 40%, 15%)', 
+      labelBgStyle: {
+        fill: 'hsl(265, 40%, 15%)',
         fillOpacity: 0.9,
         rx: 4,
         ry: 4,
@@ -337,36 +337,36 @@ export const KnowledgeMap = ({ onNodeClick, activeNodeId, data, highlightedNodes
   const flowRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [isZenMode, setIsZenMode] = useState(false);
-  const [selectedNode, setSelectedNode] = useState<{ 
+  const [selectedNode, setSelectedNode] = useState<{
     id: string;
-    label: string; 
-    category: string; 
+    label: string;
+    category: string;
     description?: string;
     details?: string[];
     connections?: string[];
   } | null>(null);
-  
+
   // Edit modal state
   const [editingNode, setEditingNode] = useState<{ id: string; label: string } | null>(null);
-  
+
   // Persistence: track if user has made changes
   const [hasUserChanges, setHasUserChanges] = useState(false);
   const [userNodePositions, setUserNodePositions] = useState<Map<string, { x: number; y: number }>>(new Map());
   const [userNodeLabels, setUserNodeLabels] = useState<Map<string, string>>(new Map());
-  
+
   const labels = uiLabels[language] || uiLabels.en;
 
   // Calculate layout with user modifications applied
   const layoutResult = useMemo(() => {
     const sourceNodes = data?.nodes || initialNodes;
     const sourceEdges = data?.edges || initialEdges;
-    
+
     // Apply user label changes
     const modifiedNodes = sourceNodes.map(node => ({
       ...node,
       label: userNodeLabels.get(node.id) || node.label,
     }));
-    
+
     return createTreeLayout(modifiedNodes, sourceEdges, activeNodeId, highlightedNodes, isZenMode);
   }, [data, activeNodeId, highlightedNodes, isZenMode, userNodeLabels]);
 
@@ -396,7 +396,7 @@ export const KnowledgeMap = ({ onNodeClick, activeNodeId, data, highlightedNodes
   // Handle node position changes (drag)
   const handleNodesChange = useCallback((changes: NodeChange<Node>[]) => {
     onNodesChange(changes);
-    
+
     // Track position changes for persistence
     changes.forEach(change => {
       if (change.type === 'position' && change.position) {
@@ -428,12 +428,12 @@ export const KnowledgeMap = ({ onNodeClick, activeNodeId, data, highlightedNodes
     });
     setHasUserChanges(true);
     setEditingNode(null);
-    
+
     // Update the selected node if it's the one being edited
     setSelectedNode(prev => prev?.id === nodeId ? { ...prev, label: newLabel } : prev);
-    
+
     // Update nodes state directly
-    setNodes(nds => nds.map(n => 
+    setNodes(nds => nds.map(n =>
       n.id === nodeId ? { ...n, data: { ...n.data, label: newLabel } } : n
     ));
   }, [setNodes]);
@@ -442,13 +442,13 @@ export const KnowledgeMap = ({ onNodeClick, activeNodeId, data, highlightedNodes
   const handleNodeClick = useCallback((_event: React.MouseEvent, node: Node) => {
     const nodeData = node.data as { label: string; category: string; description?: string };
     const nodeId = node.id;
-    
+
     // Get description and details from nodeDescriptions
-    const nodeInfo = nodeDescriptions[nodeId] || { 
+    const nodeInfo = nodeDescriptions[nodeId] || {
       description: `Learn more about "${nodeData.label}"`,
       details: []
     };
-    
+
     // Find connected nodes
     const sourceNodes = data?.nodes || initialNodes;
     const currentNode = sourceNodes.find(n => n.id === nodeId);
@@ -457,7 +457,7 @@ export const KnowledgeMap = ({ onNodeClick, activeNodeId, data, highlightedNodes
       const connNode = sourceNodes.find(n => n.id === connId);
       return connNode?.label || connId;
     });
-    
+
     setSelectedNode({
       id: nodeId,
       label: userNodeLabels.get(nodeId) || nodeData.label,
@@ -532,7 +532,7 @@ export const KnowledgeMap = ({ onNodeClick, activeNodeId, data, highlightedNodes
 
     document.addEventListener('fullscreenchange', handleFullscreenChange);
     document.addEventListener('keydown', handleKeyDown);
-    
+
     return () => {
       document.removeEventListener('fullscreenchange', handleFullscreenChange);
       document.removeEventListener('keydown', handleKeyDown);
@@ -627,11 +627,10 @@ export const KnowledgeMap = ({ onNodeClick, activeNodeId, data, highlightedNodes
                   size={1}
                 />
                 <Controls
-                  className={`!backdrop-blur-sm !border-border !rounded-lg !shadow-lg ${
-                    isZenMode 
-                      ? '!bg-card/95 [&>button]:!w-10 [&>button]:!h-10 [&>button]:!text-base' 
+                  className={`!backdrop-blur-sm !border-border !rounded-lg !shadow-lg ${isZenMode
+                      ? '!bg-card/95 [&>button]:!w-10 [&>button]:!h-10 [&>button]:!text-base'
                       : '!bg-card/80'
-                  }`}
+                    }`}
                   showInteractive={false}
                   style={{
                     boxShadow: isZenMode ? '0 10px 40px -10px hsl(0 0% 0% / 0.5)' : undefined,
@@ -692,7 +691,7 @@ export const KnowledgeMap = ({ onNodeClick, activeNodeId, data, highlightedNodes
 
                 {/* Title */}
                 <Panel position="top-left">
-                  <motion.div 
+                  <motion.div
                     layout
                     className="flex items-center gap-2 bg-card/90 backdrop-blur-sm border border-border rounded-lg px-2 sm:px-3 py-1.5 sm:py-2 shadow-md"
                   >
@@ -781,8 +780,8 @@ export const KnowledgeMap = ({ onNodeClick, activeNodeId, data, highlightedNodes
                     </div>
                     <div className="flex flex-wrap gap-2">
                       {selectedNode.connections.map((conn, index) => (
-                        <span 
-                          key={index} 
+                        <span
+                          key={index}
                           className="text-xs px-2.5 py-1 rounded-full bg-purple-500/20 text-purple-200 border border-purple-500/30"
                         >
                           {conn}

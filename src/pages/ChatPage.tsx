@@ -26,7 +26,8 @@ const uiLabels = {
     thinking: 'Thinking...',
     error: 'Failed to get response. Please try again.',
     welcome: 'Hi! I can answer questions about this content. What would you like to know?',
-    backToContent: 'Back to Content'
+    backToContent: 'Back to Content',
+    knowledgeMap: 'Knowledge Map'
   },
   ru: {
     title: 'ИИ Чат',
@@ -35,7 +36,8 @@ const uiLabels = {
     thinking: 'Думаю...',
     error: 'Не удалось получить ответ. Попробуйте снова.',
     welcome: 'Привет! Я могу ответить на вопросы об этом контенте. Что бы вы хотели узнать?',
-    backToContent: 'Назад к контенту'
+    backToContent: 'Назад к контенту',
+    knowledgeMap: 'Карта Знаний'
   },
   hy: {
     title: 'AI Զրուցարան',
@@ -44,7 +46,8 @@ const uiLabels = {
     thinking: 'Մտածում եմ...',
     error: 'Չհաջողվեց պատասխան ստանալ: Խնդրում ենք կրկին փորձել:',
     welcome: 'Բարև: Ես կարող եմ պատասխանել այս բովանդակության վերաբերյալ հարցերին: Ի՞նչ կցանկանայիք իմանալ:',
-    backToContent: 'Վերադառնալ բովանդակությանը'
+    backToContent: 'Վերադառնալ բովանդակությանը',
+    knowledgeMap: 'Գիտելիքների Քարտեզ'
   },
   ko: {
     title: 'AI 채팅',
@@ -53,7 +56,8 @@ const uiLabels = {
     thinking: '생각 중...',
     error: '응답을 받지 못했습니다. 다시 시도하세요.',
     welcome: '안녕하세요! 이 콘텐츠에 대한 질문에 답변해 드릴 수 있습니다. 무엇을 알고 싶으신가요?',
-    backToContent: '콘텐츠로 돌아가기'
+    backToContent: '콘텐츠로 돌아가기',
+    knowledgeMap: '지식 맵'
   }
 };
 
@@ -247,7 +251,7 @@ const ChatPage = () => {
               className="gap-2 hidden lg:flex"
             >
               <Map className="h-4 w-4" />
-              Knowledge Map
+              {labels.knowledgeMap}
             </Button>
           </div>
         </div>

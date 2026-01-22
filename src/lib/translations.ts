@@ -22,7 +22,9 @@ export type TranslationKey =
     | 'deleteConfirmDescription'
     | 'deleteConfirmButton'
     | 'cancel'
-    | 'deleting';
+    | 'deleting'
+    | 'accountDeletedTitle'
+    | 'accountDeletedDescription';
 
 export const translations: Record<Language, Record<TranslationKey, string>> = {
     en: {
@@ -47,7 +49,9 @@ export const translations: Record<Language, Record<TranslationKey, string>> = {
         deleteConfirmDescription: "Are you sure you want to delete your account? This action cannot be undone. All your data, including your profile and usage history, will be permanently deleted.",
         deleteConfirmButton: "Delete Account",
         cancel: "Cancel",
-        deleting: "Deleting..."
+        deleting: "Deleting...",
+        accountDeletedTitle: "Account Deleted",
+        accountDeletedDescription: "Your account has been successfully deleted."
     },
     ru: {
         welcome: "Добро пожаловать",
@@ -71,7 +75,9 @@ export const translations: Record<Language, Record<TranslationKey, string>> = {
         deleteConfirmDescription: "Вы уверены, что хотите удалить свой аккаунт? Это действие нельзя отменить. Все ваши данные, включая профиль и историю использования, будут безвозвратно удалены.",
         deleteConfirmButton: "Удалить аккаунт",
         cancel: "Отмена",
-        deleting: "Удаление..."
+        deleting: "Удаление...",
+        accountDeletedTitle: "Аккаунт удален",
+        accountDeletedDescription: "Ваш аккаунт был успешно удален."
     },
     hy: {
         welcome: "Բարի գալուստ",
@@ -95,7 +101,9 @@ export const translations: Record<Language, Record<TranslationKey, string>> = {
         deleteConfirmDescription: "Դուք համոզված եք, որ ցանկանում եք ջնջել ձեր հաշիվը: Այս գործողությունը չի կարող հետարկվել: Ձեր բոլոր տվյալները, ներառյալ ձեր պրոֆիլը և օգտագործման պատմությունը, կմշտապես ջնջվեն:",
         deleteConfirmButton: "Ջնջել հաշիվը",
         cancel: "Չեղարկել",
-        deleting: "Ջնջվում է..."
+        deleting: "Ջնջվում է...",
+        accountDeletedTitle: "Հաշիվը ջնջված է",
+        accountDeletedDescription: "Ձեր հաշիվը հաջողությամբ ջնջվել է:"
     },
     ko: {
         welcome: "환영합니다",
@@ -119,6 +127,8 @@ export const translations: Record<Language, Record<TranslationKey, string>> = {
         deleteConfirmDescription: "계정을 삭제하시겠습니까? 이 작업은 취소할 수 없습니다. 프로필 및 사용 기록을 포함한 모든 데이터가 영구적으로 삭제됩니다.",
         deleteConfirmButton: "계정 삭제",
         cancel: "취소",
-        deleting: "삭제 중..."
+        deleting: "삭제 중...",
+        accountDeletedTitle: "계정이 삭제되었습니다",
+        accountDeletedDescription: "계정이 성공적으로 삭제되었습니다."
     }
 };

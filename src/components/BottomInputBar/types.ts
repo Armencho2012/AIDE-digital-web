@@ -75,32 +75,32 @@ export const uiLabels = {
   },
   hy: {
     placeholder: {
-      analyze: 'Տdelays',
-      chat: 'Հdelays delays delays...',
-      podcast: 'Մdelays delays delays delays delays...',
-      course: 'Տdelays delays delays delays...'
+      analyze: 'Տեղադրեք տեքստ կամ կցեք ֆայլեր վերլուծության համար...',
+      chat: 'Հարց տվեք ցանկացած թեմայի շուրջ...',
+      podcast: 'Մուտքագրեք թեմա պոդկաստի քննարկում ստեղծելու համար...',
+      course: 'Տեղադրեք դասընթացի նյութեր կառուցվածքային ուսումնական պլանի համար...'
     },
     modes: {
-      analyze: 'Delays',
-      chat: 'Delays',
-      podcast: 'Delays',
-      course: 'Delays'
+      analyze: 'Վերլուծել',
+      chat: 'Զրուցարան',
+      podcast: 'Պոդկաստ',
+      course: 'Դասընթաց'
     },
     tooltips: {
-      analyze: 'Delays delays delays',
-      chat: 'Delays delays',
-      podcast: 'Delays delays delays',
-      course: 'Delays delays delays'
+      analyze: 'Ամբողջական մանկավարժական վերլուծություն',
+      chat: 'Ընդհանուր հարց ու պատասխան',
+      podcast: 'Ստեղծել աուդիո պոդկաստ',
+      course: 'Կառուցվածքային դասընթացի պլան'
     },
-    submit: 'Delays',
-    processing: 'Delays...',
-    attachFile: 'Delays delays',
-    fileAttached: 'delays delays',
-    filesAttached: 'delays delays',
-    upgradeTooltip: 'Delays delays',
-    dropFiles: 'Delays delays delays',
-    voiceInput: 'Delays delays',
-    listening: 'Delays...'
+    submit: 'Ուղարկել',
+    processing: 'Մշակվում է...',
+    attachFile: 'Կցել ֆայլեր',
+    fileAttached: 'ֆայլ կցված է',
+    filesAttached: 'ֆայլեր կցված են',
+    upgradeTooltip: 'Թարմացրեք շարունակելու համար',
+    dropFiles: 'Գցեք ֆայլերը այստեղ',
+    voiceInput: 'Ձայնային մուտքագրում',
+    listening: 'Լսում եմ...'
   },
   ko: {
     placeholder: {
