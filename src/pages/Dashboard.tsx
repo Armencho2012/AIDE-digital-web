@@ -113,6 +113,7 @@ const uiLabels = {
 };
 
 
+// Daily limits by plan
 const DAILY_LIMIT_FREE = 1;
 const DAILY_LIMIT_PRO = 50;
 
