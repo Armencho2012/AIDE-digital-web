@@ -132,7 +132,7 @@ const Dashboard = () => {
   const [podcastAudio, setPodcastAudio] = useState<string | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  
+
   // Chat state
   const [showChat, setShowChat] = useState(false);
   const [chatInitialMessage, setChatInitialMessage] = useState<string | undefined>();
@@ -428,7 +428,7 @@ const Dashboard = () => {
 
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/20 pb-64">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/20 pb-96">
       <div className="container max-w-5xl mx-auto px-4 py-8">
         {/* Header */}
         <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 sm:mb-8 animate-in fade-in-50 slide-in-from-top-4">
