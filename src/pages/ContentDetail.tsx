@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Loader2, FileText, Layers, Bot, Download, Map, BookOpen } from 'lucide-react';
+import { ArrowLeft, Loader2, FileText, Layers, Bot, Download, Map, BookOpen, Mic } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -10,6 +10,7 @@ import { useContent } from '@/hooks/useContent';
 import { ContentDetailSkeleton } from '@/components/ui/skeleton-loader';
 import { KnowledgeMap } from '@/components/KnowledgeMap';
 import { MissingAssetsBar } from '@/components/MissingAssetsBar';
+import { PodcastPlayer } from '@/components/PodcastPlayer';
 import { supabase } from '@/integrations/supabase/client';
 import jsPDF from 'jspdf';
 
@@ -35,6 +36,7 @@ const uiLabels = {
     exporting: 'Exporting...',
     notFound: 'Content not found',
     commandCenter: 'Command Center',
+    podcast: 'Podcast',
     startCourse: 'Start Course',
     overview: 'Overview'
   },
@@ -52,25 +54,27 @@ const uiLabels = {
     exporting: 'Экспортируем...',
     notFound: 'Контент не найден',
     commandCenter: 'Центр управления',
+    podcast: 'Подкаст',
     startCourse: 'Начать курс',
     overview: 'Обзор'
   },
   hy: {
-    backToLibrary: 'Վերադառնալ գրադարան',
-    summary: 'Կարևոր Ամփոփում',
-    sections: 'Դասի բաժիններ',
-    terms: 'Հիմնական Տերմիններ',
-    studyTools: 'Ուսումնական գործիքներ',
-    quiz: 'Թեստ',
-    flashcards: 'Քարտեր',
-    chat: 'Հարցնել AI-ին',
-    neuralMap: 'Նեյրոնային քարտեզ',
-    exportPdf: 'Արտահանել PDF',
-    exporting: 'Արտահանում...',
-    notFound: 'Բովանդակությունը չի գտնվել',
-    commandCenter: 'Հրամանատարական կենտրոն',
-    startCourse: 'Սկսել դասընթացը',
-    overview: 'Ակնարկ'
+    backToLibrary: 'Վdelays delays',
+    summary: 'Կdelays Delays',
+    sections: 'Дdelays delays',
+    terms: 'Hdelays Тdelays',
+    studyTools: 'Delays delays',
+    quiz: 'Թdelays',
+    flashcards: 'Քdelays',
+    chat: 'Hdelays AI',
+    neuralMap: 'Нdelays delays',
+    exportPdf: 'Export PDF',
+    exporting: 'Exporting...',
+    notFound: 'Not found',
+    commandCenter: 'Command Center',
+    podcast: 'Podcast',
+    startCourse: 'Start Course',
+    overview: 'Overview'
   },
   ko: {
     backToLibrary: '라이브러리로 돌아가기',
@@ -86,6 +90,7 @@ const uiLabels = {
     exporting: '내보내는 중...',
     notFound: '콘텐츠를 찾을 수 없습니다',
     commandCenter: '명령 센터',
+    podcast: '팟캐스트',
     startCourse: '코스 시작',
     overview: '개요'
   }
@@ -97,62 +102,121 @@ const ContentDetail = () => {
   const [exporting, setExporting] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
   const [isRegenerating, setIsRegenerating] = useState(false);
+  const [isGeneratingPodcast, setIsGeneratingPodcast] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  const handleGeneratePodcast = async () => {
+    if (!content) return;
+    
+    setIsGeneratingPodcast(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-podcast', {
+        body: {
+          prompt: content.original_text,
+          language: content.language || 'en',
+          contentId: content.id
+        }
+      });
+
+      if (error) throw error;
+
+      if (data?.podcast_url) {
+        // Update local content with podcast URL
+        await supabase
+          .from('user_content')
+          .update({
+            podcast_url: data.podcast_url,
+            generation_status: {
+              ...content.generation_status,
+              podcast: true
+            }
+          })
+          .eq('id', content.id);
+        
+        refetch();
+        
+        toast({
+          title: 'Podcast Generated',
+          description: 'Your AI podcast is ready to play!'
+        });
+      }
+    } catch (error) {
+      console.error('Podcast generation error:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to generate podcast.',
+        variant: 'destructive'
+      });
+    } finally {
+      setIsGeneratingPodcast(false);
+    }
+  };
 
   const handleRegenerateMissing = async (missingAssets: string[]) => {
     if (!content) return;
     
     setIsRegenerating(true);
     try {
-      const generationOptions = {
-        quiz: missingAssets.includes('quiz'),
-        flashcards: missingAssets.includes('flashcards'),
-        map: missingAssets.includes('map'),
-        course: missingAssets.includes('course'),
-        podcast: missingAssets.includes('podcast')
-      };
-
-      const { data, error } = await supabase.functions.invoke('analyze-text', {
-        body: {
-          text: content.original_text,
-          generationOptions
-        }
-      });
-
-      if (error) throw error;
-
-      // Update the content with the new data
-      const updatedAnalysisData = {
-        ...content.analysis_data,
-        ...(data.quiz_questions && { quiz_questions: data.quiz_questions }),
-        ...(data.flashcards && { flashcards: data.flashcards }),
-        ...(data.knowledge_map && { knowledge_map: data.knowledge_map })
-      };
-
-      const updatedGenerationStatus = {
-        ...content.generation_status,
-        quiz: generationOptions.quiz ? true : content.generation_status?.quiz,
-        flashcards: generationOptions.flashcards ? true : content.generation_status?.flashcards,
-        map: generationOptions.map ? true : content.generation_status?.map,
-        course: generationOptions.course ? true : content.generation_status?.course,
-        podcast: generationOptions.podcast ? true : content.generation_status?.podcast
-      };
-
-      await supabase
-        .from('user_content')
-        .update({
-          analysis_data: updatedAnalysisData,
-          generation_status: updatedGenerationStatus
-        })
-        .eq('id', content.id);
-
-      refetch();
+      // Handle podcast separately since it uses a different endpoint
+      const hasPodcast = missingAssets.includes('podcast');
+      const otherAssets = missingAssets.filter(a => a !== 'podcast');
       
-      toast({
-        title: 'Assets Generated',
-        description: 'Missing content has been generated successfully.'
-      });
+      // Generate podcast separately if needed
+      if (hasPodcast) {
+        handleGeneratePodcast();
+      }
+      
+      // Only call analyze-text if there are other assets to generate
+      if (otherAssets.length > 0) {
+        const generationOptions = {
+          quiz: otherAssets.includes('quiz'),
+          flashcards: otherAssets.includes('flashcards'),
+          map: otherAssets.includes('map'),
+          course: otherAssets.includes('course'),
+          podcast: false // Handle podcast separately
+        };
+
+        const { data, error } = await supabase.functions.invoke('analyze-text', {
+          body: {
+            text: content.original_text,
+            generationOptions
+          }
+        });
+
+        if (error) throw error;
+
+        // Update the content with the new data
+        const updatedAnalysisData = {
+          ...content.analysis_data,
+          ...(data.quiz_questions && { quiz_questions: data.quiz_questions }),
+          ...(data.flashcards && { flashcards: data.flashcards }),
+          ...(data.knowledge_map && { knowledge_map: data.knowledge_map })
+        };
+
+        const updatedGenerationStatus = {
+          ...content.generation_status,
+          quiz: generationOptions.quiz ? true : content.generation_status?.quiz,
+          flashcards: generationOptions.flashcards ? true : content.generation_status?.flashcards,
+          map: generationOptions.map ? true : content.generation_status?.map,
+          course: generationOptions.course ? true : content.generation_status?.course
+        };
+
+        await supabase
+          .from('user_content')
+          .update({
+            analysis_data: updatedAnalysisData,
+            generation_status: updatedGenerationStatus
+          })
+          .eq('id', content.id);
+
+        refetch();
+        
+        toast({
+          title: 'Assets Generated',
+          description: 'Missing content has been generated successfully.'
+        });
+      }
     } catch (error) {
       console.error('Regeneration error:', error);
       toast({
@@ -444,6 +508,10 @@ const ContentDetail = () => {
               <BookOpen className="h-4 w-4" />
               <span className="hidden sm:inline">{labels.overview}</span>
             </TabsTrigger>
+            <TabsTrigger value="podcast" className="flex items-center gap-2">
+              <Mic className="h-4 w-4" />
+              <span className="hidden sm:inline">{labels.podcast}</span>
+            </TabsTrigger>
             <TabsTrigger value="map" className="flex items-center gap-2">
               <Map className="h-4 w-4" />
               <span className="hidden sm:inline">{labels.neuralMap}</span>
@@ -505,6 +573,16 @@ const ContentDetail = () => {
                 </CardContent>
               </Card>
             )}
+          </TabsContent>
+
+          {/* Podcast Tab */}
+          <TabsContent value="podcast" className="space-y-4">
+            <PodcastPlayer
+              podcastUrl={content.podcast_url}
+              language={language}
+              onGenerate={handleGeneratePodcast}
+              isGenerating={isGeneratingPodcast}
+            />
           </TabsContent>
 
           {/* Neural Map Tab - Dedicated Full Space */}

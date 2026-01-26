@@ -1,47 +1,11 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { encode as base64Encode } from "https://deno.land/std@0.168.0/encoding/base64.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
-
-// WAV header helper for reconstructing audio from raw PCM data
-function createWavHeader(dataLength: number, options: { numChannels: number; sampleRate: number; bitsPerSample: number }): Uint8Array {
-  const { numChannels, sampleRate, bitsPerSample } = options;
-  const byteRate = sampleRate * numChannels * bitsPerSample / 8;
-  const blockAlign = numChannels * bitsPerSample / 8;
-  
-  const buffer = new ArrayBuffer(44);
-  const view = new DataView(buffer);
-  
-  // "RIFF" chunk descriptor
-  writeString(view, 0, 'RIFF');
-  view.setUint32(4, 36 + dataLength, true);
-  writeString(view, 8, 'WAVE');
-  
-  // "fmt " sub-chunk
-  writeString(view, 12, 'fmt ');
-  view.setUint32(16, 16, true); // Subchunk1Size (16 for PCM)
-  view.setUint16(20, 1, true);  // AudioFormat (1 for PCM)
-  view.setUint16(22, numChannels, true);
-  view.setUint32(24, sampleRate, true);
-  view.setUint32(28, byteRate, true);
-  view.setUint16(32, blockAlign, true);
-  view.setUint16(34, bitsPerSample, true);
-  
-  // "data" sub-chunk
-  writeString(view, 36, 'data');
-  view.setUint32(40, dataLength, true);
-  
-  return new Uint8Array(buffer);
-}
-
-function writeString(view: DataView, offset: number, str: string): void {
-  for (let i = 0; i < str.length; i++) {
-    view.setUint8(offset + i, str.charCodeAt(i));
-  }
-}
 
 // Helper function to get user's subscription plan
 async function getUserPlan(supabaseAdmin: any, userId: string): Promise<string> {
@@ -62,6 +26,16 @@ async function getUserPlan(supabaseAdmin: any, userId: string): Promise<string> 
   return isActive ? data.plan_type : 'free';
 }
 
+// Helper to decode base64 to Uint8Array
+function base64ToUint8Array(base64: string): Uint8Array {
+  const binaryString = atob(base64);
+  const bytes = new Uint8Array(binaryString.length);
+  for (let i = 0; i < binaryString.length; i++) {
+    bytes[i] = binaryString.charCodeAt(i);
+  }
+  return bytes;
+}
+
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -80,7 +54,7 @@ Deno.serve(async (req: Request) => {
       global: { headers: { Authorization: authHeader } },
     });
 
-    // Admin client for logging usage (bypasses RLS)
+    // Admin client for storage and DB operations (bypasses RLS)
     const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey);
 
     const {
@@ -94,7 +68,7 @@ Deno.serve(async (req: Request) => {
     console.log(`User ${user.id} has plan: ${userPlan}`);
 
     const body = await req.json().catch(() => ({}));
-    const { prompt, language = 'en' } = body;
+    const { prompt, language = 'en', contentId } = body;
 
     if (!prompt?.trim()) {
       throw new Error("No topic provided for podcast generation");
@@ -109,9 +83,12 @@ Deno.serve(async (req: Request) => {
                                 language === 'hy' ? 'Armenian' : 
                                 language === 'ko' ? 'Korean' : 'English';
 
+    // Truncate prompt to avoid exceeding token limits
+    const truncatedPrompt = prompt.substring(0, 4000);
+
     const dialoguePrompt = `You are creating an educational podcast dialogue between two speakers discussing the following topic. The conversation should be informative, engaging, and natural-sounding.
 
-Topic: ${prompt}
+Topic: ${truncatedPrompt}
 
 Instructions:
 - Create a dialogue between Speaker 1 and Speaker 2
@@ -119,14 +96,14 @@ Instructions:
 - Speaker 2 is the expert who provides detailed explanations
 - Make the conversation flow naturally with appropriate reactions and follow-up questions
 - Include interesting facts, examples, and analogies to make the content accessible
-- The dialogue should be 3-5 minutes when spoken
+- The dialogue should be 2-3 minutes when spoken
 - Respond in ${languageInstruction}
 
 Begin the podcast dialogue now:`;
 
-    console.log(`Generating podcast for user ${user.id}, topic: ${prompt.substring(0, 50)}...`);
+    console.log(`Generating podcast for user ${user.id}, topic: ${truncatedPrompt.substring(0, 50)}...`);
 
-    // Call Gemini TTS API with multi-speaker configuration (using flash for better quota limits)
+    // Call Gemini TTS API with multi-speaker configuration
     const ttsUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`;
     
     const ttsPayload = {
@@ -187,23 +164,77 @@ Begin the podcast dialogue now:`;
 
     const audioBase64 = audioPart.inlineData.data;
     const audioMimeType = audioPart.inlineData.mimeType || 'audio/wav';
+    
+    // Decode base64 to bytes
+    const audioBytes = base64ToUint8Array(audioBase64);
+    console.log(`Audio size: ${audioBytes.length} bytes`);
 
-    // Log usage with admin client (bypasses RLS)
-    const { error: logError } = await supabaseAdmin.from("usage_logs").insert({
-      user_id: user.id,
-      action_type: "podcast_generation",
-    });
+    // Generate unique filename
+    const timestamp = Date.now();
+    const extension = audioMimeType.includes('wav') ? 'wav' : 'mp3';
+    const filename = `${user.id}/${timestamp}.${extension}`;
 
-    if (logError) {
-      console.error("Error logging usage:", logError);
-    } else {
-      console.log(`Podcast usage logged for user ${user.id}`);
+    // Upload to storage
+    const { data: uploadData, error: uploadError } = await supabaseAdmin.storage
+      .from('podcasts')
+      .upload(filename, audioBytes, {
+        contentType: audioMimeType,
+        upsert: true
+      });
+
+    if (uploadError) {
+      console.error('Storage upload error:', uploadError);
+      throw new Error('Failed to save podcast audio');
     }
 
-    // Return audio data as base64 for frontend to decode
+    // Get public URL
+    const { data: urlData } = supabaseAdmin.storage
+      .from('podcasts')
+      .getPublicUrl(filename);
+
+    const podcastUrl = urlData.publicUrl;
+    console.log(`Podcast uploaded: ${podcastUrl}`);
+
+    // Update user_content if contentId provided
+    if (contentId) {
+      // First get existing generation_status
+      const { data: contentData } = await supabaseAdmin
+        .from('user_content')
+        .select('generation_status')
+        .eq('id', contentId)
+        .single();
+
+      const existingStatus = contentData?.generation_status || {};
+      
+      const { error: updateError } = await supabaseAdmin
+        .from('user_content')
+        .update({
+          podcast_url: podcastUrl,
+          generation_status: {
+            ...existingStatus,
+            podcast: true
+          }
+        })
+        .eq('id', contentId);
+
+      if (updateError) {
+        console.error('Error updating content:', updateError);
+      } else {
+        console.log(`Content ${contentId} updated with podcast URL`);
+      }
+    }
+
+    // Log usage (fire and forget)
+    supabaseAdmin.from("usage_logs").insert({
+      user_id: user.id,
+      action_type: "podcast_generation",
+    }).then(({ error }) => {
+      if (error) console.error("Error logging usage:", error);
+    });
+
+    // Return podcast URL
     return new Response(JSON.stringify({
-      audio: audioBase64,
-      mimeType: audioMimeType,
+      podcast_url: podcastUrl,
       success: true
     }), {
       status: 200,
