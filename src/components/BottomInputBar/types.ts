@@ -106,43 +106,43 @@ export const uiLabels = {
   },
   hy: {
     placeholder: {
-      analyze: 'Տdelays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delaysays...',
-      chat: 'Hdelays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delaysays...',
-      podcast: 'Мdelays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delaysays...',
-      course: 'Тdelays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delaysays...'
+      analyze: 'Տեղադրեք տեքստ կամ կցեք ֆայլեր վերլուծության համար...',
+      chat: 'Հարցրեք ցանկացած թեմայի մասին...',
+      podcast: 'Մուտքագրեք թեմա պոդկաստի քննարկում ստեղծելու համար...',
+      course: 'Տեղադրեք դասընթացի նյութերը կառուցվածքային ուսումնական ծրագրի համար...'
     },
     primaryModes: {
-      analyse: 'Vdelays',
-      chat: 'Zdelays'
+      analyse: 'Վերլուծել',
+      chat: 'Զրուցարան'
     },
     modes: {
-      analyze: 'Vdelays',
-      chat: 'Zdelays',
-      podcast: 'Pdelays',
-      course: 'Ddelays'
+      analyze: 'Վերլուծել',
+      chat: 'Զրուցարան',
+      podcast: 'Պոդկաստ',
+      course: 'Դասընթաց'
     },
     generationOptions: {
-      quiz: 'Tdelays',
-      flashcards: 'Qdelays',
-      map: 'Qdelays',
-      course: 'Ddelays',
-      podcast: 'Pdelays'
+      quiz: 'Թեստ',
+      flashcards: 'Քարտեր',
+      map: 'Քարտեզ',
+      course: 'Դասընթաց',
+      podcast: 'Պոդկաստ'
     },
     tooltips: {
-      analyze: 'Aаmbdelays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delaysays',
-      chat: 'Ydelays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delaysays',
-      podcast: 'Sdelays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delaysays',
-      course: 'Kdelays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delaysays'
+      analyze: 'Լիարժեք մանկավարժական վերլուծություն',
+      chat: 'Ընդհանուր հարց ու պատասխան',
+      podcast: 'Ստեղծել աուդիո պոդկաստ',
+      course: 'Կառուցվածքային դասընթացի ծրագիր'
     },
-    submit: 'Ughdelays',
-    processing: 'Mdelays delays...',
-    attachFile: 'Kdelays delays delays delays delaysays',
-    fileAttached: 'fdelays delays delays delays delays delaysays',
-    filesAttached: 'fdelays delays delays delays delays delays delaysays',
-    upgradeTooltip: 'Tdelays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delaysays',
-    dropFiles: 'Gdelays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delaysays',
-    voiceInput: 'Dzdelays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delays delaysays',
-    listening: 'Lsdelays delays...'
+    submit: 'Ուղարկել',
+    processing: 'Մշակվում է...',
+    attachFile: 'Կցել ֆայլեր',
+    fileAttached: 'ֆայլ կցված է',
+    filesAttached: 'ֆայլեր կցված են',
+    upgradeTooltip: 'Թարմացրեք շարունակելու համար',
+    dropFiles: 'Գցեք ֆայլերը այստեղ',
+    voiceInput: 'Ձայնային մուտքագրում',
+    listening: 'Լսում եմ...'
   },
   ko: {
     placeholder: {

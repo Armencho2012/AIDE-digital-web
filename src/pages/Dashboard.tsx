@@ -85,7 +85,7 @@ const uiLabels = {
     library: 'Գրադարան',
     upgrade: 'Թարմացնել',
     profile: 'Պրոֆիլ',
-    of: '/' // using clean separator or 'hy' correct form 'ից' but logic is formatted {count} of {limit}.
+    of: '/'
   },
   ko: {
     title: 'Aide',
