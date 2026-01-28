@@ -11,6 +11,9 @@ import { ActionMode, MediaFile, GenerationOptions } from "@/components/BottomInp
 import { ChatPanel } from "@/components/ChatPanel";
 import { useToast } from "@/hooks/use-toast";
 import { useSettings } from "@/hooks/useSettings";
+import { useAuth } from "@/hooks/useAuth";
+import { usePodcast } from "@/hooks/usePodcast";
+import { useUsageLimit } from "@/hooks/useUsageLimit";
 import { supabase } from "@/integrations/supabase/client";
 import type { User } from "@supabase/supabase-js";
 
@@ -119,90 +122,36 @@ const DAILY_LIMIT_FREE = 1;
 const DAILY_LIMIT_PRO = 50;
 
 const Dashboard = () => {
-  const [user, setUser] = useState<User | null>(null);
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  
+  // Use custom hooks for cleaner state management
+  const { user, isAuthChecked, signOut, refreshUser } = useAuth();
   const { language, theme, setLanguage, setTheme, isLoaded: settingsLoaded } = useSettings();
+  const { usageCount, dailyLimit, userPlan, isLocked, isLoading: usageLoading, refreshUsage } = useUsageLimit(user?.id || '');
+  const { podcastAudio, isPlaying, isGenerating: podcastGenerating, error: podcastError, audioRef, generatePodcast, togglePlayback, clearError: clearPodcastError, clearAudio } = usePodcast();
+
+  // Local UI state
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [analysisData, setAnalysisData] = useState<any>(null);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [usageCount, setUsageCount] = useState(1);
-  const [dailyLimit, setDailyLimit] = useState(DAILY_LIMIT_FREE);
-  const [userPlan, setUserPlan] = useState<'free' | 'pro' | 'class'>('free');
-  const [isLocked, setIsLocked] = useState(false);
-  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
-
-  // Podcast audio state
-  const [podcastAudio, setPodcastAudio] = useState<string | null>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-
-  // Chat state
-  const [showChat, setShowChat] = useState(false);
-  const [chatInitialMessage, setChatInitialMessage] = useState<string | undefined>();
-  const { toast } = useToast();
-  const navigate = useNavigate();
 
   const labels = uiLabels[language];
 
+  // Show upgrade modal when limit is reached
   useEffect(() => {
-    // Check if Supabase is properly configured
-    const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-    const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
-
-    if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
-      console.warn('Supabase not configured - redirecting to auth');
-      navigate("/auth");
-      return;
+    if (isLocked && userPlan === 'free') {
+      setShowUpgradeModal(true);
     }
+  }, [isLocked, userPlan]);
 
-    // Set up auth state listener
-    let subscription: { unsubscribe: () => void } | null = null;
-
-    try {
-      const { data: { subscription: sub } } = supabase.auth.onAuthStateChange((event, session) => {
-        setUser(session?.user ?? null);
-
-        if (!session) {
-          navigate("/auth");
-        } else {
-          // Fetch usage count when user changes
-          setTimeout(() => {
-            fetchUsageCount(session.user.id);
-          }, 0);
-        }
-      });
-      subscription = sub;
-    } catch (err) {
-      console.error('Failed to set up auth state listener:', err);
-      navigate("/auth");
-      return;
+  // Refresh usage on mount and after auth change
+  useEffect(() => {
+    if (user?.id && isAuthChecked) {
+      refreshUsage(user.id);
     }
-
-    // Check current session
-    supabase.auth.getSession().then(({ data: { session }, error }) => {
-      if (error) {
-        console.error('Error getting session:', error);
-        navigate("/auth");
-        return;
-      }
-
-      setUser(session?.user ?? null);
-
-      if (!session) {
-        navigate("/auth");
-      } else {
-        fetchUsageCount(session.user.id);
-      }
-    }).catch((err) => {
-      console.error('Failed to get session:', err);
-      navigate("/auth");
-    });
-
-    return () => {
-      if (subscription) {
-        subscription.unsubscribe();
-      }
-    };
-  }, [navigate]);
+  }, [user?.id, isAuthChecked, refreshUsage]);
 
   // Check for success parameter from Gumroad redirect
   useEffect(() => {
@@ -212,168 +161,76 @@ const Dashboard = () => {
         title: "Success!",
         description: "Your subscription is now active. Refreshing your account...",
       });
-      // Refresh usage count and subscription status
-      if (user) {
-        fetchUsageCount(user.id);
+      if (user?.id) {
+        refreshUsage(user.id);
       }
-
-      // Clean up URL
       window.history.replaceState({}, document.title, window.location.pathname);
     }
-  }, [user, toast]);
+  }, [user?.id, toast, refreshUsage]);
 
-  const fetchUsageCount = async (userId: string) => {
-    try {
-      // First, get user's subscription plan
-      const { data: subData } = await (supabase as any)
-        .from('subscriptions')
-        .select('status, plan_type, expires_at')
-        .eq('user_id', userId)
-        .single();
-
-      let plan: 'free' | 'pro' | 'class' = 'free';
-      if (subData) {
-        const isActive = subData.status === 'active' &&
-          ['pro', 'class'].includes(subData.plan_type) &&
-          (!subData.expires_at || new Date(subData.expires_at) > new Date());
-        if (isActive) {
-          plan = subData.plan_type as 'pro' | 'class';
-        }
-      }
-      setUserPlan(plan);
-
-      // Class tier has unlimited - no limits
-      if (plan === 'class') {
-        setDailyLimit(Infinity);
-        setUsageCount(Infinity);
-        setIsLocked(false);
-        return;
-      }
-
-      // Set daily limit based on plan
-      const limit = plan === 'pro' ? DAILY_LIMIT_PRO : DAILY_LIMIT_FREE;
-      setDailyLimit(limit);
-
-      // Get usage count
-      const { data, error } = await supabase.rpc('get_daily_usage_count', {
-        p_user_id: userId
-      });
-
-      if (error) {
-        console.error('Error fetching usage count:', error);
-        return;
-      }
-
-      const remaining = Math.max(0, limit - (data || 0));
-      setUsageCount(remaining);
-      const locked = remaining <= 0;
-      setIsLocked(locked);
-      // Show upgrade modal when limit is reached (only for free users)
-      if (locked && plan === 'free') {
-        setShowUpgradeModal(true);
-      }
-    } catch (error) {
-      console.error('Error fetching usage count:', error);
+  // Redirect if not authenticated
+  useEffect(() => {
+    if (isAuthChecked && !user) {
+      navigate("/auth");
     }
-  };
+  }, [isAuthChecked, user, navigate]);
+
+
 
   const handleSubmit = async (text: string, mode: ActionMode, media?: MediaFile[] | null, generationOptions?: GenerationOptions) => {
+    // Prevent race conditions
+    if (isProcessing) {
+      toast({ description: language === 'en' ? 'Please wait for current request to complete' : '请等待当前请求完成', variant: 'default' });
+      return;
+    }
+
     if (!user) {
-      toast({
-        title: "Error",
-        description: "Please sign in",
-        variant: "destructive"
-      });
+      toast({ title: "Error", description: "Please sign in", variant: "destructive" });
       return;
     }
 
     if (!text.trim() && (!media || media.length === 0)) {
-      toast({
-        title: language === 'en' ? 'Error' : language === 'ru' ? 'Ошибка' : language === 'hy' ? 'Սխալ' : '오류',
-        description: labels.errorNoInput,
-        variant: 'destructive'
-      });
+      toast({ title: 'Error', description: labels.errorNoInput, variant: 'destructive' });
       return;
     }
 
     if (usageCount <= 0 && userPlan !== 'class') {
       toast({
-        title: language === 'en' ? 'Limit Reached' : language === 'ru' ? 'Лимит достигнут' : language === 'hy' ? 'Սահմանաչափը հասել է' : '한도 도달',
-        description: language === 'en' ? `You have reached your daily limit of ${dailyLimit} analyses` : language === 'ru' ? `Вы достигли дневного лимита в ${dailyLimit} анализов` : language === 'hy' ? `Դուք հասել եք ${dailyLimit} վերլուծության օրական սահմանաչափին` : `일일 ${dailyLimit}회 분석 한도에 도달했습니다`,
+        title: `${labels.limitReached}`,
+        description: `You have reached your daily limit of ${dailyLimit} analyses`,
         variant: 'destructive'
       });
       return;
     }
 
     setIsProcessing(true);
-
-    // Clear previous podcast audio
-    if (podcastAudio) {
-      setPodcastAudio(null);
-      setIsPlaying(false);
-    }
+    clearAudio();
 
     try {
       if (mode === 'podcast') {
-        // Handle podcast generation
-        const { data, error } = await supabase.functions.invoke('generate-podcast', {
-          body: { prompt: text, language }
-        });
-
-        if (error) {
-          console.error('Podcast generation error:', error);
-          throw new Error(error.message || 'Failed to generate podcast');
-        }
-
-        if (!data?.podcast_url) {
-          throw new Error('No podcast URL returned from generation');
-        }
-
-        // Use the returned podcast URL directly
-        setPodcastAudio(data.podcast_url);
-
-        toast({
-          title: language === 'en' ? 'Podcast Ready!' : language === 'ru' ? 'Подкаст готов!' : language === 'hy' ? 'Պոդկաստը պատրաստ է!' : '팟캐스트 준비됨!',
-          description: language === 'en' ? 'Your audio podcast is ready to play' : language === 'ru' ? 'Ваш аудио подкаст готов к воспроизведению' : language === 'hy' ? 'Ձեր աուդիո պոդկաստը պատրաստ է լսելու համար' : '오디오 팟캐스트가 재생 준비되었습니다'
-        });
-
-        // Refetch usage count
-        if (user) {
-          await fetchUsageCount(user.id);
+        await generatePodcast(text, language);
+        toast({ title: 'Podcast Ready!', description: 'Your audio podcast is ready to play' });
+        if (user?.id) {
+          await refreshUsage(user.id);
         }
 
       } else if (mode === 'chat') {
-        // Handle chat mode - navigate to chat page or show inline chat
-        toast({
-          title: language === 'en' ? 'Chat Mode' : language === 'ru' ? 'Режим чата' : language === 'hy' ? 'Զրուցարանի ռեժիմ' : '채팅 모드',
-          description: language === 'en' ? 'Opening chat...' : language === 'ru' ? 'Открытие чата...' : language === 'hy' ? 'Բացվում է զրուցարանը...' : '채팅 열기...'
-        });
-        // For now, just show a message - can be expanded to full chat UI
+        toast({ title: 'Chat Mode', description: 'Opening chat...' });
 
       } else {
         // Handle analyze and course modes
-        const mediaPayload = media && media.length > 0
-          ? { data: media[0].data, mimeType: media[0].mimeType }
-          : null;
+        const mediaPayload = media && media.length > 0 ? { data: media[0].data, mimeType: media[0].mimeType } : null;
 
-        // Pass generation options to edge function
         const { data, error } = await supabase.functions.invoke('analyze-text', {
           body: {
             text,
             media: mediaPayload,
             isCourse: mode === 'course',
-            generationOptions: generationOptions || {
-              quiz: true,
-              flashcards: true,
-              map: true,
-              course: mode === 'course',
-              podcast: false
-            }
+            generationOptions: generationOptions || { quiz: true, flashcards: true, map: true, course: mode === 'course', podcast: false }
           }
         });
 
         if (error) {
-          console.error('Edge function error:', error);
           throw new Error(error.message || 'Failed to analyze content');
         }
 
@@ -383,59 +240,39 @@ const Dashboard = () => {
 
         setAnalysisData(data);
 
-        // Refetch usage count from server
-        if (user) {
-          await fetchUsageCount(user.id);
+        // Refresh usage count
+        if (user?.id) {
+          await refreshUsage(user.id);
         }
 
-        // Save to user_content archive
-        if (user) {
+        // Save to archive
+        if (user?.id) {
           try {
             await (supabase as any).from('user_content').insert({
               user_id: user.id,
               original_text: text,
               analysis_data: data,
-              language: language,
+              language,
               title: text.substring(0, 50) + (text.length > 50 ? '...' : ''),
               content_type: 'analyse',
-              generation_status: generationOptions || {
-                quiz: true,
-                flashcards: true,
-                map: true,
-                course: mode === 'course',
-                podcast: false
-              }
+              generation_status: generationOptions || { quiz: true, flashcards: true, map: true, course: mode === 'course', podcast: false }
             });
           } catch (saveError) {
             console.error('Error saving to archive:', saveError);
           }
         }
 
-        toast({
-          title: language === 'en' ? 'Great job!' : language === 'ru' ? 'Отлично!' : language === 'hy' ? 'Հիանալի աշխատանք!' : '훌륭합니다!',
-          description: language === 'en' ? "You're mastering this subject. Keep it up!" : language === 'ru' ? 'Вы осваиваете этот предмет. Продолжайте в том же духе!' : language === 'hy' ? 'Դուք տիրապետում եք այս թեմային: Շարունակեք նույն ոգով!' : '이 주제를 잘 이해하고 있습니다. 계속 노력하세요!'
-        });
+        toast({ title: 'Great job!', description: "You're mastering this subject. Keep it up!" });
       }
     } catch (error) {
       console.error('Processing error:', error);
       toast({
-        title: language === 'en' ? 'Error' : language === 'ru' ? 'Ошибка' : language === 'hy' ? 'Սխալ' : '오류',
+        title: 'Error',
         description: error instanceof Error ? error.message : 'Failed to process request',
         variant: 'destructive'
       });
     } finally {
       setIsProcessing(false);
-    }
-  };
-
-  const toggleAudioPlayback = () => {
-    if (audioRef.current) {
-      if (isPlaying) {
-        audioRef.current.pause();
-      } else {
-        audioRef.current.play();
-      }
-      setIsPlaying(!isPlaying);
     }
   };
 
@@ -516,7 +353,14 @@ const Dashboard = () => {
             </div>
             <div className="text-left sm:text-right">
               <div className={`text-2xl sm:text-4xl font-bold ${usageCount === 0 && userPlan === 'free' ? 'text-destructive' : 'text-primary'}`}>
-                {userPlan === 'class' ? '∞' : `${usageCount}/${dailyLimit}`}
+                {userPlan === 'class' ? (
+                  <span className="flex items-center gap-1">
+                    <span>∞</span>
+                    <span className="text-xs text-muted-foreground">unlimited</span>
+                  </span>
+                ) : (
+                  `${usageCount}/${dailyLimit}`
+                )}
               </div>
             </div>
           </div>
@@ -541,30 +385,57 @@ const Dashboard = () => {
           </Card>
         )}
 
+        {/* Podcast Generation Loading State */}
+        {podcastGenerating && (
+          <Card className="p-6 mb-6 animate-pulse bg-primary/5">
+            <div className="flex items-center gap-4">
+              <div className="h-14 w-14 rounded-full bg-primary/20" />
+              <div className="flex-1">
+                <h3 className="font-semibold">
+                  {language === 'en' ? 'Generating Podcast...' : language === 'ru' ? 'Создание подкаста...' : language === 'hy' ? 'Պոդկաստ ստեղծվում է...' : '팟캐스트 생성 중...'}
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  {language === 'en' ? 'This may take up to 60 seconds' : language === 'ru' ? 'Это может занять до 60 секунд' : language === 'hy' ? 'Սա կարող է տևել մինչև 60 վայրկյան' : '최대 60초 소요'}
+                </p>
+              </div>
+            </div>
+          </Card>
+        )}
+
+        {/* Podcast Generation Error State */}
+        {podcastError && (
+          <Card className="p-6 mb-6 border-destructive bg-destructive/5">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="font-semibold text-destructive">Generation Failed</h3>
+                <p className="text-sm text-muted-foreground">{podcastError}</p>
+              </div>
+              <Button onClick={clearPodcastError} variant="outline" size="sm">
+                Dismiss
+              </Button>
+            </div>
+          </Card>
+        )}
+
         {/* Podcast Audio Player */}
         {podcastAudio && (
-          <Card className="p-6 mb-6 bg-gradient-to-r from-primary/10 to-accent/10 border-2 border-primary/20">
+          <Card className="p-6 mb-6 bg-gradient-to-r from-primary/10 to-accent/10 border-2 border-primary/20 animate-in fade-in-50">
             <div className="flex items-center gap-4">
               <Button
                 variant="outline"
                 size="icon"
-                onClick={toggleAudioPlayback}
-                className="h-14 w-14 rounded-full"
+                onClick={togglePlayback}
+                className="h-14 w-14 rounded-full transition-transform hover:scale-110"
               >
                 {isPlaying ? <Pause className="h-6 w-6" /> : <Play className="h-6 w-6" />}
               </Button>
               <div className="flex-1">
-                <h3 className="font-semibold">
-                  {language === 'en' ? 'Generated Podcast' : language === 'ru' ? 'Сгенерированный подкаст' : language === 'hy' ? 'Ստեղծված Պոդկաստ' : '생성된 팟캐스트'}
-                </h3>
-                <p className="text-sm text-muted-foreground">
-                  {language === 'en' ? 'Click play to listen' : language === 'ru' ? 'Нажмите для воспроизведения' : language === 'hy' ? 'Սեղմեք լսելու համար' : '재생하려면 클릭'}
-                </p>
+                <h3 className="font-semibold">Generated Podcast</h3>
+                <p className="text-sm text-muted-foreground">Click play to listen</p>
               </div>
               <audio
                 ref={audioRef}
                 src={podcastAudio}
-                onEnded={() => setIsPlaying(false)}
                 className="hidden"
               />
             </div>
