@@ -266,6 +266,20 @@ const Dashboard = () => {
       }
     } catch (error) {
       console.error('Processing error:', error);
+      
+      // Handle authentication errors
+      if (error instanceof Error && (error.message.includes('Invalid') || error.message.includes('token') || error.message.includes('Refresh Token'))) {
+        // Sign out user and redirect to login
+        await supabase.auth.signOut().catch(() => {});
+        navigate('/auth');
+        toast({
+          title: 'Session Expired',
+          description: 'Please log in again to continue.',
+          variant: 'destructive'
+        });
+        return;
+      }
+      
       toast({
         title: 'Error',
         description: error instanceof Error ? error.message : 'Failed to process request',

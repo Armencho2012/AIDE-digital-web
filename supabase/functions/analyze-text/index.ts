@@ -108,7 +108,13 @@ Deno.serve(async (req: Request) => {
     ]);
     
     const { data: { user }, error: authError } = userResult;
-    if (authError || !user) throw new Error("Invalid token");
+    if (authError || !user) {
+      console.error("Auth error:", authError?.message || "Invalid token");
+      return new Response(JSON.stringify({ error: "Invalid or expired token. Please log in again." }), { 
+        status: 401, 
+        headers: { ...corsHeaders, "Content-Type": "application/json" } 
+      });
+    }
 
     const { text, media, isCourse } = bodyData;
     if (!text?.trim() && !media) throw new Error("No content provided");

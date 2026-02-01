@@ -1,0 +1,29 @@
+git init – Initialize a new local Git repository.
+git clone <repository-url> – Create a local copy of a remote repository. 
+Tracking Changes
+git status – Check the current state of your working directory and staging area.
+git add <file> – Stage a file for commit.
+git add -A or git add . – Stage all changes (new, modified, deleted files).
+git commit -m "message" – Save staged changes with a descriptive message. 
+Branching & Merging
+git branch – List all local branches (current branch marked with *).
+git branch <branch-name> – Create a new branch.
+git checkout <branch-name> – Switch to a different branch.
+git checkout -b <branch-name> – Create and switch to a new branch in one step.
+git merge <branch-name> – Merge a branch into the current branch.
+git branch -d <branch-name> – Delete a local branch.
+git push origin --delete <branch-name> – Delete a remote branch. 
+Sharing & Syncing
+git push origin <branch-name> – Push local branch to remote repository.
+git push -u origin <branch-name> – Push and set up tracking (only needed once).
+git pull – Fetch and merge changes from the remote repository.
+git pull origin <branch-name> – Pull specific branch updates. 
+Inspecting History
+git log – View commit history.
+git log --oneline – View concise commit history.
+git diff – Preview changes before committing.
+git diff <branch1> <branch2> – Compare changes between branches. 
+Advanced Tips
+git stash – Temporarily save uncommitted changes.
+git reset --hard HEAD~1 – Undo the last commit (use with caution).
+git remote -v – View remote repository URLs. 

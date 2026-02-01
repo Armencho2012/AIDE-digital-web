@@ -219,6 +219,14 @@ const ContentDetail = () => {
       }
     } catch (error) {
       console.error('Regeneration error:', error);
+      
+      // Handle authentication errors
+      if (error instanceof Error && (error.message.includes('Invalid') || error.message.includes('token') || error.message.includes('Refresh Token'))) {
+        await supabase.auth.signOut().catch(() => {});
+        window.location.href = '/auth';
+        return;
+      }
+      
       toast({
         title: 'Error',
         description: 'Failed to generate missing assets.',
