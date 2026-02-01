@@ -8,7 +8,6 @@ const DAILY_LIMIT_PRO = 50;
 const QUIZ_QUESTIONS_COUNT = 5;
 const FLASHCARDS_COUNT = 10;
 const KNOWLEDGE_MAP_NODES_COUNT = 6;
-
 const MAX_FLASHCARDS_FREE = 20;
 
 interface AnalysisResult {
@@ -34,66 +33,70 @@ function parseJSON(text: string): any {
   try { return JSON.parse(t); } catch { return null; }
 }
 
+/**
+ * Updated for 2026: Gemini 3 series provides superior reasoning for 
+ * educational content. 2.0 series is deprecated as of March 2026.
+ */
 const GEMINI_MODEL_CANDIDATES = [
-  "gemini-3-flash-preview", // Latest (Feb 2026) - PhD reasoning at Flash speed
-  "gemini-3-pro-preview",   // Most powerful for complex logic/coding
-  "gemini-2.5-flash",       // Current stable workhorse
-  "gemini-2.5-flash-lite",  // Current stable for high-throughput/low-cost
+  "gemini-3-flash-preview", 
+  "gemini-3-pro-preview",   
+  "gemini-2.5-flash",       
+  "gemini-2.5-flash-lite",  
 ];
 
 async function callGeminiAI(apiKey: string, systemPrompt: string, userContent: string) {
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 35000);
+  let lastErrorText = "";
 
-  try {
-    let lastErrorText = "";
-    for (const model of GEMINI_MODEL_CANDIDATES) {
-      try {
-        const res = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            signal: controller.signal,
-            body: JSON.stringify({
-              contents: [
-                {
-                  role: "user",
-                  parts: [{ text: `${systemPrompt}\n\n${userContent}` }],
-                },
-              ],
-              generationConfig: {
-                temperature: 0.7,
-              },
-            }),
-          },
-        );
+  for (const model of GEMINI_MODEL_CANDIDATES) {
+    // FIX: New controller per model so a timeout on one doesn't kill the next
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 40000); 
 
-        if (!res.ok) {
-          lastErrorText = await res.text().catch(() => "");
-          console.error(`Gemini API error: ${res.status} (model=${model}) ${lastErrorText}`);
-          continue;
-        }
+    try {
+      const res = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          signal: controller.signal,
+          body: JSON.stringify({
+            contents: [{
+              role: "user",
+              parts: [{ text: `${systemPrompt}\n\n${userContent}` }],
+            }],
+            generationConfig: { temperature: 0.7 },
+          }),
+        },
+      );
 
-        clearTimeout(timeout);
-        const json = await res.json();
-        const text = json?.candidates?.[0]?.content?.parts?.[0]?.text || null;
-        console.log(`Gemini success with model=${model}`);
-        return text;
-      } catch (fetchErr) {
-        console.error(`Gemini fetch error (model=${model}):`, fetchErr);
+      clearTimeout(timeout);
+
+      if (!res.ok) {
+        lastErrorText = await res.text().catch(() => "");
+        console.warn(`Model ${model} failed (${res.status}). Trying next...`);
         continue;
       }
-    }
 
-    clearTimeout(timeout);
-    console.error("Gemini API error: all model candidates failed", lastErrorText);
-    return null;
-  } catch (e) {
-    clearTimeout(timeout);
-    console.error("Gemini API call failed:", e);
-    return null;
+      const json = await res.json();
+      const text = json?.candidates?.[0]?.content?.parts?.[0]?.text || null;
+      
+      if (text) {
+        console.log(`Gemini success with model=${model}`);
+        return text;
+      }
+    } catch (err: any) {
+      clearTimeout(timeout);
+      if (err.name === 'AbortError') {
+        console.error(`Model ${model} timed out after 40s.`);
+      } else {
+        console.error(`Fetch error for ${model}:`, err.message);
+      }
+      continue;
+    }
   }
+
+  console.error("All model candidates failed.");
+  return null;
 }
 
 async function getUserPlan(supabaseAdmin: any, userId: string): Promise<string> {
@@ -115,17 +118,15 @@ Deno.serve(async (req: Request) => {
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) throw new Error("Authorization required");
 
-    const supabaseUrl = Deno.env.get("SUPABASE_URL");
-    const supabaseKey = Deno.env.get("SUPABASE_ANON_KEY");
-    const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-    const geminiKey = Deno.env.get("GEMINI_API_KEY");
+    const env = Deno.env.toObject();
+    const { SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY, GEMINI_API_KEY } = env;
     
-    if (!supabaseUrl || !supabaseKey || !serviceRoleKey || !geminiKey) {
+    if (!SUPABASE_URL || !SUPABASE_ANON_KEY || !SUPABASE_SERVICE_ROLE_KEY || !GEMINI_API_KEY) {
       throw new Error("Missing environment variables");
     }
 
-    const supabase = createClient(supabaseUrl, supabaseKey, { global: { headers: { Authorization: authHeader } } });
-    const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey);
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { global: { headers: { Authorization: authHeader } } });
+    const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
     const [userResult, bodyData] = await Promise.all([
       supabase.auth.getUser(),
@@ -133,62 +134,35 @@ Deno.serve(async (req: Request) => {
     ]);
     
     const { data: { user }, error: authError } = userResult;
-    if (authError || !user) {
-      console.error("Auth error:", authError?.message || "Invalid token");
-      return new Response(JSON.stringify({ error: "Invalid or expired token. Please log in again." }), { 
-        status: 401, 
-        headers: { ...corsHeaders, "Content-Type": "application/json" } 
-      });
-    }
+    if (authError || !user) throw new Error("Invalid or expired token.");
 
-    const { text, media, isCourse } = bodyData;
+    const { text, media } = bodyData;
     if (!text?.trim() && !media) throw new Error("No content provided");
 
     const userPlan = await getUserPlan(supabaseAdmin, user.id);
     const isProOrClass = userPlan === 'pro' || userPlan === 'class';
 
-    // Check usage limit
-    if (userPlan !== 'class') {
-      const { data: usageCount } = await supabase.rpc("get_daily_usage_count", { p_user_id: user.id });
-      const dailyLimit = userPlan === 'pro' ? DAILY_LIMIT_PRO : DAILY_LIMIT_FREE;
-      if ((usageCount || 0) >= dailyLimit) {
-        return new Response(JSON.stringify({ error: "Daily limit reached. Upgrade for more." }), { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } });
-      }
+    // Usage check via RPC
+    const { data: usageCount } = await supabase.rpc("get_daily_usage_count", { p_user_id: user.id });
+    const dailyLimit = userPlan === 'pro' ? DAILY_LIMIT_PRO : DAILY_LIMIT_FREE;
+    if (userPlan !== 'class' && (usageCount || 0) >= dailyLimit) {
+      return new Response(JSON.stringify({ error: "Daily limit reached." }), { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
-    console.log(`Processing analysis for user ${user.id}, plan: ${userPlan}`);
-
     const contentText = text || "Analyze the content.";
-    const mediaContext = media ? "\n[User has attached an image/document for analysis]" : "";
-    const quizCount = isProOrClass ? 20 : QUIZ_QUESTIONS_COUNT;
+    const mediaContext = media ? "\n[Attached Media Content]" : "";
+    const quizCount = isProOrClass ? 15 : QUIZ_QUESTIONS_COUNT;
 
+    // Execute multiple AI calls in parallel for speed
     const [summaryResult, quizResult, mapResult] = await Promise.all([
-      callGeminiAI(geminiKey, `You are an education AI. Respond ONLY with valid JSON in the exact format specified. Analyze the content and respond in the same language as the input.`, 
-        `Analyze this content and return JSON:
-{"metadata":{"language":"detected language code","subject_domain":"topic area","complexity_level":"beginner|intermediate|advanced"},"three_bullet_summary":["summary point 1","summary point 2","summary point 3"],"key_terms":[{"term":"term name","definition":"definition","importance":"high|medium|low"}],"lesson_sections":[{"title":"section title","summary":"section content","key_takeaway":"main insight"}]}
+      callGeminiAI(GEMINI_API_KEY, "You are an education AI. Respond ONLY with valid JSON. Use the language of the input.", 
+        `Analyze and return JSON: {"metadata":{"language":"code","subject_domain":"topic","complexity_level":"beginner|intermediate|advanced"},"three_bullet_summary":["s1","s2","s3"],"key_terms":[{"term":"name","definition":"def","importance":"high"}],"lesson_sections":[{"title":"T","summary":"S","key_takeaway":"K"}]} \n\n Content: ${contentText.substring(0, 10000)}${mediaContext}`),
 
-Provide exactly 3 bullet points, 4-6 key terms, and 2-3 lesson sections. Be concise but informative.
+      callGeminiAI(GEMINI_API_KEY, "You are an education AI. Respond ONLY with valid JSON.",
+        `Create ${quizCount} questions and ${FLASHCARDS_COUNT} cards. JSON: {"quiz_questions":[{"question":"Q","options":["A","B","C","D"],"correct_answer_index":0,"explanation":"E","difficulty":"medium"}],"flashcards":[{"front":"F","back":"B"}]} \n\n Content: ${contentText.substring(0, 10000)}${mediaContext}`),
 
-Content to analyze:
-${contentText.substring(0, 8000)}${mediaContext}`),
-
-      callGeminiAI(geminiKey, `You are an education AI. Respond ONLY with valid JSON. Create quiz questions and flashcards in the same language as the input content.`,
-        `Create educational materials and return JSON:
-{"quiz_questions":[{"question":"question text","options":["option A","option B","option C","option D"],"correct_answer_index":0,"explanation":"why this is correct","difficulty":"easy|medium|hard"}],"flashcards":[{"front":"question or term","back":"answer or definition"}]}
-
-Create ${quizCount} quiz questions (mix of easy, medium, hard) and ${FLASHCARDS_COUNT} flashcards.
-
-Content:
-${contentText.substring(0, 8000)}${mediaContext}`),
-
-      callGeminiAI(geminiKey, `You are an education AI. Respond ONLY with valid JSON. Create a knowledge map in the same language as the input.`,
-        `Create a knowledge map and return JSON:
-{"knowledge_map":{"nodes":[{"id":"n1","label":"concept name","category":"category","description":"brief description"}],"edges":[{"source":"n1","target":"n2","label":"relationship","strength":5}]}}
-
-Create ${KNOWLEDGE_MAP_NODES_COUNT} nodes representing main concepts and 8-10 edges showing relationships. Strength is 1-10.
-
-Content:
-${contentText.substring(0, 8000)}${mediaContext}`),
+      callGeminiAI(GEMINI_API_KEY, "You are an education AI. Respond ONLY with valid JSON.",
+        `Create a knowledge map. JSON: {"knowledge_map":{"nodes":[{"id":"n1","label":"L","category":"C","description":"D"}],"edges":[{"source":"n1","target":"n2","label":"R","strength":5}]}} \n\n Content: ${contentText.substring(0, 10000)}${mediaContext}`),
     ]);
 
     const summary = parseJSON(summaryResult) || {};
@@ -197,7 +171,7 @@ ${contentText.substring(0, 8000)}${mediaContext}`),
 
     const analysis: AnalysisResult = {
       metadata: summary.metadata || { language: "en", subject_domain: "General", complexity_level: "intermediate" },
-      three_bullet_summary: summary.three_bullet_summary || ["Content analyzed", "Key concepts identified", "Study materials generated"],
+      three_bullet_summary: summary.three_bullet_summary || [],
       key_terms: summary.key_terms || [],
       lesson_sections: summary.lesson_sections || [],
       quiz_questions: quiz.quiz_questions || [],
@@ -205,20 +179,17 @@ ${contentText.substring(0, 8000)}${mediaContext}`),
       knowledge_map: map.knowledge_map || { nodes: [], edges: [] },
     };
 
-    // Log usage (fire and forget)
-    (async () => {
-      const { error } = await supabaseAdmin.from("usage_logs").insert({ user_id: user.id, action_type: "text_analysis" });
-      if (error) console.error("Error logging usage:", error);
-    })();
-    console.log(`Analysis complete`);
+    // Background logging
+    supabaseAdmin.from("usage_logs").insert({ user_id: user.id, action_type: "text_analysis" }).then(({ error }) => {
+      if (error) console.error("Logging error:", error);
+    });
 
     return new Response(JSON.stringify(analysis), {
       status: 200,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
-  } catch (err: unknown) {
-    console.error("Analysis error:", err);
-    return new Response(JSON.stringify({ error: err instanceof Error ? err.message : "Unknown error" }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+  } catch (err: any) {
+    console.error("Critical Function Error:", err);
+    return new Response(JSON.stringify({ error: err.message }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
   }
 });
-
