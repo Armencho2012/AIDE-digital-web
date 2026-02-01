@@ -1,10 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { GoogleGenerativeAI } from "https://esm.sh/@google/generative-ai@0.24.0";
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
-};
+import { corsHeaders } from "./_shared-index.ts";
 
 // Config Constants
 const DAILY_LIMIT_FREE = 1;
@@ -15,29 +10,54 @@ const MAX_FLASHCARDS_FREE = 20;
 
 Deno.serve(async (req: Request) => {
   // 1. Handle CORS Preflight
-  if (req.method === "OPTIONS") return new Response('ok', { headers: corsHeaders });
+  if (req.method === "OPTIONS") {
+    return new Response('ok', { headers: corsHeaders });
+  }
 
   try {
     // 2. Auth & Environment Validation
     const authHeader = req.headers.get("Authorization");
-    if (!authHeader) throw new Error("Authorization required");
+    if (!authHeader) {
+      return new Response(JSON.stringify({ error: "Authorization required" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
+      });
+    }
 
-    const env = Deno.env.toObject();
-    const { SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY, GEMINI_API_KEY } = env;
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+    const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+    const apiKey = Deno.env.get("LOVABLE_API_KEY");
 
-    if (!SUPABASE_URL || !GEMINI_API_KEY) throw new Error("Missing environment variables");
+    if (!supabaseUrl || !apiKey || !serviceRoleKey) {
+      return new Response(JSON.stringify({ error: "Missing environment variables" }), {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
+      });
+    }
 
-    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    const supabase = createClient(supabaseUrl, supabaseKey, {
       global: { headers: { Authorization: authHeader } }
     });
-    const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+    const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey);
 
     const { data: { user }, error: authError } = await supabase.auth.getUser();
-    if (authError || !user) throw new Error("Invalid or expired token");
+    if (authError || !user) {
+      return new Response(JSON.stringify({ error: "Invalid or expired token" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
+      });
+    }
 
     // 3. Parse Request & Check Limits
-    const { text, media, language = 'en' } = await req.json().catch(() => ({}));
-    if (!text?.trim() && !media) throw new Error("No content provided");
+    const body = await req.json().catch(() => ({}));
+    const { text, media, language = 'en' } = body;
+    if (!text?.trim() && !media) {
+      return new Response(JSON.stringify({ error: "No content provided" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
+      });
+    }
 
     const { data: subscription } = await supabaseAdmin
       .from('subscriptions')
@@ -60,50 +80,84 @@ Deno.serve(async (req: Request) => {
       }
     }
 
-    // 4. Gemini AI Integration (The "Brains")
-    const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
-    // Using gemini-3-flash-preview for the highest reasoning/speed ratio in 2026
-    const model = genAI.getGenerativeModel({ 
-      model: "gemini-3-flash-preview",
-      // Forces the model to output valid JSON based on our prompt structure
-      generationConfig: { 
-        responseMimeType: "application/json",
-        // @ts-ignore: 2026 reasoning parameter
-        thinkingLevel: "medium" 
-      }
-    });
-
+    // 4. AI Integration using Lovable AI Gateway (consistent with content-chat)
     const quizCount = isProOrClass ? 15 : 5;
-    const contentContext = text.substring(0, 15000); // 2026 models handle larger context
+    const contentContext = text.substring(0, 15000);
     const mediaContext = media ? "\n[Analyzing attached visual media]" : "";
 
     const systemPrompt = `You are a world-class education engine. Respond in ${language}.
-    Return a SINGLE JSON object exactly like this:
-    {
-      "metadata": {"language": "code", "subject_domain": "string", "complexity_level": "beginner|intermediate|advanced"},
-      "three_bullet_summary": ["string", "string", "string"],
-      "key_terms": [{"term": "string", "definition": "string", "importance": "high|medium|low"}],
-      "lesson_sections": [{"title": "string", "summary": "string", "key_takeaway": "string"}],
-      "quiz_questions": [{"question": "string", "options": ["A", "B", "C", "D"], "correct_answer_index": 0, "explanation": "string", "difficulty": "easy|medium|hard"}],
-      "flashcards": [{"front": "string", "back": "string"}],
-      "knowledge_map": {
-        "nodes": [{"id": "n1", "label": "string", "category": "string", "description": "string"}],
-        "edges": [{"source": "n1", "target": "n2", "label": "string", "strength": 5}]
-      }
-    }
-    
-    Stats: Create ${quizCount} quiz questions, ${FLASHCARDS_COUNT} flashcards, and ${KNOWLEDGE_MAP_NODES_COUNT} map nodes.
-    Math: Use LaTeX notation like $x^2$.`;
+Return a SINGLE JSON object exactly like this:
+{
+  "metadata": {"language": "${language}", "subject_domain": "string", "complexity_level": "beginner|intermediate|advanced"},
+  "three_bullet_summary": ["string", "string", "string"],
+  "key_terms": [{"term": "string", "definition": "string", "importance": "high|medium|low"}],
+  "lesson_sections": [{"title": "string", "summary": "string", "key_takeaway": "string"}],
+  "quiz_questions": [{"question": "string", "options": ["A", "B", "C", "D"], "correct_answer_index": 0, "explanation": "string", "difficulty": "easy|medium|hard"}],
+  "flashcards": [{"front": "string", "back": "string"}],
+  "knowledge_map": {
+    "nodes": [{"id": "n1", "label": "string", "category": "string", "description": "string"}],
+    "edges": [{"source": "n1", "target": "n2", "label": "string", "strength": 5}]
+  }
+}
+
+Stats: Create ${quizCount} quiz questions, ${FLASHCARDS_COUNT} flashcards, and ${KNOWLEDGE_MAP_NODES_COUNT} map nodes.
+Math: Use LaTeX notation like $x^2$.
+If the content is in a language other than ${language}, still respond in ${language}.`;
 
     console.log(`Analyzing for user: ${user.id} (Plan: ${userPlan})`);
 
-    const result = await model.generateContent([
-      { text: systemPrompt },
-      { text: `Content: ${contentContext}${mediaContext}` }
-    ]);
+    // Use Lovable AI Gateway with JSON response mode
+    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${apiKey}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: "google/gemini-3-flash-preview",
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: `Content: ${contentContext}${mediaContext}` }
+        ],
+        response_format: { type: "json_object" },
+        max_tokens: 8192
+      })
+    });
 
-    // No need for regex parsing anymore!
-    const analysis = JSON.parse(result.response.text());
+    if (!response.ok) {
+      console.error("AI gateway error:", response.status, await response.text());
+      if (response.status === 429) {
+        return new Response(JSON.stringify({ error: "Rate limits exceeded, please try again later." }), {
+          status: 429,
+          headers: { ...corsHeaders, "Content-Type": "application/json" }
+        });
+      }
+      if (response.status === 402) {
+        return new Response(JSON.stringify({ error: "Payment required, please add funds to your Lovable AI workspace." }), {
+          status: 402,
+          headers: { ...corsHeaders, "Content-Type": "application/json" }
+        });
+      }
+      throw new Error("AI gateway error");
+    }
+
+    const responseData = await response.json();
+    let analysis = JSON.parse(responseData.choices?.[0]?.message?.content || "{}");
+
+    // Validate and ensure all required fields exist
+    if (!analysis.metadata) {
+      analysis.metadata = { language, subject_domain: "general", complexity_level: "intermediate" };
+    }
+    if (!analysis.three_bullet_summary) {
+      analysis.three_bullet_summary = ["Summary not available", "Unable to analyze content", "Please try again"];
+    }
+    if (!analysis.key_terms) analysis.key_terms = [];
+    if (!analysis.lesson_sections) analysis.lesson_sections = [];
+    if (!analysis.quiz_questions) analysis.quiz_questions = [];
+    if (!analysis.flashcards) analysis.flashcards = [];
+    if (!analysis.knowledge_map) {
+      analysis.knowledge_map = { nodes: [], edges: [] };
+    }
 
     // Slice flashcards for free users if necessary
     if (!isProOrClass && analysis.flashcards) {
@@ -115,14 +169,16 @@ Deno.serve(async (req: Request) => {
 
     return new Response(JSON.stringify(analysis), {
       status: 200,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { ...corsHeaders, "Content-Type": "application/json" }
     });
 
-  } catch (err: any) {
-    console.error("Critical Function Error:", err.message);
-    return new Response(JSON.stringify({ error: err.message || "An unexpected error occurred" }), {
+  } catch (err) {
+    const error = err as Error;
+    console.error("Critical Function Error:", error.message);
+    return new Response(JSON.stringify({ error: error.message || "An unexpected error occurred" }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" }
     });
   }
 });
+
