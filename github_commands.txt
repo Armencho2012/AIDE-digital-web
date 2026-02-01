@@ -27,3 +27,7 @@ Advanced Tips
 git stash – Temporarily save uncommitted changes.
 git reset --hard HEAD~1 – Undo the last commit (use with caution).
 git remote -v – View remote repository URLs. 
+
+
+
+supabase functions deploy analyze-text
