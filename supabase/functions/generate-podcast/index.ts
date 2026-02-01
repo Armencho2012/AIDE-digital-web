@@ -1,5 +1,10 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { corsHeaders } from "./_shared-index.ts";
+
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+};
 
 // Helper function to get user's subscription plan
 async function getUserPlan(supabaseAdmin: any, userId: string): Promise<string> {
@@ -95,14 +100,6 @@ Deno.serve(async (req: Request) => {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_ANON_KEY")!;
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const apiKey = Deno.env.get("LOVABLE_API_KEY");
-
-    if (!supabaseUrl || !apiKey || !serviceRoleKey) {
-      return new Response(JSON.stringify({ error: "Missing environment variables" }), {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" }
-      });
-    }
 
     // Client for user auth
     const supabase = createClient(supabaseUrl, supabaseKey, {
@@ -164,6 +161,14 @@ Deno.serve(async (req: Request) => {
       });
     }
 
+    const apiKey = Deno.env.get("GEMINI_API_KEY");
+    if (!apiKey) {
+      return new Response(JSON.stringify({ error: "Gemini API key not configured" }), {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
+      });
+    }
+
     // Build the podcast dialogue prompt
     const languageInstruction = language === 'en' ? 'English' : 
                                 language === 'ru' ? 'Russian' : 
@@ -190,69 +195,39 @@ Begin the podcast dialogue now:`;
 
     console.log(`Generating podcast for user ${user.id}, topic: ${truncatedPrompt.substring(0, 50)}...`);
 
-    // Use Lovable AI Gateway with TTS capabilities
-    // First generate the dialogue text
-    const dialogueResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${apiKey}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        model: "google/gemini-3-flash-preview",
-        messages: [{ role: "user", content: dialoguePrompt }],
-        max_tokens: 2000
-      })
-    });
-
-    if (!dialogueResponse.ok) {
-      const errorText = await dialogueResponse.text();
-      console.error('Dialogue generation error:', dialogueResponse.status, errorText);
-      if (dialogueResponse.status === 429) {
-        return new Response(JSON.stringify({ 
-          error: "Rate limits exceeded, please try again later",
-          retryable: true
-        }), {
-          status: 429,
-          headers: { ...corsHeaders, "Content-Type": "application/json" }
-        });
-      }
-      if (dialogueResponse.status === 402) {
-        return new Response(JSON.stringify({ error: "Payment required, please add funds to your Lovable AI workspace." }), {
-          status: 402,
-          headers: { ...corsHeaders, "Content-Type": "application/json" }
-        });
-      }
-      throw new Error("Failed to generate podcast dialogue");
-    }
-
-    const dialogueData = await dialogueResponse.json();
-    const dialogueText = dialogueData.choices?.[0]?.message?.content;
-
-    if (!dialogueText) {
-      throw new Error("No dialogue generated");
-    }
-
-    console.log('Dialogue generated, length:', dialogueText.length);
-
-    // Call Lovable AI Gateway TTS endpoint
-    const ttsUrl = `https://ai.gateway.lovable.dev/v1/audio/speech`;
+    // Call Gemini TTS API with retry mechanism
+    const ttsUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`;
     
     const ttsPayload = {
-      model: "google/gemini-3-flash-preview",
-      input: dialogueText,
-      voice: {
-        languageCode: language,
-        name: language === 'en' ? 'en-US-Neural2-F' : 
-              language === 'ru' ? 'ru-RU-Neural2-F' : 
-              language === 'hy' ? 'hy-AM-Neural2-F' : 
-              language === 'ko' ? 'ko-KR-Neural2-F' : 'en-US-Neural2-F'
-      },
-      audioFormat: "mp3",
-      speed: 1.0
+      contents: [{
+        role: 'user',
+        parts: [{ text: dialoguePrompt }]
+      }],
+      generationConfig: {
+        temperature: 1,
+        responseModalities: ['audio'],
+        speechConfig: {
+          multiSpeakerVoiceConfig: {
+            speakerVoiceConfigs: [
+              { 
+                speaker: 'Speaker 1', 
+                voiceConfig: { 
+                  prebuiltVoiceConfig: { voiceName: 'Zephyr' } 
+                } 
+              },
+              { 
+                speaker: 'Speaker 2', 
+                voiceConfig: { 
+                  prebuiltVoiceConfig: { voiceName: 'Puck' } 
+                } 
+              }
+            ]
+          }
+        }
+      }
     };
 
-    console.log('Calling TTS API with retry...');
+    console.log('Calling Gemini TTS API with retry...');
     
     // Add timeout protection (90 seconds for TTS generation)
     const controller = new AbortController();
@@ -262,10 +237,7 @@ Begin the podcast dialogue now:`;
     try {
       ttsRes = await fetchWithRetry(ttsUrl, {
         method: "POST",
-        headers: { 
-          "Authorization": `Bearer ${apiKey}`,
-          "Content-Type": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(ttsPayload),
         signal: controller.signal
       }, 3, 2000);
@@ -285,7 +257,7 @@ Begin the podcast dialogue now:`;
         }
       })();
       const errorMessage = errorJson?.error?.message || errorJson?.message || `TTS API error (HTTP ${ttsRes.status})`;
-      console.error('TTS error:', ttsRes.status, JSON.stringify(errorJson));
+      console.error('Gemini TTS error:', ttsRes.status, JSON.stringify(errorJson));
       
       if (ttsRes.status === 429) {
         return new Response(JSON.stringify({ 
@@ -297,7 +269,7 @@ Begin the podcast dialogue now:`;
         });
       }
       
-      if (ttsRes.status === 500 || ttsRes.status === 503) {
+      if (ttsRes.status === 500) {
         return new Response(JSON.stringify({ 
           error: "The podcast service encountered a temporary issue. Please try again.",
           retryable: true
@@ -310,26 +282,72 @@ Begin the podcast dialogue now:`;
       throw new Error(errorMessage);
     }
 
-    // Get audio as array buffer
-    const audioArrayBuffer = await ttsRes.arrayBuffer();
-    const audioBytes = new Uint8Array(audioArrayBuffer);
-    console.log(`Audio size: ${audioBytes.length} bytes`);
+    const ttsJson = await ttsRes.json();
+    console.log('TTS response received, checking for audio data...');
+    console.log('Response structure:', JSON.stringify(ttsJson).substring(0, 1000));
 
-    // Validate audio size
-    const maxAudioSize = 50 * 1024 * 1024; // 50MB limit
-    if (audioBytes.length > maxAudioSize) {
-      throw new Error(`Generated audio exceeds maximum size limit (${(audioBytes.length / 1024 / 1024).toFixed(2)}MB)`);
+    // Extract audio data from response - check multiple possible locations
+    let audioPart = ttsJson?.candidates?.[0]?.content?.parts?.find(
+      (part: any) => part.inlineData?.mimeType?.startsWith('audio/')
+    );
+
+    // If not found in content.parts, check if audio is in a different structure
+    if (!audioPart && ttsJson?.candidates?.[0]) {
+      const candidate = ttsJson.candidates[0];
+      console.log('Candidate structure:', JSON.stringify(candidate).substring(0, 500));
+      
+      if (candidate.content?.parts?.length > 0) {
+        audioPart = candidate.content.parts.find((p: any) => {
+          const hasMimeType = p.inlineData?.mimeType?.startsWith('audio/');
+          const hasData = p.inlineData?.data;
+          return hasMimeType && hasData;
+        });
+      }
     }
+
+    // Strict validation: must have data AND valid audio mime type
+    if (!audioPart?.inlineData?.data) {
+      console.error('No audio data found in TTS response');
+      console.error('Full response:', JSON.stringify(ttsJson));
+      throw new Error('No audio generated from TTS API - response structure unexpected');
+    }
+
+    const audioBase64 = audioPart.inlineData.data;
+    const audioMimeType = audioPart.inlineData.mimeType;
+    
+    // Validate mime type is actually audio
+    if (!audioMimeType?.startsWith('audio/')) {
+      throw new Error(`Invalid audio format in response: ${audioMimeType}`);
+    }
+
+    if (!audioBase64 || typeof audioBase64 !== 'string') {
+      console.error('Invalid audio data format:', typeof audioBase64);
+      throw new Error('Audio data is invalid or empty');
+    }
+    
+    console.log(`Audio data received, type: ${audioMimeType}, base64 length: ${audioBase64.length}`);
+    
+    // Validate audio size before decoding (estimate: base64 is ~33% larger than binary)
+    const estimatedSize = Math.ceil((audioBase64.length * 3) / 4);
+    const maxAudioSize = 50 * 1024 * 1024; // 50MB limit
+    if (estimatedSize > maxAudioSize) {
+      throw new Error(`Generated audio exceeds maximum size limit (${(estimatedSize / 1024 / 1024).toFixed(2)}MB)`);
+    }
+    
+    // Decode base64 to bytes
+    const audioBytes = base64ToUint8Array(audioBase64);
+    console.log(`Audio size: ${audioBytes.length} bytes`);
 
     // Generate unique filename
     const timestamp = Date.now();
-    const filename = `${user.id}/${timestamp}.mp3`;
+    const extension = audioMimeType.includes('wav') ? 'wav' : 'mp3';
+    const filename = `${user.id}/${timestamp}.${extension}`;
 
     // Upload to storage
     const { data: uploadData, error: uploadError } = await supabaseAdmin.storage
       .from('podcasts')
       .upload(filename, audioBytes, {
-        contentType: 'audio/mpeg',
+        contentType: audioMimeType,
         upsert: true
       });
 
@@ -378,21 +396,20 @@ Begin the podcast dialogue now:`;
     supabaseAdmin.from("usage_logs").insert({
       user_id: user.id,
       action_type: "podcast_generation",
-    }).then((err) => {
+    }).then((err: any) => {
       if (err) console.error("Error logging usage:", err);
     });
 
     // Return podcast URL
     return new Response(JSON.stringify({
       podcast_url: podcastUrl,
-      success: true,
-      dialogue: dialogueText
+      success: true
     }), {
       status: 200,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
 
-  } catch (err) {
+  } catch (err: unknown) {
     console.error("Podcast generation error:", err);
     const errorMessage = err instanceof Error ? err.message : "An unknown error occurred";
     return new Response(JSON.stringify({ error: errorMessage }), {
