@@ -165,7 +165,7 @@ If the content is in a language other than ${language}, still respond in ${langu
     }
 
     // 5. Async Logging & Final Response
-    supabaseAdmin.from("usage_logs").insert({ user_id: user.id, action_type: "text_analysis" }).then();
+    supabaseAdmin.from("usage_logs").insert({ user_id: user.id, action_type: "analysis" }).then();
 
     return new Response(JSON.stringify(analysis), {
       status: 200,

@@ -225,6 +225,7 @@ const Dashboard = () => {
           body: {
             text,
             media: mediaPayload,
+            language,
             isCourse: mode === 'course',
             generationOptions: generationOptions || { quiz: true, flashcards: true, map: true, course: mode === 'course', podcast: false }
           }

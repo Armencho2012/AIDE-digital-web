@@ -180,6 +180,7 @@ const ContentDetail = () => {
         const { data, error } = await supabase.functions.invoke('analyze-text', {
           body: {
             text: content.original_text,
+            language: content.language || 'en',
             generationOptions
           }
         });
