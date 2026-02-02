@@ -4,9 +4,7 @@ import { corsHeaders } from "./_shared-index.ts";
 // Config Constants
 const DAILY_LIMIT_FREE = 1;
 const DAILY_LIMIT_PRO = 50;
-const FLASHCARDS_COUNT = 10;
 const KNOWLEDGE_MAP_NODES_COUNT = 6;
-const MAX_FLASHCARDS_FREE = 20;
 
 Deno.serve(async (req: Request) => {
   // 1. Handle CORS Preflight
@@ -51,7 +49,7 @@ Deno.serve(async (req: Request) => {
 
     // 3. Parse Request & Check Limits
     const body = await req.json().catch(() => ({}));
-    const { text, media, language = 'en' } = body;
+    const { text, media, language = 'en', generationOptions, n_questions = 5, n_flashcards = 10 } = body;
     if (!text?.trim() && !media) {
       return new Response(JSON.stringify({ error: "No content provided" }), {
         status: 400,
@@ -80,31 +78,52 @@ Deno.serve(async (req: Request) => {
       }
     }
 
-    // 4. AI Integration using Lovable AI Gateway (consistent with content-chat)
-    const quizCount = isProOrClass ? 15 : 5;
+    // 4. AI Integration using Lovable AI Gateway
     const contentContext = text.substring(0, 15000);
     const mediaContext = media ? "\n[Analyzing attached visual media]" : "";
+
+    // Build conditional system prompt based on generation options
+    const opts = generationOptions || { quiz: true, flashcards: true, map: false, course: false, podcast: false };
+    
+    const sections = [];
+    
+    // Always include core sections
+    sections.push(`"metadata": {"language": "${language}", "subject_domain": "string", "complexity_level": "beginner|intermediate|advanced"}`);
+    sections.push(`"three_bullet_summary": ["string", "string", "string"]`);
+    sections.push(`"key_terms": [{"term": "string", "definition": "string", "importance": "high|medium|low"}]`);
+    sections.push(`"lesson_sections": [{"title": "string", "summary": "string", "key_takeaway": "string"}]`);
+    
+    // Conditional sections
+    if (opts.quiz) {
+      sections.push(`"quiz_questions": [{"question": "string", "options": ["A", "B", "C", "D"], "correct_answer_index": 0, "explanation": "string", "difficulty": "easy|medium|hard"}]`);
+    } else {
+      sections.push(`"quiz_questions": []`);
+    }
+    
+    if (opts.flashcards) {
+      sections.push(`"flashcards": [{"front": "string", "back": "string"}]`);
+    } else {
+      sections.push(`"flashcards": []`);
+    }
+    
+    if (opts.map) {
+      sections.push(`"knowledge_map": {"nodes": [{"id": "n1", "label": "string", "category": "string", "description": "string"}], "edges": [{"source": "n1", "target": "n2", "label": "string", "strength": 5}]}`);
+    } else {
+      sections.push(`"knowledge_map": {"nodes": [], "edges": []}`);
+    }
 
     const systemPrompt = `You are a world-class education engine. Respond in ${language}.
 Return a SINGLE JSON object exactly like this:
 {
-  "metadata": {"language": "${language}", "subject_domain": "string", "complexity_level": "beginner|intermediate|advanced"},
-  "three_bullet_summary": ["string", "string", "string"],
-  "key_terms": [{"term": "string", "definition": "string", "importance": "high|medium|low"}],
-  "lesson_sections": [{"title": "string", "summary": "string", "key_takeaway": "string"}],
-  "quiz_questions": [{"question": "string", "options": ["A", "B", "C", "D"], "correct_answer_index": 0, "explanation": "string", "difficulty": "easy|medium|hard"}],
-  "flashcards": [{"front": "string", "back": "string"}],
-  "knowledge_map": {
-    "nodes": [{"id": "n1", "label": "string", "category": "string", "description": "string"}],
-    "edges": [{"source": "n1", "target": "n2", "label": "string", "strength": 5}]
-  }
+${sections.join(",\n")}
 }
 
-Stats: Create ${quizCount} quiz questions, ${FLASHCARDS_COUNT} flashcards, and ${KNOWLEDGE_MAP_NODES_COUNT} map nodes.
 Math: Use LaTeX notation like $x^2$.
-If the content is in a language other than ${language}, still respond in ${language}.`;
+${opts.quiz ? `Create exactly ${n_questions} quiz questions.` : 'Do not create quiz questions.'}
+${opts.flashcards ? `Create exactly ${n_flashcards} flashcards.` : 'Do not create flashcards.'}
+${opts.map ? `Create exactly ${KNOWLEDGE_MAP_NODES_COUNT} knowledge map nodes.` : 'Do not create a knowledge map.'}`;
 
-    console.log(`Analyzing for user: ${user.id} (Plan: ${userPlan})`);
+    console.log(`Analyzing for user: ${user.id} (Plan: ${userPlan}, Quiz: ${opts.quiz}, Flashcards: ${opts.flashcards}, Map: ${opts.map})`);
 
     // Use Lovable AI Gateway with JSON response mode
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
@@ -157,11 +176,6 @@ If the content is in a language other than ${language}, still respond in ${langu
     if (!analysis.flashcards) analysis.flashcards = [];
     if (!analysis.knowledge_map) {
       analysis.knowledge_map = { nodes: [], edges: [] };
-    }
-
-    // Slice flashcards for free users if necessary
-    if (!isProOrClass && analysis.flashcards) {
-      analysis.flashcards = analysis.flashcards.slice(0, MAX_FLASHCARDS_FREE);
     }
 
     // 5. Async Logging & Final Response

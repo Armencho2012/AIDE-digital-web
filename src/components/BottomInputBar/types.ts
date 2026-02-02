@@ -8,7 +8,23 @@ export interface GenerationOptions {
   map: boolean;
   course: boolean;
   podcast: boolean;
+  // Dynamic quantity settings
+  n_questions?: number;
+  n_flashcards?: number;
 }
+
+// Quantity limits by plan
+export const QUIZ_LIMITS = {
+  free: { min: 1, max: 5 },
+  pro: { min: 1, max: 50 },
+  class: { min: 1, max: 50 }
+};
+
+export const FLASHCARD_LIMITS = {
+  free: { min: 1, max: 10 },
+  pro: { min: 1, max: 20 },
+  class: { min: 1, max: 20 }
+};
 
 export interface MediaFile {
   data: string;
@@ -62,7 +78,11 @@ export const uiLabels = {
     upgradeTooltip: 'Upgrade to continue',
     dropFiles: 'Drop files here',
     voiceInput: 'Voice input',
-    listening: 'Listening...'
+    listening: 'Listening...',
+    // Quantity labels
+    questionsCount: 'Questions',
+    flashcardsCount: 'Flashcards',
+    quantity: 'Quantity'
   },
   ru: {
     placeholder: {
@@ -102,7 +122,11 @@ export const uiLabels = {
     upgradeTooltip: 'Обновите для продолжения',
     dropFiles: 'Перетащите файлы сюда',
     voiceInput: 'Голосовой ввод',
-    listening: 'Слушаю...'
+    listening: 'Слушаю...',
+    // Quantity labels
+    questionsCount: 'Вопросы',
+    flashcardsCount: 'Карточки',
+    quantity: 'Количество'
   },
   hy: {
     placeholder: {
@@ -142,7 +166,11 @@ export const uiLabels = {
     upgradeTooltip: 'Թարմացրեք շարունակելու համար',
     dropFiles: 'Գցեք ֆայլերը այստեղ',
     voiceInput: 'Ձայնային մուտքագրում',
-    listening: 'Լսում եմ...'
+    listening: 'Լսում եմ...',
+    // Quantity labels
+    questionsCount: 'Հարցեր',
+    flashcardsCount: 'Քարտեր',
+    quantity: 'Քանակ'
   },
   ko: {
     placeholder: {
@@ -182,6 +210,10 @@ export const uiLabels = {
     upgradeTooltip: '계속하려면 업그레이드',
     dropFiles: '파일을 여기에 놓으세요',
     voiceInput: '음성 입력',
-    listening: '듣는 중...'
+    listening: '듣는 중...',
+    // Quantity labels
+    questionsCount: '문항',
+    flashcardsCount: '플래시카드',
+    quantity: '수량'
   }
 };

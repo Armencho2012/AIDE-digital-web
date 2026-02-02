@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { ArrowLeft, Search, Trash2, Calendar, PlayCircle, Menu, MessageCircle, FileText } from 'lucide-react';
+import { ArrowLeft, Search, Trash2, Calendar, PlayCircle, Menu, MessageCircle, FileText, GraduationCap } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { useContent } from '@/hooks/useContent';
 import { useSettings } from '@/hooks/useSettings';
@@ -36,6 +36,7 @@ const uiLabels = {
     all: 'All',
     analyses: 'Analyses',
     chats: 'Chats',
+    courses: 'Courses',
     searchPlaceholder: 'Search your content...',
     noContent: 'No content in your library yet. Start by analyzing some text!',
     deleteConfirmTitle: 'Delete Content',
@@ -55,6 +56,7 @@ const uiLabels = {
     all: 'Все',
     analyses: 'Анализы',
     chats: 'Чаты',
+    courses: 'Курсы',
     searchPlaceholder: 'Найти контент...',
     noContent: 'В вашей библиотеке еще нет контента. Начните с анализа текста!',
     deleteConfirmTitle: 'Удалить контент',
@@ -74,6 +76,7 @@ const uiLabels = {
     all: 'Բոլորը',
     analyses: 'Վերլուծություններ',
     chats: 'Զրուցարաններ',
+    courses: 'Դասընթացներ',
     searchPlaceholder: 'Որոնել ձեր բովանդակությունը...',
     noContent: 'Ձեր գրադարանում դեռ բովանդակություն չկա: Սկսեք տեքստ վերլուծելով:',
     deleteConfirmTitle: 'Ջնջել բովանդակությունը',
@@ -93,6 +96,7 @@ const uiLabels = {
     all: '모두',
     analyses: '분석',
     chats: '채팅',
+    courses: '코스',
     searchPlaceholder: '콘텐츠 검색...',
     noContent: '라이브러리에 콘텐츠가 없습니다. 텍스트 분석을 시작하세요!',
     deleteConfirmTitle: '콘텐츠 삭제',
@@ -110,7 +114,7 @@ const Library = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<'all' | 'analyse' | 'chat'>('all');
+  const [activeTab, setActiveTab] = useState<'all' | 'analyse' | 'chat' | 'course'>('all');
   const navigate = useNavigate();
   const labels = uiLabels[language as Language] || uiLabels.en;
 
@@ -126,9 +130,11 @@ const Library = () => {
     
     // Filter by content type tab
     if (activeTab === 'analyse') {
-      filtered = filtered.filter(item => item.content_type !== 'chat');
+      filtered = filtered.filter(item => item.content_type !== 'chat' && item.content_type !== 'course');
     } else if (activeTab === 'chat') {
       filtered = filtered.filter(item => item.content_type === 'chat');
+    } else if (activeTab === 'course') {
+      filtered = filtered.filter(item => item.content_type === 'course' || item.generation_status?.course === true);
     }
     
     // Filter by search query
@@ -209,7 +215,7 @@ const Library = () => {
         </div>
 
         {/* Tabs for filtering content type */}
-        <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'all' | 'analyse' | 'chat')} className="mb-4 sm:mb-6">
+        <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'all' | 'analyse' | 'chat' | 'course')} className="mb-4 sm:mb-6">
           <TabsList className="bg-card/50">
             <TabsTrigger value="all" className="flex items-center gap-2">
               {labels.all}
@@ -221,6 +227,10 @@ const Library = () => {
             <TabsTrigger value="chat" className="flex items-center gap-2">
               <MessageCircle className="h-4 w-4" />
               <span className="hidden sm:inline">{labels.chats}</span>
+            </TabsTrigger>
+            <TabsTrigger value="course" className="flex items-center gap-2">
+              <GraduationCap className="h-4 w-4" />
+              <span className="hidden sm:inline">{labels.courses}</span>
             </TabsTrigger>
           </TabsList>
         </Tabs>

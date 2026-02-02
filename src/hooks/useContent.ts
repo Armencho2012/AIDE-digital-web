@@ -48,14 +48,20 @@ export const useContent = (options: UseContentOptions = {}): UseContentResult =>
   const [isAuthChecked, setIsAuthChecked] = useState(false);
   const navigate = useNavigate();
 
-  const fetchContent = useCallback(async (userId: string, contentId?: string) => {
+  const fetchContent = useCallback(async (userId: string, contentId?: string, contentType?: string) => {
     try {
-      // Fetch from Supabase instead of localStorage
-      const { data: items, error } = await supabase
+      // Build query with optional content_type filter
+      let query = supabase
         .from('user_content')
         .select('*')
-        .eq('user_id', userId)
-        .order('created_at', { ascending: false });
+        .eq('user_id', userId);
+      
+      // Filter by content_type if provided
+      if (contentType) {
+        query = query.eq('content_type', contentType);
+      }
+      
+      const { data: items, error } = await query.order('created_at', { ascending: false });
 
       if (error) {
         console.error('Error fetching content from Supabase:', error);

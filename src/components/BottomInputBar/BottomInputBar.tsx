@@ -4,6 +4,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
+import { Slider } from '@/components/ui/slider';
 import {
   Sparkles,
   Loader2,
@@ -16,7 +17,8 @@ import {
   Send,
 } from 'lucide-react';
 import { useVoiceInput } from './useVoiceInput';
-import { BottomInputBarProps, PrimaryMode, GenerationOptions, uiLabels } from './types';
+import { BottomInputBarProps, PrimaryMode, GenerationOptions, QUIZ_LIMITS, FLASHCARD_LIMITS, uiLabels } from './types';
+import { useUsageLimit } from '@/hooks/useUsageLimit';
 
 export const BottomInputBar = ({
   language,
@@ -30,6 +32,7 @@ export const BottomInputBar = ({
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const labels = uiLabels[language];
+  const { userPlan } = useUsageLimit();
 
   // Generation options - Quiz and Flashcards checked by default
   const [generationOptions, setGenerationOptions] = useState<GenerationOptions>({
@@ -37,7 +40,22 @@ export const BottomInputBar = ({
     flashcards: true,
     map: false,
     course: false,
-    podcast: false
+    podcast: false,
+    n_questions: 5,
+    n_flashcards: 10
+  });
+
+  // Get limits based on user plan
+  const quizLimits = QUIZ_LIMITS[userPlan] || QUIZ_LIMITS.free;
+  const flashcardLimits = FLASHCARD_LIMITS[userPlan] || FLASHCARD_LIMITS.free;
+
+  // Initialize quantity values when userPlan changes
+  useState(() => {
+    setGenerationOptions(prev => ({
+      ...prev,
+      n_questions: Math.min(prev.n_questions || 5, quizLimits.max),
+      n_flashcards: Math.min(prev.n_flashcards || 10, flashcardLimits.max)
+    }));
   });
 
   const handleTranscript = useCallback((transcript: string) => {
@@ -52,10 +70,15 @@ export const BottomInputBar = ({
   const handleSubmit = () => {
     if (!text.trim() && (!media || media.length === 0)) return;
     
-    // For analyse mode, pass generation options
+    // For analyse mode, pass generation options with quantities
     // For chat mode, just send to chat
     const mode = primaryMode === 'analyse' ? 'analyze' : 'chat';
-    onSubmit(text, mode, media, primaryMode === 'analyse' ? generationOptions : undefined);
+    const options = primaryMode === 'analyse' ? {
+      ...generationOptions,
+      n_questions: generationOptions.quiz ? generationOptions.n_questions : undefined,
+      n_flashcards: generationOptions.flashcards ? generationOptions.n_flashcards : undefined
+    } : undefined;
+    onSubmit(text, mode, media, options);
     setText('');
     setMedia(null);
   };
@@ -181,27 +204,84 @@ export const BottomInputBar = ({
 
           {/* Generation Options - Only show when Analyse is selected */}
           {primaryMode === 'analyse' && (
-            <div className="flex flex-wrap justify-center gap-3 mb-4 px-2">
-              {(['quiz', 'flashcards', 'map', 'course', 'podcast'] as const).map((option) => (
-                <label
-                  key={option}
-                  className={`flex items-center gap-2 px-3 py-1.5 rounded-lg cursor-pointer transition-all ${
-                    generationOptions[option]
-                      ? 'bg-primary/10 border border-primary/30 text-primary'
-                      : 'bg-muted/50 border border-transparent text-muted-foreground hover:bg-muted'
-                  }`}
-                >
-                  <Checkbox
-                    checked={generationOptions[option]}
-                    onCheckedChange={() => toggleGenerationOption(option)}
-                    disabled={isLocked}
-                    className="h-4 w-4"
-                  />
-                  <span className="text-sm font-medium capitalize">
-                    {labels.generationOptions[option]}
-                  </span>
-                </label>
-              ))}
+            <div className="space-y-3 mb-4 px-2">
+              <div className="flex flex-wrap justify-center gap-3">
+                {(['quiz', 'flashcards', 'map', 'course', 'podcast'] as const).map((option) => (
+                  <label
+                    key={option}
+                    className={`flex items-center gap-2 px-3 py-1.5 rounded-lg cursor-pointer transition-all ${
+                      generationOptions[option]
+                        ? 'bg-primary/10 border border-primary/30 text-primary'
+                        : 'bg-muted/50 border border-transparent text-muted-foreground hover:bg-muted'
+                    }`}
+                  >
+                    <Checkbox
+                      checked={generationOptions[option]}
+                      onCheckedChange={() => toggleGenerationOption(option)}
+                      disabled={isLocked}
+                      className="h-4 w-4"
+                    />
+                    <span className="text-sm font-medium capitalize">
+                      {labels.generationOptions[option]}
+                    </span>
+                  </label>
+                ))}
+              </div>
+
+              {/* Quantity Sliders */}
+              <div className="flex flex-col sm:flex-row gap-4 mt-3 p-3 bg-muted/30 rounded-lg">
+                {/* Quiz Questions Slider */}
+                {generationOptions.quiz && (
+                  <div className="flex-1 space-y-2">
+                    <div className="flex justify-between items-center">
+                      <span className="text-xs font-medium text-muted-foreground">
+                        {labels.questionsCount}: {generationOptions.n_questions}
+                      </span>
+                      <span className="text-xs text-muted-foreground">
+                        1-{quizLimits.max}
+                      </span>
+                    </div>
+                    <Slider
+                      value={[generationOptions.n_questions || 5]}
+                      onValueChange={(value) => setGenerationOptions(prev => ({
+                        ...prev,
+                        n_questions: value[0]
+                      }))}
+                      min={quizLimits.min}
+                      max={quizLimits.max}
+                      step={1}
+                      disabled={isLocked}
+                      className="cursor-pointer"
+                    />
+                  </div>
+                )}
+
+                {/* Flashcards Slider */}
+                {generationOptions.flashcards && (
+                  <div className="flex-1 space-y-2">
+                    <div className="flex justify-between items-center">
+                      <span className="text-xs font-medium text-muted-foreground">
+                        {labels.flashcardsCount}: {generationOptions.n_flashcards}
+                      </span>
+                      <span className="text-xs text-muted-foreground">
+                        1-{flashcardLimits.max}
+                      </span>
+                    </div>
+                    <Slider
+                      value={[generationOptions.n_flashcards || 10]}
+                      onValueChange={(value) => setGenerationOptions(prev => ({
+                        ...prev,
+                        n_flashcards: value[0]
+                      }))}
+                      min={flashcardLimits.min}
+                      max={flashcardLimits.max}
+                      step={1}
+                      disabled={isLocked}
+                      className="cursor-pointer"
+                    />
+                  </div>
+                )}
+              </div>
             </div>
           )}
 
