@@ -30,31 +30,64 @@ export const useUsageLimit = (): UseUsageLimitReturn => {
 
     setIsLoading(true);
     try {
-      // Get subscription info
+      const normalizePlan = (value: string | null | undefined) => {
+        const normalized = (value || '').toLowerCase();
+        if (normalized === 'pro' || normalized === 'class') {
+          return normalized as 'pro' | 'class';
+        }
+        return 'free';
+      };
+
+      const isActiveStatus = (status: string | null | undefined) => {
+        const normalized = (status || '').toLowerCase();
+        return normalized === 'active' || normalized === 'trialing';
+      };
+
+      // Get subscription info (latest row if multiple exist)
       const { data: subscriptionData, error: subError } = await supabase
         .from('subscriptions')
-        .select('status, plan_type, expires_at')
+        .select('status, plan_type, expires_at, updated_at')
         .eq('user_id', userId)
-        .single();
+        .order('updated_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
 
       let plan: 'free' | 'pro' | 'class' = 'free';
       let limit = DAILY_LIMIT_FREE;
 
       if (!subError && subscriptionData) {
-        const isActive =
-          subscriptionData.status === 'active' &&
-          ['pro', 'class'].includes(subscriptionData.plan_type) &&
-          (!subscriptionData.expires_at ||
-            new Date(subscriptionData.expires_at) > new Date());
+        const notExpired =
+          !subscriptionData.expires_at ||
+          new Date(subscriptionData.expires_at) > new Date();
+        const normalizedPlan = normalizePlan(subscriptionData.plan_type);
+        const isActive = isActiveStatus(subscriptionData.status) && normalizedPlan !== 'free' && notExpired;
 
         if (isActive) {
-          plan = subscriptionData.plan_type as 'pro' | 'class';
+          plan = normalizedPlan;
           limit =
             plan === 'class'
               ? DAILY_LIMIT_CLASS
               : plan === 'pro'
               ? DAILY_LIMIT_PRO
               : DAILY_LIMIT_FREE;
+        }
+      } else if (subError) {
+        console.warn('Subscription fetch error:', subError);
+      }
+
+      // Optional fallback to RPC if subscription row is missing or blocked by RLS
+      if (plan === 'free' && !subscriptionData) {
+        const { data: rpcPlan, error: rpcError } = await supabase.rpc('get_user_plan', {
+          p_user_id: userId
+        });
+        if (!rpcError && rpcPlan) {
+          const normalized = normalizePlan(rpcPlan);
+          if (normalized !== 'free') {
+            plan = normalized;
+            limit = normalized === 'class' ? DAILY_LIMIT_CLASS : DAILY_LIMIT_PRO;
+          }
+        } else if (rpcError) {
+          console.warn('get_user_plan RPC error:', rpcError);
         }
       }
 
