@@ -16,14 +16,14 @@ export interface GenerationOptions {
 // Quantity limits by plan
 export const QUIZ_LIMITS = {
   free: { min: 1, max: 5 },
-  pro: { min: 1, max: 15 },
-  class: { min: 1, max: 50 }
+  pro: { min: 1, max: 5 },
+  class: { min: 1, max: 5 }
 };
 
 export const FLASHCARD_LIMITS = {
   free: { min: 1, max: 10 },
-  pro: { min: 1, max: 20 },
-  class: { min: 1, max: 20 }
+  pro: { min: 1, max: 10 },
+  class: { min: 1, max: 10 }
 };
 
 export interface MediaFile {
