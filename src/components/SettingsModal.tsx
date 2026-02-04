@@ -126,6 +126,15 @@ export const SettingsModal = ({
     }
   };
 
+  useEffect(() => {
+    if (!open) return;
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user?.id) {
+        refreshUsage(session.user.id);
+      }
+    });
+  }, [open, refreshUsage]);
+
   return (
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
@@ -253,11 +262,3 @@ export const SettingsModal = ({
     </>
   );
 };
-  useEffect(() => {
-    if (!open) return;
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user?.id) {
-        refreshUsage(session.user.id);
-      }
-    });
-  }, [open, refreshUsage]);
