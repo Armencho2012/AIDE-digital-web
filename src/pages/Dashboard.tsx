@@ -517,6 +517,7 @@ const Dashboard = () => {
         isLocked={isLocked}
         isSessionLocked={isSessionLocked}
         onDraftStart={handleDraftStart}
+        userPlan={userPlan}
       />
     </div>
   );

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -18,6 +18,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Trash2, Loader2 } from "lucide-react";
 import { useTranslation } from "@/hooks/useTranslation";
 import { Language } from "@/lib/settings";
+import { useUsageLimit } from "@/hooks/useUsageLimit";
 
 interface SettingsModalProps {
   open: boolean;
@@ -48,6 +49,7 @@ export const SettingsModal = ({
 
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const { userPlan, isLoading: planLoading, refreshUsage } = useUsageLimit();
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -189,7 +191,15 @@ export const SettingsModal = ({
             {showPlanStatus && (
               <div className="space-y-2 pt-4 border-t">
                 <Label className="text-muted-foreground">{t('accountStatus')}</Label>
-                <p className="text-sm font-medium">{t('freeTier')}</p>
+                <p className="text-sm font-medium">
+                  {planLoading
+                    ? t('loading')
+                    : userPlan === 'pro'
+                      ? t('proPlan')
+                      : userPlan === 'class'
+                        ? t('classPlan')
+                        : t('freeTier')}
+                </p>
               </div>
             )}
 
@@ -243,3 +253,11 @@ export const SettingsModal = ({
     </>
   );
 };
+  useEffect(() => {
+    if (!open) return;
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user?.id) {
+        refreshUsage(session.user.id);
+      }
+    });
+  }, [open, refreshUsage]);

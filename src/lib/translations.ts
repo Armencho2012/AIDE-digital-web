@@ -17,6 +17,9 @@ export type TranslationKey =
     | 'dark'
     | 'accountStatus'
     | 'freeTier'
+    | 'proPlan'
+    | 'classPlan'
+    | 'loading'
     | 'deleteAccount'
     | 'deleteConfirmTitle'
     | 'deleteConfirmDescription'
@@ -44,6 +47,9 @@ export const translations: Record<Language, Record<TranslationKey, string>> = {
         dark: "Dark",
         accountStatus: "Account Status",
         freeTier: "Free Tier",
+        proPlan: "Pro Plan",
+        classPlan: "Class Plan",
+        loading: "Loading...",
         deleteAccount: "Delete Account",
         deleteConfirmTitle: "Delete Account",
         deleteConfirmDescription: "Are you sure you want to delete your account? This action cannot be undone. All your data, including your profile and usage history, will be permanently deleted.",
@@ -70,6 +76,9 @@ export const translations: Record<Language, Record<TranslationKey, string>> = {
         dark: "Темная",
         accountStatus: "Статус аккаунта",
         freeTier: "Бесплатный тариф",
+        proPlan: "Тариф Pro",
+        classPlan: "Тариф Class",
+        loading: "Загрузка...",
         deleteAccount: "Удалить аккаунт",
         deleteConfirmTitle: "Удалить аккаунт",
         deleteConfirmDescription: "Вы уверены, что хотите удалить свой аккаунт? Это действие нельзя отменить. Все ваши данные, включая профиль и историю использования, будут безвозвратно удалены.",
@@ -96,6 +105,9 @@ export const translations: Record<Language, Record<TranslationKey, string>> = {
         dark: "Մուգ",
         accountStatus: "Հաշվի կարգավիճակ",
         freeTier: "Անվճար տարբերակ",
+        proPlan: "Pro պլան",
+        classPlan: "Class պլան",
+        loading: "Բեռնվում է...",
         deleteAccount: "Ջնջել հաշիվը",
         deleteConfirmTitle: "Ջնջել հաշիվը",
         deleteConfirmDescription: "Դուք համոզված եք, որ ցանկանում եք ջնջել ձեր հաշիվը: Այս գործողությունը չի կարող հետարկվել: Ձեր բոլոր տվյալները, ներառյալ ձեր պրոֆիլը և օգտագործման պատմությունը, կմշտապես ջնջվեն:",
@@ -122,6 +134,9 @@ export const translations: Record<Language, Record<TranslationKey, string>> = {
         dark: "다크",
         accountStatus: "계정 상태",
         freeTier: "무료 요금제",
+        proPlan: "프로 요금제",
+        classPlan: "클래스 요금제",
+        loading: "로딩 중...",
         deleteAccount: "계정 삭제",
         deleteConfirmTitle: "계정 삭제",
         deleteConfirmDescription: "계정을 삭제하시겠습니까? 이 작업은 취소할 수 없습니다. 프로필 및 사용 기록을 포함한 모든 데이터가 영구적으로 삭제됩니다.",

@@ -26,7 +26,8 @@ export const BottomInputBar = ({
   isProcessing,
   isLocked,
   isSessionLocked = false,
-  onDraftStart
+  onDraftStart,
+  userPlan: propUserPlan
 }: BottomInputBarProps) => {
   const [primaryMode, setPrimaryMode] = useState<PrimaryMode>('analyse');
   const [text, setText] = useState('');
@@ -34,7 +35,8 @@ export const BottomInputBar = ({
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const labels = uiLabels[language];
-  const { userPlan } = useUsageLimit();
+  const { userPlan: hookUserPlan } = useUsageLimit();
+  const userPlan = propUserPlan || hookUserPlan;
 
   // Generation options - Quiz and Flashcards checked by default
   const [generationOptions, setGenerationOptions] = useState<GenerationOptions>({
