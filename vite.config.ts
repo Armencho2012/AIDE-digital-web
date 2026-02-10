@@ -17,7 +17,7 @@ export default defineConfig(({ mode }) => ({
   },
   build: {
     // Raise chunk size warning threshold to reduce noisy alerts for large vendor bundles
-    chunkSizeWarningLimit: 2000, // in kB
+    chunkSizeWarningLimit: 4096, // in kB
   },
   test: {
     globals: true,
