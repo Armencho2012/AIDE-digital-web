@@ -15,6 +15,10 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    // Raise chunk size warning threshold to reduce noisy alerts for large vendor bundles
+    chunkSizeWarningLimit: 2000, // in kB
+  },
   test: {
     globals: true,
     environment: "jsdom",
