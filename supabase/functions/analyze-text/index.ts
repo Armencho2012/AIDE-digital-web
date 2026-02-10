@@ -108,8 +108,14 @@ Deno.serve(async (req: Request) => {
 
     const quizLimits = QUIZ_LIMITS[userPlan] || QUIZ_LIMITS.free;
     const flashcardLimits = FLASHCARD_LIMITS[userPlan] || FLASHCARD_LIMITS.free;
-    const parseCount = (value: unknown, fallback: number) =>
-      typeof value === "number" && Number.isFinite(value) ? value : fallback;
+    const parseCount = (value: unknown, fallback: number) => {
+      if (typeof value === "number" && Number.isFinite(value)) return value;
+      if (typeof value === "string") {
+        const parsed = Number(value);
+        if (Number.isFinite(parsed)) return parsed;
+      }
+      return fallback;
+    };
     const requestedQuizCount = parseCount(n_questions, parseCount(generationOptions?.n_questions, DEFAULT_QUIZ_COUNT));
     const requestedFlashcardCount = parseCount(n_flashcards, parseCount(generationOptions?.n_flashcards, DEFAULT_FLASHCARD_COUNT));
     const quizCount = opts.quiz
