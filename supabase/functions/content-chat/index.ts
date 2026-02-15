@@ -4,29 +4,8 @@ const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
 };
-const GEMINI_API_VERSIONS = Array.from(new Set([
-  ...(Deno.env.get("GEMINI_API_VERSIONS") || "")
-    .split(",")
-    .map((value) => value.trim())
-    .filter(Boolean),
-  Deno.env.get("GEMINI_API_VERSION")?.trim(),
-  "v1beta",
-  "v1",
-].filter((value): value is string => Boolean(value && value.trim()))));
-const GEMINI_MODEL_CANDIDATES = Array.from(new Set([
-  Deno.env.get("GEMINI_TEXT_MODEL"),
-  "gemini-flash-latest",
-  "gemini-3-flash-preview",
-  "gemini-2.5-flash",
-  "gemini-2.5-flash-lite",
-  "gemini-2.0-flash",
-  "gemini-2.0-flash-lite",
-].filter((model): model is string => Boolean(model && model.trim()))));
-
-const isModelAvailabilityError = (status: number, details: string): boolean => {
-  if (status === 404) return true;
-  return status === 400 && /not found|not supported|unknown model|unsupported model|api version/i.test(details);
-};
+const GEMINI_API_VERSION = Deno.env.get("GEMINI_API_VERSION")?.trim() || "v1beta";
+const GEMINI_MODEL = Deno.env.get("GEMINI_TEXT_MODEL")?.trim() || "gemini-flash-latest";
 
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
@@ -133,66 +112,28 @@ ${termsContext}
 --- PREVIOUS CONVERSATION ---
 ${historyContext}`;
 
-    let response: Response | null = null;
-    let selectedModel: string | null = null;
-    let selectedApiVersion: string | null = null;
-    const modelErrors: string[] = [];
-
-    modelLoop: for (const model of GEMINI_MODEL_CANDIDATES) {
-      for (const apiVersion of GEMINI_API_VERSIONS) {
-        const endpoint = `https://generativelanguage.googleapis.com/${apiVersion}/models/${model}:streamGenerateContent?alt=sse&key=${apiKey}`;
-        const candidateResponse = await fetch(endpoint, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            systemInstruction: {
-              parts: [{ text: systemPrompt }]
-            },
-            contents: [{
-              role: "user",
-              parts: [{ text: question }]
-            }],
-            generationConfig: {
-              temperature: 0.5,
-              maxOutputTokens: 2048
-            }
-          })
-        });
-
-        if (candidateResponse.ok) {
-          response = candidateResponse;
-          selectedModel = model;
-          selectedApiVersion = apiVersion;
-          break modelLoop;
+    const selectedModel = GEMINI_MODEL;
+    const selectedApiVersion = GEMINI_API_VERSION;
+    const endpoint = `https://generativelanguage.googleapis.com/${selectedApiVersion}/models/${selectedModel}:streamGenerateContent?alt=sse&key=${apiKey}`;
+    const response = await fetch(endpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        systemInstruction: {
+          parts: [{ text: systemPrompt }]
+        },
+        contents: [{
+          role: "user",
+          parts: [{ text: question }]
+        }],
+        generationConfig: {
+          temperature: 0.5,
+          maxOutputTokens: 2048
         }
-
-        const details = await candidateResponse.text();
-        if (isModelAvailabilityError(candidateResponse.status, details)) {
-          modelErrors.push(`[${model} @ ${apiVersion}] ${details}`);
-          continue;
-        }
-
-        response = new Response(details, {
-          status: candidateResponse.status,
-          headers: { "Content-Type": "application/json" }
-        });
-        selectedModel = model;
-        selectedApiVersion = apiVersion;
-        break modelLoop;
-      }
-    }
-
-    if (!response) {
-      return new Response(JSON.stringify({
-        error: "Gemini model not found",
-        details: modelErrors.join("\n")
-      }), {
-        status: 502,
-        headers: { ...corsHeaders, "Content-Type": "application/json" }
-      });
-    }
+      })
+    });
 
     if (!response.ok) {
       const errorText = await response.text();
