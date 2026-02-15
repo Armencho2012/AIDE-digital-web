@@ -17,8 +17,8 @@ const FLASHCARD_LIMITS = {
   pro: { min: 1, max: 20 },
   class: { min: 1, max: 40 }
 };
-const BASE_MAX_TOKENS = 8192;
-const PRO_MAP_MAX_TOKENS = 12288;
+const BASE_MAX_TOKENS = 4096;
+const PRO_MAP_MAX_TOKENS = 6144;
 const GEMINI_MODEL = "gemini-2.0-flash";
 
 const extractGeminiText = (payload: any): string => {
@@ -84,6 +84,7 @@ Deno.serve(async (req: Request) => {
     // 3. Parse Request & Check Limits
     const body = await req.json().catch(() => ({}));
     const { text, media, language = 'en', generationOptions, n_questions, n_flashcards } = body;
+    const textInput = typeof text === "string" ? text : "";
     if (!text?.trim() && !media) {
       return new Response(JSON.stringify({ error: "No content provided" }), {
         status: 400,
@@ -113,7 +114,7 @@ Deno.serve(async (req: Request) => {
     }
 
     // 4. AI Integration using Gemini API
-    const contentContext = text.substring(0, 15000);
+    const contentContext = textInput.substring(0, 15000);
     const mediaContext = media ? "\n[Analyzing attached visual media]" : "";
 
     // Build conditional system prompt based on generation options

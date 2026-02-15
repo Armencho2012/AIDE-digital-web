@@ -39,10 +39,10 @@ Deno.serve(async (req: Request) => {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_ANON_KEY")!;
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-    const apiKey = Deno.env.get("GEMINI_API_KEY");
+    const apiKey = Deno.env.get("GEMINI_API_KEY") || Deno.env.get("LOVABLE_API_KEY");
 
     if (!supabaseUrl || !apiKey || !serviceRoleKey) {
-      return new Response(JSON.stringify({ error: "Missing environment variables" }), {
+      return new Response(JSON.stringify({ error: "Missing environment variables (SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, GEMINI_API_KEY/LOVABLE_API_KEY)" }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" }
       });
@@ -108,9 +108,10 @@ Rules:
     });
 
     if (!response.ok) {
-      console.error("Gemini API error:", response.status, await response.text());
-      return new Response(JSON.stringify({ error: "Gemini API error" }), {
-        status: 500,
+      const providerError = await response.text();
+      console.error("Gemini API error:", response.status, providerError);
+      return new Response(JSON.stringify({ error: "Gemini API error", details: providerError }), {
+        status: 502,
         headers: { ...corsHeaders, "Content-Type": "application/json" }
       });
     }

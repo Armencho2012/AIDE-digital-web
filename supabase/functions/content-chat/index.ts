@@ -46,9 +46,9 @@ Deno.serve(async (req: Request) => {
       });
     }
 
-    const apiKey = Deno.env.get("GEMINI_API_KEY");
+    const apiKey = Deno.env.get("GEMINI_API_KEY") || Deno.env.get("LOVABLE_API_KEY");
     if (!apiKey) {
-      return new Response(JSON.stringify({ error: "API key not configured" }), {
+      return new Response(JSON.stringify({ error: "API key not configured (GEMINI_API_KEY/LOVABLE_API_KEY)" }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" }
       });
@@ -140,7 +140,10 @@ ${historyContext}`;
       }
       const errorText = await response.text();
       console.error("Gemini API error:", response.status, errorText);
-      throw new Error("Gemini API error");
+      return new Response(JSON.stringify({ error: "Gemini API error", details: errorText }), {
+        status: 502,
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
+      });
     }
 
     const encoder = new TextEncoder();
