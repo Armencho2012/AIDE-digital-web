@@ -1,7 +1,29 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { corsHeaders } from "./_shared-index.ts";
 
-const GEMINI_MODEL = Deno.env.get("GEMINI_TEXT_MODEL") || "gemini-1.5-flash";
+const GEMINI_API_VERSIONS = Array.from(new Set([
+  ...(Deno.env.get("GEMINI_API_VERSIONS") || "")
+    .split(",")
+    .map((value) => value.trim())
+    .filter(Boolean),
+  Deno.env.get("GEMINI_API_VERSION")?.trim(),
+  "v1beta",
+  "v1",
+].filter((value): value is string => Boolean(value && value.trim()))));
+const GEMINI_MODEL_CANDIDATES = Array.from(new Set([
+  Deno.env.get("GEMINI_TEXT_MODEL"),
+  "gemini-flash-latest",
+  "gemini-3-flash-preview",
+  "gemini-2.5-flash",
+  "gemini-2.5-flash-lite",
+  "gemini-2.0-flash",
+  "gemini-2.0-flash-lite",
+].filter((model): model is string => Boolean(model && model.trim()))));
+
+const isModelAvailabilityError = (status: number, details: string): boolean => {
+  if (status === 404) return true;
+  return status === 400 && /not found|not supported|unknown model|unsupported model|api version/i.test(details);
+};
 
 const extractGeminiText = (payload: any): string => {
   const parts = payload?.candidates?.[0]?.content?.parts;
@@ -19,7 +41,20 @@ const parseGeminiJson = (rawText: string): any => {
     .replace(/^```\s*/i, "")
     .replace(/\s*```$/, "")
     .trim();
-  return JSON.parse(cleaned);
+  try {
+    return JSON.parse(cleaned);
+  } catch {
+    const firstBrace = cleaned.indexOf("{");
+    const lastBrace = cleaned.lastIndexOf("}");
+    if (firstBrace >= 0 && lastBrace > firstBrace) {
+      try {
+        return JSON.parse(cleaned.slice(firstBrace, lastBrace + 1));
+      } catch {
+        return {};
+      }
+    }
+    return {};
+  }
 };
 
 Deno.serve(async (req: Request) => {
@@ -86,31 +121,94 @@ Rules:
 - Keep ghost_nodes to 3 items.
 - Use types and directions that match the relationship.`;
 
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${apiKey}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        systemInstruction: {
-          parts: [{ text: systemPrompt }]
-        },
-        contents: [{
-          role: "user",
-          parts: [{ text: `Original Text:\n${text}\n\nKnowledge Map:\n${JSON.stringify(knowledge_map)}` }]
-        }],
-        generationConfig: {
-          temperature: 0.2,
-          maxOutputTokens: 2048,
-          responseMimeType: "application/json"
+    let response: Response | null = null;
+    let selectedModel: string | null = null;
+    let selectedApiVersion: string | null = null;
+    const modelErrors: string[] = [];
+
+    modelLoop: for (const model of GEMINI_MODEL_CANDIDATES) {
+      for (const apiVersion of GEMINI_API_VERSIONS) {
+        const endpoint = `https://generativelanguage.googleapis.com/${apiVersion}/models/${model}:generateContent?key=${apiKey}`;
+        let candidateResponse = await fetch(endpoint, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            systemInstruction: {
+              parts: [{ text: systemPrompt }]
+            },
+            contents: [{
+              role: "user",
+              parts: [{ text: `Original Text:\n${text}\n\nKnowledge Map:\n${JSON.stringify(knowledge_map)}` }]
+            }],
+            generationConfig: {
+              temperature: 0.2,
+              maxOutputTokens: 2048,
+              responseMimeType: "application/json"
+            }
+          })
+        });
+
+        if (!candidateResponse.ok && candidateResponse.status === 400) {
+          candidateResponse = await fetch(endpoint, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              systemInstruction: {
+                parts: [{ text: systemPrompt }]
+              },
+              contents: [{
+                role: "user",
+                parts: [{ text: `Original Text:\n${text}\n\nKnowledge Map:\n${JSON.stringify(knowledge_map)}` }]
+              }],
+              generationConfig: {
+                temperature: 0.2,
+                maxOutputTokens: 2048
+              }
+            })
+          });
         }
-      })
-    });
+
+        if (candidateResponse.ok) {
+          response = candidateResponse;
+          selectedModel = model;
+          selectedApiVersion = apiVersion;
+          break modelLoop;
+        }
+
+        const details = await candidateResponse.text();
+        if (isModelAvailabilityError(candidateResponse.status, details)) {
+          modelErrors.push(`[${model} @ ${apiVersion}] ${details}`);
+          continue;
+        }
+
+        response = new Response(details, {
+          status: candidateResponse.status,
+          headers: { "Content-Type": "application/json" }
+        });
+        selectedModel = model;
+        selectedApiVersion = apiVersion;
+        break modelLoop;
+      }
+    }
+
+    if (!response) {
+      return new Response(JSON.stringify({
+        error: "Gemini model not found",
+        details: modelErrors.join("\n")
+      }), {
+        status: 502,
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
+      });
+    }
 
     if (!response.ok) {
       const providerError = await response.text();
-      console.error("Gemini API error:", response.status, providerError);
-      return new Response(JSON.stringify({ error: "Gemini API error", details: providerError }), {
+      console.error(`Gemini API error (${selectedModel} @ ${selectedApiVersion}):`, response.status, providerError);
+      return new Response(JSON.stringify({ error: "Gemini API error", model: selectedModel, apiVersion: selectedApiVersion, details: providerError }), {
         status: 502,
         headers: { ...corsHeaders, "Content-Type": "application/json" }
       });

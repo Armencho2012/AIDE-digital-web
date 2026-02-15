@@ -19,7 +19,29 @@ const FLASHCARD_LIMITS = {
 };
 const BASE_MAX_TOKENS = 4096;
 const PRO_MAP_MAX_TOKENS = 6144;
-const GEMINI_MODEL = Deno.env.get("GEMINI_TEXT_MODEL") || "gemini-1.5-flash";
+const GEMINI_API_VERSIONS = Array.from(new Set([
+  ...(Deno.env.get("GEMINI_API_VERSIONS") || "")
+    .split(",")
+    .map((value) => value.trim())
+    .filter(Boolean),
+  Deno.env.get("GEMINI_API_VERSION")?.trim(),
+  "v1beta",
+  "v1",
+].filter((value): value is string => Boolean(value && value.trim()))));
+const GEMINI_MODEL_CANDIDATES = Array.from(new Set([
+  Deno.env.get("GEMINI_TEXT_MODEL"),
+  "gemini-flash-latest",
+  "gemini-3-flash-preview",
+  "gemini-2.5-flash",
+  "gemini-2.5-flash-lite",
+  "gemini-2.0-flash",
+  "gemini-2.0-flash-lite",
+].filter((model): model is string => Boolean(model && model.trim()))));
+
+const isModelAvailabilityError = (status: number, details: string): boolean => {
+  if (status === 404) return true;
+  return status === 400 && /not found|not supported|unknown model|unsupported model|api version/i.test(details);
+};
 
 const extractGeminiText = (payload: any): string => {
   const parts = payload?.candidates?.[0]?.content?.parts;
@@ -52,6 +74,13 @@ const parseGeminiJson = (rawText: string): any => {
     }
     return {};
   }
+};
+
+type GeminiCallResult = {
+  response: Response | null;
+  model: string | null;
+  apiVersion: string | null;
+  notFoundErrors: string[];
 };
 
 Deno.serve(async (req: Request) => {
@@ -217,34 +246,78 @@ ${knowledgeMapInstruction ?? ''}`.trim();
       }
     });
 
-    let response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${apiKey}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(createGeminiPayload(true))
-    });
+    const callGeminiWithFallback = async (): Promise<GeminiCallResult> => {
+      const notFoundErrors: string[] = [];
 
-    if (!response.ok && response.status === 400) {
-      response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${apiKey}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(createGeminiPayload(false))
+      for (const model of GEMINI_MODEL_CANDIDATES) {
+        for (const apiVersion of GEMINI_API_VERSIONS) {
+          const endpoint = `https://generativelanguage.googleapis.com/${apiVersion}/models/${model}:generateContent?key=${apiKey}`;
+
+          let response = await fetch(endpoint, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify(createGeminiPayload(true))
+          });
+
+          if (!response.ok && response.status === 400) {
+            response = await fetch(endpoint, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify(createGeminiPayload(false))
+            });
+          }
+
+          if (response.ok) {
+            return { response, model, apiVersion, notFoundErrors };
+          }
+
+          const details = await response.text();
+          if (isModelAvailabilityError(response.status, details)) {
+            notFoundErrors.push(`[${model} @ ${apiVersion}] ${details}`);
+            continue;
+          }
+
+          return {
+            response: new Response(details, {
+              status: response.status,
+              headers: { "Content-Type": "application/json" }
+            }),
+            model,
+            apiVersion,
+            notFoundErrors
+          };
+        }
+      }
+
+      return { response: null, model: null, apiVersion: null, notFoundErrors };
+    };
+
+    const { response, model, apiVersion, notFoundErrors } = await callGeminiWithFallback();
+
+    if (!response) {
+      return new Response(JSON.stringify({
+        error: "Gemini model not found",
+        details: notFoundErrors.join("\n")
+      }), {
+        status: 502,
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
       });
     }
 
     if (!response.ok) {
       const providerError = await response.text();
-      console.error("Gemini API error:", response.status, providerError);
+      console.error(`Gemini API error (${model} @ ${apiVersion}):`, response.status, providerError);
       if (response.status === 429) {
         return new Response(JSON.stringify({ error: "Rate limits exceeded, please try again later.", details: providerError }), {
           status: 429,
           headers: { ...corsHeaders, "Content-Type": "application/json" }
         });
       }
-      return new Response(JSON.stringify({ error: "Gemini API error", details: providerError }), {
+      return new Response(JSON.stringify({ error: "Gemini API error", model, apiVersion, details: providerError }), {
         status: 502,
         headers: { ...corsHeaders, "Content-Type": "application/json" }
       });
