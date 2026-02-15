@@ -37,7 +37,21 @@ const parseGeminiJson = (rawText: string): any => {
     .replace(/^```\s*/i, "")
     .replace(/\s*```$/, "")
     .trim();
-  return JSON.parse(cleaned);
+  try {
+    return JSON.parse(cleaned);
+  } catch {
+    const firstBrace = cleaned.indexOf("{");
+    const lastBrace = cleaned.lastIndexOf("}");
+    if (firstBrace >= 0 && lastBrace > firstBrace) {
+      const candidate = cleaned.slice(firstBrace, lastBrace + 1);
+      try {
+        return JSON.parse(candidate);
+      } catch {
+        return {};
+      }
+    }
+    return {};
+  }
 };
 
 Deno.serve(async (req: Request) => {
@@ -59,10 +73,10 @@ Deno.serve(async (req: Request) => {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_ANON_KEY")!;
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-    const apiKey = Deno.env.get("GEMINI_API_KEY");
+    const apiKey = Deno.env.get("GEMINI_API_KEY") || Deno.env.get("LOVABLE_API_KEY");
 
     if (!supabaseUrl || !apiKey || !serviceRoleKey) {
-      return new Response(JSON.stringify({ error: "Missing environment variables" }), {
+      return new Response(JSON.stringify({ error: "Missing environment variables (SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, GEMINI_API_KEY/LOVABLE_API_KEY)" }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" }
       });
@@ -188,36 +202,52 @@ ${knowledgeMapInstruction ?? ''}`.trim();
 
     console.log(`Analyzing for user: ${user.id} (Plan: ${userPlan}, Quiz: ${opts.quiz}, Flashcards: ${opts.flashcards}, Map: ${opts.map}, QuizCount: ${quizCount}, FlashcardsCount: ${flashcardCount})`);
 
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${apiKey}`, {
+    const createGeminiPayload = (strictJson: boolean) => ({
+      systemInstruction: {
+        parts: [{ text: systemPrompt }]
+      },
+      contents: [{
+        role: "user",
+        parts: [{ text: `Content: ${contentContext}${mediaContext}` }]
+      }],
+      generationConfig: {
+        temperature: 0.2,
+        maxOutputTokens: maxTokens,
+        ...(strictJson ? { responseMimeType: "application/json" } : {})
+      }
+    });
+
+    let response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${apiKey}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({
-        systemInstruction: {
-          parts: [{ text: systemPrompt }]
-        },
-        contents: [{
-          role: "user",
-          parts: [{ text: `Content: ${contentContext}${mediaContext}` }]
-        }],
-        generationConfig: {
-          temperature: 0.2,
-          maxOutputTokens: maxTokens,
-          responseMimeType: "application/json"
-        }
-      })
+      body: JSON.stringify(createGeminiPayload(true))
     });
 
+    if (!response.ok && response.status === 400) {
+      response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${apiKey}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(createGeminiPayload(false))
+      });
+    }
+
     if (!response.ok) {
-      console.error("Gemini API error:", response.status, await response.text());
+      const providerError = await response.text();
+      console.error("Gemini API error:", response.status, providerError);
       if (response.status === 429) {
-        return new Response(JSON.stringify({ error: "Rate limits exceeded, please try again later." }), {
+        return new Response(JSON.stringify({ error: "Rate limits exceeded, please try again later.", details: providerError }), {
           status: 429,
           headers: { ...corsHeaders, "Content-Type": "application/json" }
         });
       }
-      throw new Error("Gemini API error");
+      return new Response(JSON.stringify({ error: "Gemini API error", details: providerError }), {
+        status: 502,
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
+      });
     }
 
     const responseData = await response.json();
