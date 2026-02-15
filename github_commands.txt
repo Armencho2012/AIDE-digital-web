@@ -29,7 +29,9 @@ git reset --hard HEAD~1 – Undo the last commit (use with caution).
 git remote -v – View remote repository URLs. 
 
 
-
+git add .
+git commit -m "update"
+git push
 supabase functions deploy analyze-text
 supabase functions deploy content-chat
 supabase functions deploy scan-knowledge-map

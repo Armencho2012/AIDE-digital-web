@@ -250,7 +250,17 @@ const Dashboard = () => {
         });
 
         if (error) {
-          throw new Error(error.message || 'Failed to analyze content');
+          let detailedMessage = error.message || 'Failed to analyze content';
+          const context = (error as any)?.context;
+          if (context?.json) {
+            const payload = await context.json().catch(() => null);
+            if (payload?.details && typeof payload.details === 'string') {
+              detailedMessage = payload.details;
+            } else if (payload?.error && typeof payload.error === 'string') {
+              detailedMessage = payload.error;
+            }
+          }
+          throw new Error(detailedMessage);
         }
 
         if (!data) {

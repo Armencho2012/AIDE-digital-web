@@ -19,7 +19,7 @@ const FLASHCARD_LIMITS = {
 };
 const BASE_MAX_TOKENS = 4096;
 const PRO_MAP_MAX_TOKENS = 6144;
-const GEMINI_MODEL = "gemini-2.0-flash";
+const GEMINI_MODEL = Deno.env.get("GEMINI_TEXT_MODEL") || "gemini-1.5-flash";
 
 const extractGeminiText = (payload: any): string => {
   const parts = payload?.candidates?.[0]?.content?.parts;
