@@ -35,3 +35,4 @@ git push
 supabase functions deploy analyze-text
 supabase functions deploy content-chat
 supabase functions deploy scan-knowledge-map
+supabase functions deploy gumroad-checkout
