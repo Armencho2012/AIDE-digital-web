@@ -9,7 +9,8 @@ import { useSettings } from "@/hooks/useSettings";
 import type { User } from "@supabase/supabase-js";
 
 type Language = 'en' | 'ru' | 'hy' | 'ko';
-const DEFAULT_GUMROAD_PRO_FULL_URL = 'https://myaide.gumroad.com/l/xtldur?_gl=1*w57a2q*_ga*MzI2ODM0MDQyLjE3NjgzMjgxNjM.*_ga_6LJN6D94N6*czE3NzEyNjcxNDckbzQkZzEkdDE3NzEyNjcyODkkajYwJGwwJGgw';
+const DEFAULT_GUMROAD_PRO_FULL_URL = 'https://myaide.gumroad.com/l/sceqs';
+const DEFAULT_GUMROAD_CLASS_FULL_URL = 'https://myaide.gumroad.com/l/xtldur';
 
 const uiLabels = {
   en: {
@@ -270,7 +271,8 @@ const Billing = () => {
 
     return (
       import.meta.env.VITE_GUMROAD_CLASS_FULL_URL ||
-      import.meta.env.VITE_GUMROAD_CLASS_URL
+      import.meta.env.VITE_GUMROAD_CLASS_URL ||
+      DEFAULT_GUMROAD_CLASS_FULL_URL
     );
   };
 

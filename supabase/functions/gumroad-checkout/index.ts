@@ -2,6 +2,8 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { corsHeaders } from "./_shared-index.ts";
 
 type PlanType = "pro" | "class";
+const DEFAULT_GUMROAD_PRO_FULL_URL = "https://myaide.gumroad.com/l/sceqs";
+const DEFAULT_GUMROAD_CLASS_FULL_URL = "https://myaide.gumroad.com/l/xtldur";
 
 const isHttpUrl = (value: unknown): value is string =>
   typeof value === "string" && /^https?:\/\//i.test(value);
@@ -93,8 +95,8 @@ Deno.serve(async (req: Request) => {
 
     // Prefer explicit public product URL env if configured.
     const configuredUrl = planType === "class"
-      ? Deno.env.get("GUMROAD_CLASS_FULL_URL") || Deno.env.get("GUMROAD_CLASS_URL")
-      : Deno.env.get("GUMROAD_PRO_FULL_URL") || Deno.env.get("GUMROAD_PRO_URL");
+      ? Deno.env.get("GUMROAD_CLASS_FULL_URL") || Deno.env.get("GUMROAD_CLASS_URL") || DEFAULT_GUMROAD_CLASS_FULL_URL
+      : Deno.env.get("GUMROAD_PRO_FULL_URL") || Deno.env.get("GUMROAD_PRO_URL") || DEFAULT_GUMROAD_PRO_FULL_URL;
 
     let baseUrl: string | null = isHttpUrl(configuredUrl) ? configuredUrl : null;
 
