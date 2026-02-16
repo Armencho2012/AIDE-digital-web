@@ -19,8 +19,8 @@ const extractProductUrl = (product: any): string | null => {
     product?.short_url,
     product?.url,
     product?.product_url,
-    product?.checkout_url,
     product?.long_url,
+    product?.checkout_url,
   ];
 
   for (const candidate of directCandidates) {
@@ -66,7 +66,7 @@ Deno.serve(async (req: Request) => {
     const supabaseUrl = Deno.env.get("SUPABASE_URL");
     const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY");
     const gumroadAccessToken = Deno.env.get("GUMROAD_ACCESS_TOKEN");
-    if (!supabaseUrl || !supabaseAnonKey || !gumroadAccessToken) {
+    if (!supabaseUrl || !supabaseAnonKey) {
       return new Response(JSON.stringify({ error: "Missing environment configuration" }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -80,13 +80,6 @@ Deno.serve(async (req: Request) => {
       ? Deno.env.get("GUMROAD_CLASS_ID")
       : Deno.env.get("GUMROAD_PRODUCT_ID");
 
-    if (!productId) {
-      return new Response(JSON.stringify({ error: `Missing Gumroad product id for plan ${planType}` }), {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
     const supabase = createClient(supabaseUrl, supabaseAnonKey, {
       global: { headers: { Authorization: authHeader } },
     });
@@ -98,14 +91,23 @@ Deno.serve(async (req: Request) => {
       });
     }
 
-    // Prefer explicit checkout URL env if configured.
+    // Prefer explicit public product URL env if configured.
     const configuredUrl = planType === "class"
-      ? Deno.env.get("GUMROAD_CLASS_URL")
-      : Deno.env.get("GUMROAD_PRO_URL");
+      ? Deno.env.get("GUMROAD_CLASS_FULL_URL") || Deno.env.get("GUMROAD_CLASS_URL")
+      : Deno.env.get("GUMROAD_PRO_FULL_URL") || Deno.env.get("GUMROAD_PRO_URL");
 
     let baseUrl: string | null = isHttpUrl(configuredUrl) ? configuredUrl : null;
 
     if (!baseUrl) {
+      if (!gumroadAccessToken || !productId) {
+        return new Response(JSON.stringify({
+          error: `Missing Gumroad credentials for resolving product URL for plan ${planType}`,
+        }), {
+          status: 500,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
       const productByIdResp = await fetch(`https://api.gumroad.com/v2/products/${productId}`, {
         headers: { Authorization: `Bearer ${gumroadAccessToken}` },
       });
@@ -153,18 +155,20 @@ Deno.serve(async (req: Request) => {
       });
     }
 
-    const checkoutUrl = new URL(baseUrl);
-    checkoutUrl.searchParams.set("wanted", "true");
+    const productUrl = new URL(baseUrl);
     if (user.email) {
-      checkoutUrl.searchParams.set("email", user.email);
+      productUrl.searchParams.set("email", user.email);
     }
 
     const origin = req.headers.get("origin");
     if (origin && /^https?:\/\/[a-zA-Z0-9.-]+(?::\d+)?$/i.test(origin)) {
-      checkoutUrl.searchParams.set("success_url", `${origin}/billing?status=success`);
+      productUrl.searchParams.set("success_url", `${origin}/billing?status=success`);
     }
 
-    return new Response(JSON.stringify({ checkout_url: checkoutUrl.toString() }), {
+    return new Response(JSON.stringify({
+      product_url: productUrl.toString(),
+      checkout_url: productUrl.toString(),
+    }), {
       status: 200,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });

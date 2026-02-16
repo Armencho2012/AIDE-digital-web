@@ -9,6 +9,7 @@ import { useSettings } from "@/hooks/useSettings";
 import type { User } from "@supabase/supabase-js";
 
 type Language = 'en' | 'ru' | 'hy' | 'ko';
+const DEFAULT_GUMROAD_PRO_FULL_URL = 'https://myaide.gumroad.com/l/xtldur?_gl=1*w57a2q*_ga*MzI2ODM0MDQyLjE3NjgzMjgxNjM.*_ga_6LJN6D94N6*czE3NzEyNjcxNDckbzQkZzEkdDE3NzEyNjcyODkkajYwJGwwJGgw';
 
 const uiLabels = {
   en: {
@@ -254,18 +255,23 @@ const Billing = () => {
     }
   };
 
-  const appendCheckoutParams = (baseUrl: string) => {
-    const url = new URL(baseUrl);
-    url.searchParams.set('wanted', 'true');
-    if (user?.email) {
-      url.searchParams.set('email', user.email);
-    }
-    url.searchParams.set('success_url', `${window.location.origin}/billing?status=success`);
-    return url.toString();
+  const openCheckout = (url: string) => {
+    window.open(url, '_blank', 'noopener,noreferrer');
   };
 
-  const openCheckout = (checkoutUrl: string) => {
-    window.open(checkoutUrl, '_blank', 'noopener,noreferrer');
+  const getDirectGumroadUrl = (plan: 'pro' | 'class') => {
+    if (plan === 'pro') {
+      return (
+        import.meta.env.VITE_GUMROAD_PRO_FULL_URL ||
+        import.meta.env.VITE_GUMROAD_PRO_URL ||
+        DEFAULT_GUMROAD_PRO_FULL_URL
+      );
+    }
+
+    return (
+      import.meta.env.VITE_GUMROAD_CLASS_FULL_URL ||
+      import.meta.env.VITE_GUMROAD_CLASS_URL
+    );
   };
 
   const handleUpgrade = async (plan: 'pro' | 'class') => {
@@ -274,27 +280,26 @@ const Billing = () => {
     setLoading(true);
 
     try {
+      const directUrl = getDirectGumroadUrl(plan);
+      if (directUrl && typeof directUrl === 'string') {
+        openCheckout(directUrl);
+        return;
+      }
+
       const { data, error } = await supabase.functions.invoke('gumroad-checkout', {
         body: { plan }
       });
 
-      if (!error && data?.checkout_url) {
-        openCheckout(data.checkout_url);
-        return;
-      }
+      const resolvedUrl = data?.product_url || data?.checkout_url;
 
-      const fallbackUrl = plan === 'pro'
-        ? import.meta.env.VITE_GUMROAD_PRO_URL
-        : import.meta.env.VITE_GUMROAD_CLASS_URL;
-
-      if (fallbackUrl && typeof fallbackUrl === 'string') {
-        openCheckout(appendCheckoutParams(fallbackUrl));
+      if (!error && resolvedUrl) {
+        openCheckout(resolvedUrl);
         return;
       }
 
       throw new Error(
         error?.message ||
-        'Checkout URL is not configured. Set Gumroad URLs or edge-function secrets.'
+        'Gumroad URL is not configured. Set Gumroad URLs or edge-function secrets.'
       );
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Unable to start checkout';

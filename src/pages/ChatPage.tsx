@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { useParams, Link, useLocation } from 'react-router-dom';
 import { ArrowLeft, Loader2, Send, Bot, User } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -17,64 +17,91 @@ interface Message {
   content: string;
 }
 
+interface ChatLocationState {
+  initialMessage?: string;
+}
+
+const GENERAL_CHAT_CONTEXT = 'General conversation - user is asking a question';
+
 const uiLabels = {
   en: {
     title: 'AI Chat',
     placeholder: 'Ask a question about this material...',
+    placeholderGeneral: 'Ask me anything...',
     send: 'Send',
     thinking: 'Thinking...',
     error: 'Failed to get response. Please try again.',
     welcome: 'Hi! I can answer questions about this content. What would you like to know?',
+    welcomeGeneral: 'Hi! I am your AI assistant. Ask me anything.',
     backToContent: 'Back to Content',
-    knowledgeMap: 'Knowledge Map'
+    backToLibrary: 'Back to Library'
   },
   ru: {
     title: 'ИИ Чат',
     placeholder: 'Задайте вопрос об этом материале...',
+    placeholderGeneral: 'Задайте любой вопрос...',
     send: 'Отправить',
     thinking: 'Думаю...',
     error: 'Не удалось получить ответ. Попробуйте снова.',
     welcome: 'Привет! Я могу ответить на вопросы об этом контенте. Что бы вы хотели узнать?',
+    welcomeGeneral: 'Привет! Я ваш AI-ассистент. Задайте любой вопрос.',
     backToContent: 'Назад к контенту',
-    knowledgeMap: 'Карта Знаний'
+    backToLibrary: 'Назад в библиотеку'
   },
   hy: {
     title: 'AI Զրուցարան',
     placeholder: 'Հարց տվեք այս նյութի մասին...',
+    placeholderGeneral: 'Հարց տվեք ցանկացած թեմայի մասին...',
     send: 'Ուղարկել',
     thinking: 'Մտածում եմ...',
     error: 'Չհաջողվեց պատասխան ստանալ: Խնդրում ենք կրկին փորձել:',
     welcome: 'Բարև: Ես կարող եմ պատասխանել այս բովանդակության վերաբերյալ հարցերին: Ի՞նչ կցանկանայիք իմանալ:',
+    welcomeGeneral: 'Բարև: Ես ձեր AI օգնականն եմ: Հարց տվեք ցանկացած թեմայով:',
     backToContent: 'Վերադառնալ բովանդակությանը',
-    knowledgeMap: 'Գիտելիքների Քարտեզ'
+    backToLibrary: 'Վերադառնալ գրադարան'
   },
   ko: {
     title: 'AI 채팅',
     placeholder: '이 자료에 대해 질문하세요...',
+    placeholderGeneral: '무엇이든 질문하세요...',
     send: '전송',
     thinking: '생각 중...',
     error: '응답을 받지 못했습니다. 다시 시도하세요.',
     welcome: '안녕하세요! 이 콘텐츠에 대한 질문에 답변해 드릴 수 있습니다. 무엇을 알고 싶으신가요?',
+    welcomeGeneral: '안녕하세요! AI 도우미입니다. 무엇이든 물어보세요.',
     backToContent: '콘텐츠로 돌아가기',
-    knowledgeMap: '지식 맵'
+    backToLibrary: '라이브러리로 돌아가기'
   }
 };
 
 const ChatPage = () => {
   const { id } = useParams<{ id: string }>();
+  const location = useLocation();
+  const initialMessage = (location.state as ChatLocationState | null)?.initialMessage;
   const { content, isLoading, isAuthChecked } = useContent({ id });
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isSending, setIsSending] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const hasAutoSentInitialMessage = useRef(false);
+  const isGeneralChat = content?.content_type === 'chat';
+
+  useEffect(() => {
+    hasAutoSentInitialMessage.current = false;
+  }, [id, initialMessage]);
 
   useEffect(() => {
     if (content) {
       const language = (content.language as Language) || 'en';
       const labels = uiLabels[language];
-      setMessages([{ role: 'assistant', content: labels.welcome }]);
+      setMessages([
+        {
+          role: 'assistant',
+          content: isGeneralChat ? labels.welcomeGeneral : labels.welcome
+        }
+      ]);
     }
-  }, [content]);
+  }, [content, isGeneralChat]);
 
   useEffect(() => {
     if (scrollAreaRef.current) {
@@ -82,14 +109,22 @@ const ChatPage = () => {
     }
   }, [messages]);
 
-  const handleSend = async () => {
-    if (!input.trim() || isSending || !content) return;
+  const handleSend = useCallback(async (messageText?: string) => {
+    if (isSending || !content) return;
 
-    const userMessage = input.trim();
+    const userMessage = (messageText ?? input).trim();
+    if (!userMessage) return;
+
     const language = (content.language as Language) || 'en';
     const labels = uiLabels[language];
+    const contentText = isGeneralChat
+      ? GENERAL_CHAT_CONTEXT
+      : content.original_text || GENERAL_CHAT_CONTEXT;
 
-    setInput('');
+    if (!messageText) {
+      setInput('');
+    }
+
     setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
     setIsSending(true);
 
@@ -105,10 +140,10 @@ const ChatPage = () => {
         },
         body: JSON.stringify({
           question: userMessage,
-          contentText: content.original_text,
-          analysisData: content.analysis_data,
+          contentText,
+          analysisData: isGeneralChat ? null : content.analysis_data,
           language,
-          chatHistory: messages
+          chatHistory: [...messages, { role: 'user', content: userMessage }]
         }),
       });
 
@@ -156,7 +191,17 @@ const ChatPage = () => {
     } finally {
       setIsSending(false);
     }
-  };
+  }, [content, input, isSending, isGeneralChat, messages]);
+
+  useEffect(() => {
+    if (!content || hasAutoSentInitialMessage.current) return;
+
+    const prompt = typeof initialMessage === 'string' ? initialMessage.trim() : '';
+    if (!prompt) return;
+
+    hasAutoSentInitialMessage.current = true;
+    handleSend(prompt);
+  }, [content, handleSend, initialMessage]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -190,6 +235,9 @@ const ChatPage = () => {
 
   const language = (content.language as Language) || 'en';
   const labels = uiLabels[language];
+  const backTarget = isGeneralChat ? '/library' : `/library/${id}`;
+  const backLabel = isGeneralChat ? labels.backToLibrary : labels.backToContent;
+  const placeholder = isGeneralChat ? labels.placeholderGeneral : labels.placeholder;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/20">
@@ -198,9 +246,9 @@ const ChatPage = () => {
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 w-full sm:w-auto">
               <Button variant="ghost" asChild size="sm" className="w-fit">
-                <Link to={`/library/${id}`}>
+                <Link to={backTarget}>
                   <ArrowLeft className="h-4 w-4 mr-2" />
-                  <span className="text-sm">{labels.backToContent}</span>
+                  <span className="text-sm">{backLabel}</span>
                 </Link>
               </Button>
               <h1 className="text-lg sm:text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent flex items-center gap-2">
@@ -267,7 +315,7 @@ const ChatPage = () => {
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     onKeyDown={handleKeyDown}
-                    placeholder={labels.placeholder}
+                    placeholder={placeholder}
                     className="min-h-[50px] sm:min-h-[60px] resize-none text-sm"
                     disabled={isSending}
                   />

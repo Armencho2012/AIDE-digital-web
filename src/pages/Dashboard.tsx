@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -8,14 +8,12 @@ import { AnalysisOutput } from "@/components/AnalysisOutput";
 import { UpgradeModal } from "@/components/UpgradeModal";
 import { BottomInputBar } from "@/components/BottomInputBar";
 import { ActionMode, MediaFile, GenerationOptions } from "@/components/BottomInputBar/types";
-import { ChatPanel } from "@/components/ChatPanel";
 import { useToast } from "@/hooks/use-toast";
 import { useSettings } from "@/hooks/useSettings";
 import { useAuth } from "@/hooks/useAuth";
 import { usePodcast } from "@/hooks/usePodcast";
 import { useUsageLimit } from "@/hooks/useUsageLimit";
 import { supabase } from "@/integrations/supabase/client";
-import type { User } from "@supabase/supabase-js";
 
 const uiLabels = {
   en: {
@@ -117,18 +115,14 @@ const uiLabels = {
 };
 
 
-// Daily limits by plan
-const DAILY_LIMIT_FREE = 1;
-const DAILY_LIMIT_PRO = 50;
-
 const Dashboard = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   
   // Use custom hooks for cleaner state management
-  const { user, isAuthChecked, signOut, refreshUser } = useAuth();
+  const { user, isAuthChecked } = useAuth();
   const { language, theme, setLanguage, setTheme, isLoaded: settingsLoaded } = useSettings();
-  const { usageCount, dailyLimit, userPlan, isLocked, isLoading: usageLoading, refreshUsage } = useUsageLimit();
+  const { usageCount, dailyLimit, userPlan, isLocked, refreshUsage } = useUsageLimit();
   const { podcastAudio, isPlaying, isGenerating: podcastGenerating, error: podcastError, audioRef, generatePodcast, togglePlayback, clearError: clearPodcastError, clearAudio } = usePodcast();
 
   // Local UI state
@@ -199,12 +193,19 @@ const Dashboard = () => {
       return;
     }
 
-    if (!text.trim() && (!media || media.length === 0)) {
+    const trimmedText = text.trim();
+
+    if (!trimmedText && (!media || media.length === 0)) {
       toast({ title: 'Error', description: labels.errorNoInput, variant: 'destructive' });
       return;
     }
 
-    if (usageCount <= 0 && userPlan !== 'class') {
+    if (mode === 'chat' && !trimmedText) {
+      toast({ title: 'Error', description: 'Please enter a message to start chat', variant: 'destructive' });
+      return;
+    }
+
+    if (mode !== 'chat' && usageCount <= 0 && userPlan !== 'class') {
       toast({
         title: `${labels.limitReached}`,
         description: `You have reached your daily limit of ${dailyLimit} analyses`,
@@ -233,7 +234,37 @@ const Dashboard = () => {
         }
 
       } else if (mode === 'chat') {
+        const { data: savedChat, error: saveError } = await (supabase as any)
+          .from('user_content')
+          .insert({
+            user_id: user.id,
+            original_text: trimmedText,
+            analysis_data: {
+              session_type: 'general_chat',
+              created_from: 'dashboard'
+            },
+            language,
+            title: trimmedText.substring(0, 50) + (trimmedText.length > 50 ? '...' : ''),
+            content_type: 'chat',
+            generation_status: {
+              quiz: false,
+              flashcards: false,
+              map: false,
+              course: false,
+              podcast: false
+            }
+          })
+          .select('id')
+          .single();
+
+        if (saveError || !savedChat?.id) {
+          throw new Error(saveError?.message || 'Failed to start chat session');
+        }
+
         toast({ title: 'Chat Mode', description: 'Opening chat...' });
+        navigate(`/library/${savedChat.id}/chat`, {
+          state: { initialMessage: trimmedText }
+        });
 
       } else {
         // Handle analyze and course modes

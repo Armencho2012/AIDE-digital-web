@@ -117,6 +117,8 @@ const Library = () => {
   const [activeTab, setActiveTab] = useState<'all' | 'analyse' | 'chat' | 'course'>('all');
   const navigate = useNavigate();
   const labels = uiLabels[language as Language] || uiLabels.en;
+  const getContentRoute = (id: string, contentType: string | null) =>
+    contentType === 'chat' ? `/library/${id}/chat` : `/library/${id}`;
 
   const handleDelete = (id: string) => {
     deleteContent(id);
@@ -178,7 +180,7 @@ const Library = () => {
                   variant="ghost"
                   className="w-full justify-start text-left h-auto py-2"
                   onClick={() => {
-                    navigate(`/library/${item.id}`);
+                    navigate(getContentRoute(item.id, item.content_type));
                     setMobileMenuOpen(false);
                   }}
                 >
@@ -258,7 +260,7 @@ const Library = () => {
               <Card 
                 key={item.id} 
                 className="overflow-hidden hover:shadow-md transition-shadow h-full flex flex-col cursor-pointer group"
-                onClick={() => navigate(`/library/${item.id}`)}
+                onClick={() => navigate(getContentRoute(item.id, item.content_type))}
               >
                 <div className="p-3 sm:p-4 flex-1 flex flex-col">
                   <div className="flex justify-between items-start mb-2 gap-2">
@@ -284,7 +286,7 @@ const Library = () => {
                         className="h-8 px-2 text-primary hover:text-primary hover:bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity"
                         onClick={(e) => {
                           e.stopPropagation();
-                          navigate(`/library/${item.id}`);
+                          navigate(getContentRoute(item.id, item.content_type));
                         }}
                         title={labels.back}
                       >
