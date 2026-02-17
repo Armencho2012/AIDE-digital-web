@@ -181,7 +181,7 @@ export const BottomInputBar = ({
 
   return (
     <div
-      className={`fixed bottom-0 left-0 right-0 z-[60] p-3 sm:p-4 transition-all ${isDragging ? 'bg-primary/5' : ''}`}
+      className={`fixed bottom-0 left-0 right-0 z-40 p-3 sm:p-4 transition-all ${isDragging ? 'bg-primary/5' : ''}`}
       style={{ pointerEvents: 'none' }}
       onDragOver={handleDragOver}
       onDragEnter={handleDragEnter}
