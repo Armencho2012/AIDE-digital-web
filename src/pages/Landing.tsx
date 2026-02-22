@@ -10,7 +10,6 @@ import {
   Brain,
   Check,
   FileText,
-  Globe,
   HelpCircle,
   Library,
   Mail,
@@ -113,7 +112,7 @@ const copy: Record<Language, LandingCopy> = {
     previewNodeChat: "Chat Node",
     flowTitle: "How It Works",
     flowSubtitle: "Three steps. No setup friction.",
-    transitionTitle: "Scroll Into Midnight Mode",
+    transitionTitle: "Scroll Into Deep Study",
     transitionSubtitle: "Watch the workspace evolve from daylight focus to deep-study blue.",
     step1Title: "Drop Material",
     step1Desc: "Paste text, upload PDF/image, or dictate with voice input.",
@@ -213,7 +212,7 @@ const copy: Record<Language, LandingCopy> = {
     previewNodeChat: "Узел чата",
     flowTitle: "Как это работает",
     flowSubtitle: "Три шага. Без сложной настройки.",
-    transitionTitle: "Переход в Midnight Mode",
+    transitionTitle: "Переход в глубокий режим обучения",
     transitionSubtitle: "По мере скролла интерфейс плавно переходит от светлого режима к глубокому синему.",
     step1Title: "Загрузите материал",
     step1Desc: "Вставьте текст, загрузите PDF/изображение или используйте голос.",
@@ -313,7 +312,7 @@ const copy: Record<Language, LandingCopy> = {
     previewNodeChat: "Զրույցի հանգույց",
     flowTitle: "Ինչպես է աշխատում",
     flowSubtitle: "3 քայլ։ Առանց բարդ կարգավորման։",
-    transitionTitle: "Անցում դեպի Midnight Mode",
+    transitionTitle: "Խորը ուսուցման ռեժիմի անցում",
     transitionSubtitle: "Սքրոլի ընթացքում միջերեսը սահուն անցնում է բաց միջավայրից խորը կապույտ ուսուցման ռեժիմի։",
     step1Title: "Ավելացրեք նյութը",
     step1Desc: "Տեղադրեք տեքստ, վերբեռնեք PDF/պատկեր կամ օգտագործեք ձայնային մուտք:",
@@ -413,7 +412,7 @@ const copy: Record<Language, LandingCopy> = {
     previewNodeChat: "채팅 노드",
     flowTitle: "작동 방식",
     flowSubtitle: "3단계. 설정 부담 없음.",
-    transitionTitle: "Midnight Mode로 전환",
+    transitionTitle: "딥 스터디 모드로 전환",
     transitionSubtitle: "스크롤과 함께 밝은 학습 화면이 깊은 블루 학습 환경으로 부드럽게 전환됩니다.",
     step1Title: "자료 입력",
     step1Desc: "텍스트 붙여넣기, PDF/이미지 업로드, 음성 입력 사용.",
@@ -957,8 +956,8 @@ const Landing = () => {
       <section className="container mx-auto max-w-7xl px-4 pb-14 pt-16 md:pt-20 xl:pr-[22rem]">
         <div className="grid items-start gap-8 lg:grid-cols-12">
           <div className="lg:col-span-6">
-            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-blue-200 bg-white/80 px-3 py-1.5 text-xs text-slate-600 dark:border-white/15 dark:bg-white/6 dark:text-zinc-300">
-              <Brain className="h-3.5 w-3.5 text-blue-400" />
+            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-blue-200 bg-white/85 px-3 py-1.5 text-xs font-medium text-slate-700 shadow-sm shadow-blue-100/40 dark:border-cyan-300/35 dark:bg-slate-900/88 dark:text-cyan-50 dark:shadow-black/30">
+              <Brain className="h-3.5 w-3.5 text-blue-500 dark:text-cyan-200" />
               {t.heroEyebrow}
             </div>
 
@@ -1008,7 +1007,7 @@ const Landing = () => {
               {[t.freeBadge, t.langBadge, t.uploadBadge].map((badge) => (
                 <span
                   key={badge}
-                  className="rounded-full border border-slate-300 bg-white/80 px-3 py-1.5 text-xs text-slate-600 dark:border-white/12 dark:bg-white/6 dark:text-zinc-300"
+                  className="rounded-full border border-slate-300 bg-white/85 px-3 py-1.5 text-xs font-medium text-slate-700 shadow-sm shadow-slate-200/70 dark:border-blue-300/25 dark:bg-slate-900/82 dark:text-blue-50/95 dark:shadow-black/25"
                 >
                   {badge}
                 </span>
@@ -1017,13 +1016,13 @@ const Landing = () => {
           </div>
 
           <div data-preview-panel data-depth="panel" className="lg:col-span-6">
-            <div className="relative rounded-3xl border border-slate-200 bg-white/75 p-4 shadow-2xl shadow-blue-100/60 backdrop-blur-2xl md:p-5 dark:border-white/15 dark:bg-white/[0.045] dark:shadow-black/45">
+            <div className="relative rounded-3xl border border-slate-200 bg-white/75 p-4 shadow-2xl shadow-blue-100/60 backdrop-blur-2xl md:p-5 dark:border-white/16 dark:bg-slate-950/74 dark:shadow-black/50">
               <div className="pointer-events-none absolute -inset-px rounded-3xl bg-gradient-to-r from-blue-400/35 via-transparent to-cyan-300/35" />
               <div className="relative">
                 <div className="mb-4 flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-slate-800 dark:text-zinc-200">{t.previewTitle}</p>
-                    <p className="text-xs text-slate-500 dark:text-zinc-500">{t.previewSubtitle}</p>
+                    <p className="text-xs text-slate-500 dark:text-zinc-300/85">{t.previewSubtitle}</p>
                   </div>
                   <div className="inline-flex items-center gap-2 rounded-full border border-emerald-400/40 bg-emerald-500/10 px-3 py-1 text-[11px] text-emerald-700">
                     <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
@@ -1036,7 +1035,7 @@ const Landing = () => {
                     <div
                       key={tab}
                       className={`rounded-xl px-3 py-2 text-center text-xs ${
-                        idx === 0 ? "bg-blue-600 text-white dark:bg-white/15 dark:text-white" : "bg-slate-100 text-slate-500 dark:bg-white/5 dark:text-zinc-400"
+                        idx === 0 ? "bg-blue-600 text-white dark:bg-blue-500/30 dark:text-blue-50" : "bg-slate-100 text-slate-500 dark:bg-slate-900/80 dark:text-zinc-200"
                       }`}
                     >
                       {tab}
@@ -1062,19 +1061,21 @@ const Landing = () => {
                   </Card>
 
                   <Card className="rounded-2xl border-slate-200 bg-white/95 p-4 md:col-span-2 dark:border-white/10 dark:bg-black/25">
-                    <div className="relative h-full min-h-[150px]">
-                      <div className="absolute left-1/2 top-3 -translate-x-1/2 rounded-full border border-blue-300 bg-blue-100 px-2 py-1 text-[10px] text-blue-700 dark:border-blue-300/40 dark:bg-blue-500/20 dark:text-blue-100">
+                    <div className="relative h-full min-h-[164px] overflow-hidden rounded-xl border border-slate-200/90 bg-slate-50/80 p-3 dark:border-white/12 dark:bg-slate-950/60">
+                      <div className="absolute left-1/2 top-3 w-full max-w-[132px] -translate-x-1/2 rounded-full border border-blue-300 bg-blue-100 px-2 py-1.5 text-center text-[10px] leading-tight text-blue-700 dark:border-blue-300/40 dark:bg-blue-500/20 dark:text-blue-100">
                         {t.previewNodeCore}
                       </div>
-                      <div className="absolute bottom-10 left-4 rounded-full border border-cyan-300 bg-cyan-100 px-2 py-1 text-[10px] text-cyan-700 dark:border-cyan-300/40 dark:bg-cyan-500/20 dark:text-cyan-100">
-                        {t.previewNodeQuiz}
+                      <div className="absolute inset-x-3 bottom-3 grid grid-cols-2 gap-2">
+                        <div className="rounded-full border border-cyan-300 bg-cyan-100 px-2 py-1.5 text-center text-[10px] leading-tight text-cyan-700 dark:border-cyan-300/40 dark:bg-cyan-500/20 dark:text-cyan-100">
+                          {t.previewNodeQuiz}
+                        </div>
+                        <div className="rounded-full border border-emerald-300 bg-emerald-100 px-2 py-1.5 text-center text-[10px] leading-tight text-emerald-700 dark:border-emerald-300/40 dark:bg-emerald-500/20 dark:text-emerald-100">
+                          {t.previewNodeChat}
+                        </div>
                       </div>
-                      <div className="absolute bottom-8 right-4 rounded-full border border-emerald-300 bg-emerald-100 px-2 py-1 text-[10px] text-emerald-700 dark:border-emerald-300/40 dark:bg-emerald-500/20 dark:text-emerald-100">
-                        {t.previewNodeChat}
-                      </div>
-                      <svg className="absolute inset-0 h-full w-full" viewBox="0 0 240 170" fill="none" aria-hidden="true">
-                        <path d="M120 30 L70 112" stroke="rgba(148,163,184,0.5)" strokeWidth="1.2" />
-                        <path d="M120 30 L168 110" stroke="rgba(148,163,184,0.5)" strokeWidth="1.2" />
+                      <svg className="pointer-events-none absolute inset-0 h-full w-full" viewBox="0 0 240 170" fill="none" aria-hidden="true">
+                        <path d="M120 34 L78 124" stroke="rgba(148,163,184,0.55)" strokeWidth="1.2" />
+                        <path d="M120 34 L162 124" stroke="rgba(148,163,184,0.55)" strokeWidth="1.2" />
                       </svg>
                     </div>
                   </Card>
@@ -1183,35 +1184,35 @@ const Landing = () => {
           ref={stickySectionRef}
           className="container mx-auto max-w-7xl px-4 pb-16 xl:pr-[22rem]"
         >
-          <div className="grid items-start gap-4 lg:grid-cols-12">
-            <div className="lg:col-span-4">
+          <div className="grid items-start gap-6 lg:grid-cols-12">
+            <div className="lg:col-span-5">
               <div
                 ref={stickyPinRef}
-                className="rounded-3xl border border-white/22 bg-gradient-to-b from-white/[0.16] to-white/[0.06] p-6 backdrop-blur-xl lg:top-28"
+                className="rounded-3xl border border-white/24 bg-gradient-to-b from-white/[0.22] via-white/[0.12] to-white/[0.07] p-6 shadow-[0_18px_42px_rgba(2,12,37,0.35)] backdrop-blur-2xl lg:top-28 lg:p-7"
               >
                 <p className="text-xs font-semibold uppercase tracking-[0.22em] text-blue-100/75">
                   Live Capability Stack
                 </p>
-                <h3 className="text-2xl font-semibold tracking-tight text-slate-50 md:text-3xl">
+                <h3 className="mt-3 max-w-[18ch] break-words text-[clamp(1.85rem,3vw,2.6rem)] font-semibold leading-[1.08] tracking-tight text-slate-50">
                   {t.capabilitiesTitle}
                 </h3>
-                <p className="mt-3 text-sm text-blue-100/82 md:text-base">
+                <p className="mt-4 max-w-[28ch] text-sm leading-relaxed text-blue-100/90 md:text-[15px]">
                   {t.capabilitiesSubtitle}
                 </p>
               </div>
             </div>
 
-            <div ref={stickyTrackRef} className="space-y-3 lg:col-span-8">
+            <div ref={stickyTrackRef} className="space-y-3 lg:col-span-7">
               {t.capabilityItems.map((item, index) => (
                 <div
                   key={item}
                   data-sticky-card
-                  className="flex items-start gap-3 rounded-2xl border border-white/18 bg-black/18 px-4 py-3 backdrop-blur-xl transition-all duration-500 hover:scale-[1.01] hover:border-cyan-200/65 hover:bg-black/28"
+                  className="flex items-start gap-3 rounded-2xl border border-white/20 bg-slate-950/35 px-4 py-4 shadow-[0_10px_28px_rgba(2,12,37,0.24)] backdrop-blur-xl transition-all duration-300 hover:border-cyan-200/65 hover:bg-slate-900/48"
                 >
-                  <span className="mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-cyan-200/40 bg-cyan-300/15 text-[10px] font-semibold text-cyan-100">
+                  <span className="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-cyan-200/45 bg-cyan-300/16 text-[11px] font-semibold text-cyan-100">
                     {index + 1}
                   </span>
-                  <p className="text-sm leading-relaxed text-blue-50/92">{item}</p>
+                  <p className="break-words text-sm leading-7 text-blue-50/95 md:text-[15px] md:leading-7">{item}</p>
                 </div>
               ))}
             </div>
@@ -1252,27 +1253,84 @@ const Landing = () => {
         </section>
 
         <footer className="container mx-auto max-w-7xl px-4 pb-10 xl:pr-[22rem]">
-          <div className="flex flex-col items-center justify-between gap-3 border-t border-white/16 pt-5 text-sm text-blue-100/80 sm:flex-row">
-            <p>{t.footer}</p>
-            <div className="flex items-center gap-4">
-              <Link
-                to="/billing"
-                className="flex items-center gap-1.5 transition-colors hover:text-white"
-              >
-                <Globe className="h-4 w-4" /> {t.plans}
-              </Link>
-              <a
-                href="mailto:myaide.study@gmail.com"
-                className="flex items-center gap-1.5 transition-colors hover:text-white"
-              >
-                <Mail className="h-4 w-4" /> {t.contact}
-              </a>
-              <Link
-                to="/help"
-                className="flex items-center gap-1.5 transition-colors hover:text-white"
-              >
-                <HelpCircle className="h-4 w-4" /> {t.help}
-              </Link>
+          <div className="rounded-3xl border-t border-[rgba(255,255,255,0.1)] bg-gradient-to-b from-slate-950/88 via-slate-950/92 to-blue-950/92 px-6 py-8 shadow-[0_-18px_45px_rgba(2,6,23,0.28)] md:px-8 md:py-10">
+            <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
+              <div>
+                <h4 className="text-xs font-semibold uppercase tracking-[0.2em] text-white/90">Product</h4>
+                <div className="mt-4 flex flex-col gap-2.5 text-sm font-medium">
+                  <Link to="/help" className="text-white/60 transition-colors duration-300 hover:text-white">
+                    About Page
+                  </Link>
+                  <a href="#flow" className="text-white/60 transition-colors duration-300 hover:text-white">
+                    How it Works
+                  </a>
+                  <a href="#blue-section" className="text-white/60 transition-colors duration-300 hover:text-white">
+                    Success Stories
+                  </a>
+                </div>
+              </div>
+
+              <div>
+                <h4 className="text-xs font-semibold uppercase tracking-[0.2em] text-white/90">Support</h4>
+                <div className="mt-4 flex flex-col gap-2.5 text-sm font-medium">
+                  <Link to="/help" className="text-white/60 transition-colors duration-300 hover:text-white">
+                    Help Center
+                  </Link>
+                  <a
+                    href="mailto:myaide.study@gmail.com?subject=Aide%20Support"
+                    className="text-white/60 transition-colors duration-300 hover:text-white"
+                  >
+                    Support
+                  </a>
+                  <a
+                    href="mailto:myaide.study@gmail.com"
+                    className="text-white/60 transition-colors duration-300 hover:text-white"
+                  >
+                    Contact Us
+                  </a>
+                </div>
+              </div>
+
+              <div>
+                <h4 className="text-xs font-semibold uppercase tracking-[0.2em] text-white/90">Legal</h4>
+                <div className="mt-4 flex flex-col gap-2.5 text-sm font-medium">
+                  <Link to="/help#privacy-policy" className="text-white/60 transition-colors duration-300 hover:text-white">
+                    Privacy Policy
+                  </Link>
+                  <Link to="/help#terms-of-service" className="text-white/60 transition-colors duration-300 hover:text-white">
+                    Terms of Service
+                  </Link>
+                  <Link to="/help#community-guidelines" className="text-white/60 transition-colors duration-300 hover:text-white">
+                    Community Guidelines
+                  </Link>
+                </div>
+              </div>
+
+              <div>
+                <h4 className="text-xs font-semibold uppercase tracking-[0.2em] text-white/90">Social</h4>
+                <div className="mt-4 flex flex-col gap-2.5 text-sm font-medium">
+                  <a
+                    href="https://www.instagram.com/myaide.study/"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-white/60 transition-colors duration-300 hover:text-white"
+                  >
+                    Instagram
+                  </a>
+                  <a
+                    href="https://www.facebook.com/profile.php?id=61587146428880"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-white/60 transition-colors duration-300 hover:text-white"
+                  >
+                    Facebook
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-8 border-t border-white/10 pt-4 text-xs tracking-wide text-white/70">
+              © 2026 Aide. All rights reserved.
             </div>
           </div>
         </footer>
