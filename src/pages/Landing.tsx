@@ -866,28 +866,11 @@ const Landing = () => {
         className="pointer-events-none fixed inset-x-0 top-[-10vh] -z-10 h-[56vh] bg-[radial-gradient(circle_at_50%_40%,rgba(59,130,246,0.26),transparent_58%)]"
       />
 
-      <div className="pointer-events-none hidden xl:block">
-        <div className="fixed right-5 top-24 z-40 w-[300px] 2xl:right-[max(2rem,calc((100vw-86rem)/2))]">
-          <div data-speed="1.1" className="relative">
-            <div
-              data-mascot-glow
-              className="absolute inset-6 rounded-full bg-[radial-gradient(circle,rgba(84,169,255,0.9)_0%,rgba(66,124,255,0.55)_38%,rgba(35,56,145,0)_76%)] opacity-0 blur-3xl"
-            />
-            <img
-              data-mascot-shell
-              src="/aide-mascot.svg"
-              alt="Aide mascot"
-              className="relative w-full drop-shadow-[0_18px_30px_rgba(15,23,42,0.22)]"
-            />
-          </div>
-        </div>
-      </div>
-
       <nav
         data-nav
         className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/78 backdrop-blur-xl dark:border-white/10 dark:bg-black/45"
       >
-        <div className="container mx-auto flex max-w-7xl items-center justify-between px-4 py-3 xl:pr-[22rem]">
+        <div className="container mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
           <div className="flex items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-cyan-400 shadow-lg shadow-blue-500/25">
               <Sparkles className="h-4 w-4 text-white" />
@@ -953,140 +936,132 @@ const Landing = () => {
         </div>
       </nav>
 
-      <section className="container mx-auto max-w-7xl px-4 pb-14 pt-16 md:pt-20 xl:pr-[22rem]">
-        <div className="grid items-start gap-8 lg:grid-cols-12">
-          <div className="lg:col-span-6">
-            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-blue-200 bg-white/85 px-3 py-1.5 text-xs font-medium text-slate-700 shadow-sm shadow-blue-100/40 dark:border-cyan-300/35 dark:bg-slate-900/88 dark:text-cyan-50 dark:shadow-black/30">
-              <Brain className="h-3.5 w-3.5 text-blue-500 dark:text-cyan-200" />
-              {t.heroEyebrow}
-            </div>
+      <section className="container mx-auto max-w-7xl px-4 pb-14 pt-16 md:pt-20">
+        <div className="relative overflow-hidden rounded-[2.2rem] border border-slate-200/90 bg-[linear-gradient(120deg,#d8ecff_0%,#eff6ff_45%,#f7f2db_100%)] p-6 shadow-[0_24px_70px_rgba(59,130,246,0.16)] md:p-10 dark:border-white/12 dark:bg-[radial-gradient(circle_at_76%_25%,rgba(56,189,248,0.2),transparent_45%),radial-gradient(circle_at_18%_16%,rgba(59,130,246,0.22),transparent_40%),linear-gradient(145deg,#041024_0%,#081c3f_56%,#0d2a59_100%)] dark:shadow-[0_24px_70px_rgba(2,6,23,0.65)]">
+          <div className="pointer-events-none absolute inset-0 opacity-45 [background-image:linear-gradient(to_right,rgba(15,23,42,0.07)_1px,transparent_1px),linear-gradient(to_bottom,rgba(15,23,42,0.07)_1px,transparent_1px)] [background-size:72px_72px] dark:opacity-55 dark:[background-image:linear-gradient(to_right,rgba(191,219,254,0.15)_1px,transparent_1px),linear-gradient(to_bottom,rgba(191,219,254,0.15)_1px,transparent_1px)]" />
+          <div className="pointer-events-none absolute -left-24 top-16 h-64 w-64 rounded-full bg-cyan-300/28 blur-3xl dark:bg-cyan-300/18" />
+          <div className="pointer-events-none absolute -right-20 bottom-0 h-64 w-64 rounded-full bg-amber-300/26 blur-3xl dark:bg-blue-400/18" />
 
-            <h1
-              className="text-[clamp(2.35rem,7vw,5.65rem)] font-black leading-[0.94] tracking-[-0.045em] text-slate-950 dark:text-zinc-50"
-            >
-              {heroWords.map((word, index) => (
-                <span
-                  key={`${word}-${index}`}
-                  data-hero-word
-                  className="mr-[0.18em] inline-block last:mr-0"
-                >
-                  {word}
-                </span>
-              ))}
-            </h1>
+          <div className="relative grid items-center gap-8 lg:grid-cols-12 xl:gap-10">
+            <div className="lg:col-span-6 xl:col-span-7">
+              <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-blue-300/70 bg-white/70 px-3.5 py-1.5 text-xs font-medium text-slate-700 shadow-sm shadow-blue-100/60 dark:border-cyan-300/35 dark:bg-slate-900/85 dark:text-cyan-50 dark:shadow-black/30">
+                <Brain className="h-3.5 w-3.5 text-blue-600 dark:text-cyan-200" />
+                {t.heroEyebrow}
+              </div>
 
-            <p
-              data-hero-subtitle
-              className="mt-5 max-w-2xl text-base leading-relaxed text-slate-600 md:text-lg dark:text-zinc-300"
-            >
-              {t.heroSubtitle}
-            </p>
+              <h1 className="max-w-[14ch] text-[clamp(2.4rem,7vw,5.5rem)] font-black leading-[0.93] tracking-[-0.042em] text-slate-900 dark:text-slate-50">
+                {heroWords.map((word, index) => (
+                  <span
+                    key={`${word}-${index}`}
+                    data-hero-word
+                    className="mr-[0.17em] inline-block last:mr-0"
+                  >
+                    {word}
+                  </span>
+                ))}
+              </h1>
 
-            <div data-hero-cta className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Button
-                asChild
-                size="lg"
-                className="bg-blue-500 text-white shadow-lg shadow-blue-500/25 hover:bg-blue-400"
+              <p
+                data-hero-subtitle
+                className="mt-5 max-w-2xl text-base leading-relaxed text-slate-600 md:text-lg dark:text-blue-100/88"
               >
-                <Link to="/auth">
-                  {t.startNow}
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Link>
-              </Button>
-              <Button
-                asChild
-                size="lg"
-                variant="outline"
-                className="border-slate-300 bg-white text-slate-900 hover:bg-slate-100 dark:border-white/20 dark:bg-white/6 dark:text-zinc-100 dark:hover:bg-white/12"
-              >
-                <a href="#flow">{t.seeFlow}</a>
-              </Button>
-            </div>
+                {t.heroSubtitle}
+              </p>
 
-            <div data-hero-badges className="mt-6 flex flex-wrap gap-2">
-              {[t.freeBadge, t.langBadge, t.uploadBadge].map((badge) => (
-                <span
-                  key={badge}
-                  className="rounded-full border border-slate-300 bg-white/85 px-3 py-1.5 text-xs font-medium text-slate-700 shadow-sm shadow-slate-200/70 dark:border-blue-300/25 dark:bg-slate-900/82 dark:text-blue-50/95 dark:shadow-black/25"
+              <div data-hero-cta className="mt-8 flex flex-col gap-3 sm:flex-row">
+                <Button
+                  asChild
+                  size="lg"
+                  className="h-12 rounded-full bg-blue-600 px-7 text-base text-white shadow-lg shadow-blue-500/30 transition-all hover:bg-blue-500 hover:shadow-blue-400/35 dark:bg-cyan-300 dark:text-slate-950 dark:hover:bg-cyan-200"
                 >
-                  {badge}
-                </span>
-              ))}
+                  <Link to="/auth">
+                    {t.startNow}
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Link>
+                </Button>
+                <Button
+                  asChild
+                  size="lg"
+                  variant="outline"
+                  className="h-12 rounded-full border-blue-500/65 bg-white/65 px-7 text-base text-blue-700 transition-colors hover:bg-white/90 dark:border-cyan-200/45 dark:bg-slate-900/65 dark:text-cyan-100 dark:hover:bg-slate-900/90"
+                >
+                  <a href="#flow">{t.seeFlow}</a>
+                </Button>
+              </div>
+
+              <div data-hero-badges className="mt-6 flex flex-wrap gap-2.5">
+                {[t.freeBadge, t.langBadge, t.uploadBadge].map((badge) => (
+                  <span
+                    key={badge}
+                    className="rounded-full border border-slate-300/80 bg-white/75 px-3 py-1.5 text-xs font-medium text-slate-700 shadow-sm shadow-slate-200/75 dark:border-blue-200/25 dark:bg-slate-900/72 dark:text-blue-50/95"
+                  >
+                    {badge}
+                  </span>
+                ))}
+              </div>
             </div>
-          </div>
 
-          <div data-preview-panel data-depth="panel" className="lg:col-span-6">
-            <div className="relative rounded-3xl border border-slate-200 bg-white/75 p-4 shadow-2xl shadow-blue-100/60 backdrop-blur-2xl md:p-5 dark:border-white/16 dark:bg-slate-950/74 dark:shadow-black/50">
-              <div className="pointer-events-none absolute -inset-px rounded-3xl bg-gradient-to-r from-blue-400/35 via-transparent to-cyan-300/35" />
-              <div className="relative">
-                <div className="mb-4 flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-slate-800 dark:text-zinc-200">{t.previewTitle}</p>
-                    <p className="text-xs text-slate-500 dark:text-zinc-300/85">{t.previewSubtitle}</p>
+            <div data-preview-panel data-depth="panel" className="lg:col-span-6 xl:col-span-5">
+              <div className="relative mx-auto w-full max-w-[27rem]">
+                <div
+                  data-mascot-glow
+                  className="pointer-events-none absolute inset-x-12 top-10 h-44 rounded-full bg-[radial-gradient(circle,rgba(84,169,255,0.82)_0%,rgba(66,124,255,0.52)_42%,rgba(35,56,145,0)_78%)] opacity-0 blur-3xl"
+                />
+                <Card className="relative overflow-hidden rounded-[1.85rem] border-slate-200/80 bg-white/72 p-5 shadow-2xl shadow-blue-200/70 backdrop-blur-2xl dark:border-white/16 dark:bg-slate-950/72 dark:shadow-black/55">
+                  <div className="pointer-events-none absolute -top-20 right-[-5.5rem] h-44 w-44 rounded-full bg-cyan-300/20 blur-3xl dark:bg-cyan-300/22" />
+                  <div className="pointer-events-none absolute bottom-0 left-[-5rem] h-40 w-40 rounded-full bg-blue-300/22 blur-3xl dark:bg-blue-400/24" />
+
+                  <div className="relative mb-4 flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-semibold text-slate-800 dark:text-zinc-100">{t.previewTitle}</p>
+                      <p className="text-xs text-slate-500 dark:text-blue-100/80">{t.previewSubtitle}</p>
+                    </div>
+                    <div className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/35 bg-emerald-500/10 px-2.5 py-1 text-[11px] font-medium text-emerald-700 dark:text-emerald-200">
+                      <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
+                      {t.previewStream}
+                    </div>
                   </div>
-                  <div className="inline-flex items-center gap-2 rounded-full border border-emerald-400/40 bg-emerald-500/10 px-3 py-1 text-[11px] text-emerald-700">
-                    <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
-                    {t.previewStream}
+
+                  <img
+                    data-mascot-shell
+                    src="/aide-mascot.svg"
+                    alt="Aide mascot"
+                    className="relative mx-auto w-full max-w-[16.5rem] drop-shadow-[0_24px_40px_rgba(15,23,42,0.24)] dark:drop-shadow-[0_24px_44px_rgba(2,6,23,0.7)] md:max-w-[18rem]"
+                  />
+
+                  <div className="mt-4 grid grid-cols-3 gap-2">
+                    {[t.previewTab1, t.previewTab2, t.previewTab3].map((tab, idx) => (
+                      <div
+                        key={tab}
+                        className={`rounded-xl px-2 py-1.5 text-center text-[11px] font-medium ${
+                          idx === 0
+                            ? "bg-blue-600 text-white dark:bg-blue-500/35 dark:text-blue-50"
+                            : "bg-white/85 text-slate-600 dark:bg-slate-900/80 dark:text-zinc-200"
+                        }`}
+                      >
+                        {tab}
+                      </div>
+                    ))}
                   </div>
-                </div>
 
-                <div className="mb-3 grid grid-cols-3 gap-2">
-                  {[t.previewTab1, t.previewTab2, t.previewTab3].map((tab, idx) => (
-                    <div
-                      key={tab}
-                      className={`rounded-xl px-3 py-2 text-center text-xs ${
-                        idx === 0 ? "bg-blue-600 text-white dark:bg-blue-500/30 dark:text-blue-50" : "bg-slate-100 text-slate-500 dark:bg-slate-900/80 dark:text-zinc-200"
-                      }`}
-                    >
-                      {tab}
+                  <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                    <div className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white/86 p-2 text-[11px] text-slate-700 dark:border-white/12 dark:bg-slate-900/76 dark:text-zinc-200">
+                      <FileText className="h-3.5 w-3.5 text-blue-500 dark:text-cyan-300" />
+                      {t.previewWidgetQuizNotes}
                     </div>
-                  ))}
-                </div>
-
-                <div className="grid gap-3 md:grid-cols-5">
-                  <Card className="rounded-2xl border-slate-200 bg-white/95 p-4 md:col-span-3 dark:border-white/10 dark:bg-black/25">
-                    <div className="space-y-3">
-                      <div className="h-2 w-3/4 rounded bg-slate-300/70 dark:bg-white/15" />
-                      <div className="h-2 rounded bg-slate-200/80 dark:bg-white/10" />
-                      <div className="h-2 w-5/6 rounded bg-slate-200/80 dark:bg-white/10" />
-                      <div className="grid grid-cols-2 gap-2 pt-2">
-                        <div className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 p-2 text-[11px] text-slate-700 dark:border-white/10 dark:bg-white/5 dark:text-zinc-300">
-                          <FileText className="h-3.5 w-3.5 text-blue-400" /> {t.previewWidgetQuizNotes}
-                        </div>
-                        <div className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 p-2 text-[11px] text-slate-700 dark:border-white/10 dark:bg-white/5 dark:text-zinc-300">
-                          <Mic className="h-3.5 w-3.5 text-cyan-500" /> {t.previewWidgetPodcast}
-                        </div>
-                      </div>
+                    <div className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white/86 p-2 text-[11px] text-slate-700 dark:border-white/12 dark:bg-slate-900/76 dark:text-zinc-200">
+                      <Mic className="h-3.5 w-3.5 text-cyan-500" />
+                      {t.previewWidgetPodcast}
                     </div>
-                  </Card>
-
-                  <Card className="rounded-2xl border-slate-200 bg-white/95 p-4 md:col-span-2 dark:border-white/10 dark:bg-black/25">
-                    <div className="relative h-full min-h-[164px] overflow-hidden rounded-xl border border-slate-200/90 bg-slate-50/80 p-3 dark:border-white/12 dark:bg-slate-950/60">
-                      <div className="absolute left-1/2 top-3 w-full max-w-[132px] -translate-x-1/2 rounded-full border border-blue-300 bg-blue-100 px-2 py-1.5 text-center text-[10px] leading-tight text-blue-700 dark:border-blue-300/40 dark:bg-blue-500/20 dark:text-blue-100">
-                        {t.previewNodeCore}
-                      </div>
-                      <div className="absolute inset-x-3 bottom-3 grid grid-cols-2 gap-2">
-                        <div className="rounded-full border border-cyan-300 bg-cyan-100 px-2 py-1.5 text-center text-[10px] leading-tight text-cyan-700 dark:border-cyan-300/40 dark:bg-cyan-500/20 dark:text-cyan-100">
-                          {t.previewNodeQuiz}
-                        </div>
-                        <div className="rounded-full border border-emerald-300 bg-emerald-100 px-2 py-1.5 text-center text-[10px] leading-tight text-emerald-700 dark:border-emerald-300/40 dark:bg-emerald-500/20 dark:text-emerald-100">
-                          {t.previewNodeChat}
-                        </div>
-                      </div>
-                      <svg className="pointer-events-none absolute inset-0 h-full w-full" viewBox="0 0 240 170" fill="none" aria-hidden="true">
-                        <path d="M120 34 L78 124" stroke="rgba(148,163,184,0.55)" strokeWidth="1.2" />
-                        <path d="M120 34 L162 124" stroke="rgba(148,163,184,0.55)" strokeWidth="1.2" />
-                      </svg>
-                    </div>
-                  </Card>
-                </div>
+                  </div>
+                </Card>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      <section id="flow" className="container mx-auto max-w-7xl px-4 pb-14 xl:pr-[22rem]">
+      <section id="flow" className="container mx-auto max-w-7xl px-4 pb-14">
         <div data-reveal className="mb-6">
           <h2 className="text-2xl font-semibold tracking-tight text-slate-950 md:text-3xl dark:text-zinc-50">{t.flowTitle}</h2>
           <p className="mt-2 text-slate-600 dark:text-zinc-300">{t.flowSubtitle}</p>
@@ -1116,7 +1091,7 @@ const Landing = () => {
         </div>
       </section>
 
-      <section id="transition-zone" className="container mx-auto max-w-7xl px-4 pb-16 xl:pr-[22rem]">
+      <section id="transition-zone" className="container mx-auto max-w-7xl px-4 pb-16">
         <div
           data-reveal
           className="rounded-[2rem] border border-slate-300/70 bg-white/78 p-8 shadow-xl shadow-slate-200/80 backdrop-blur-xl md:p-10 dark:border-white/16 dark:bg-white/[0.06] dark:shadow-none"
@@ -1136,7 +1111,7 @@ const Landing = () => {
       <section id="blue-section" className="relative pb-16 pt-12 text-slate-50">
         <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_20%_0%,rgba(255,255,255,0.22),transparent_48%),radial-gradient(circle_at_85%_16%,rgba(122,190,255,0.3),transparent_42%),linear-gradient(180deg,rgba(9,29,80,0.42)_0%,rgba(7,22,63,0.74)_100%)]" />
 
-        <section className="container mx-auto max-w-7xl px-4 pb-16 xl:pr-[22rem]">
+        <section className="container mx-auto max-w-7xl px-4 pb-16">
           <div data-reveal className="mb-6">
             <h2 className="text-2xl font-semibold tracking-tight text-slate-50 md:text-3xl">{t.featuresTitle}</h2>
             <p className="mt-2 text-blue-100/80">{t.featuresSubtitle}</p>
@@ -1182,7 +1157,7 @@ const Landing = () => {
 
         <section
           ref={stickySectionRef}
-          className="container mx-auto max-w-7xl px-4 pb-16 xl:pr-[22rem]"
+          className="container mx-auto max-w-7xl px-4 pb-16"
         >
           <div className="grid items-start gap-6 lg:grid-cols-12">
             <div className="lg:col-span-5">
@@ -1219,7 +1194,7 @@ const Landing = () => {
           </div>
         </section>
 
-        <section className="container mx-auto max-w-7xl px-4 pb-16 xl:pr-[22rem]">
+        <section className="container mx-auto max-w-7xl px-4 pb-16">
           <div
             data-reveal
             className="rounded-3xl border border-white/18 bg-white/[0.08] p-7 backdrop-blur-xl md:p-10"
@@ -1252,7 +1227,7 @@ const Landing = () => {
           </div>
         </section>
 
-        <footer className="container mx-auto max-w-7xl px-4 pb-10 xl:pr-[22rem]">
+        <footer className="container mx-auto max-w-7xl px-4 pb-10">
           <div className="rounded-3xl border-t border-[rgba(255,255,255,0.1)] bg-gradient-to-b from-slate-950/88 via-slate-950/92 to-blue-950/92 px-6 py-8 shadow-[0_-18px_45px_rgba(2,6,23,0.28)] md:px-8 md:py-10">
             <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
               <div>
