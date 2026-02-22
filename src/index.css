@@ -161,3 +161,162 @@ html.lenis body {
 .lenis.lenis-stopped {
   overflow: hidden;
 }
+
+/* Capability bento system */
+.capability-bento-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-auto-rows: minmax(124px, auto);
+  gap: 0.8rem;
+}
+
+.capability-tile {
+  position: relative;
+  overflow: hidden;
+  border-radius: 1.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: linear-gradient(155deg, rgba(255, 255, 255, 0.11), rgba(255, 255, 255, 0.045));
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition:
+    border-color 220ms ease,
+    box-shadow 300ms ease,
+    transform 300ms ease,
+    background-color 220ms ease;
+}
+
+.capability-tile:hover {
+  transform: translateY(-3px);
+  border-color: rgba(186, 230, 253, 0.36);
+  box-shadow: 0 20px 36px rgba(1, 10, 34, 0.28);
+}
+
+.capability-tile::before {
+  content: "";
+  position: absolute;
+  inset: -40% -20% auto;
+  height: 62%;
+  background: radial-gradient(circle, rgba(125, 211, 252, 0.16), transparent 64%);
+  opacity: 0;
+  transition: opacity 260ms ease;
+  pointer-events: none;
+}
+
+.capability-tile:hover::before {
+  opacity: 1;
+}
+
+.map-signal {
+  position: relative;
+  height: 120px;
+}
+
+.map-signal-lines {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.map-signal-lines path {
+  fill: none;
+  stroke: rgba(191, 219, 254, 0.42);
+  stroke-width: 1.3;
+  stroke-dasharray: 6 8;
+  transition: stroke 220ms ease, opacity 220ms ease;
+}
+
+.map-signal-node {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-radius: 9999px;
+  background: rgba(224, 242, 254, 0.9);
+  border: 1px solid rgba(125, 211, 252, 0.62);
+  box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.4);
+  transition: transform 220ms ease, box-shadow 220ms ease;
+}
+
+.map-signal-core {
+  top: 12px;
+  left: calc(50% - 7px);
+}
+
+.map-signal-left {
+  bottom: 16px;
+  left: 62px;
+}
+
+.map-signal-right {
+  bottom: 14px;
+  right: 64px;
+}
+
+.capability-tile-map:hover {
+  box-shadow: 0 22px 42px rgba(8, 31, 83, 0.45), 0 0 0 1px rgba(125, 211, 252, 0.16);
+}
+
+.capability-tile-map:hover .map-signal-lines path {
+  stroke: rgba(186, 230, 253, 0.92);
+  animation: map-node-flow 2.6s linear infinite;
+}
+
+.capability-tile-map:hover .map-signal-node {
+  transform: scale(1.1);
+  box-shadow: 0 0 0 8px rgba(56, 189, 248, 0.12);
+}
+
+@keyframes map-node-flow {
+  to {
+    stroke-dashoffset: -54;
+  }
+}
+
+@media (min-width: 640px) {
+  .capability-bento-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .capability-bento-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-areas:
+      "tutor tutor map map"
+      "tutor tutor map map"
+      "ingest controls podcast exports"
+      "languages oneclick exports exports";
+  }
+
+  .capability-area-tutor {
+    grid-area: tutor;
+  }
+
+  .capability-area-map {
+    grid-area: map;
+  }
+
+  .capability-area-ingest {
+    grid-area: ingest;
+  }
+
+  .capability-area-controls {
+    grid-area: controls;
+  }
+
+  .capability-area-podcast {
+    grid-area: podcast;
+  }
+
+  .capability-area-exports {
+    grid-area: exports;
+  }
+
+  .capability-area-languages {
+    grid-area: languages;
+  }
+
+  .capability-area-oneclick {
+    grid-area: oneclick;
+  }
+}

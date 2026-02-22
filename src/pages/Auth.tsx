@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, ArrowLeft } from "lucide-react";
+import { Loader2, ArrowLeft, Sparkles, Brain, MessageSquare, Mic } from "lucide-react";
 import { z } from "zod";
 import { useSettings } from "@/hooks/useSettings";
 
@@ -249,10 +249,10 @@ const Auth = () => {
         setSignUpPassword("");
         setFullName("");
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: labels.signupError,
-        description: error.message || "Failed to create account",
+        description: error instanceof Error ? error.message : "Failed to create account",
         variant: "destructive"
       });
     } finally {
@@ -293,9 +293,9 @@ const Auth = () => {
         description: labels.signedIn
       });
       navigate("/dashboard");
-    } catch (error: any) {
+    } catch (error: unknown) {
       let errorMessage = "Invalid email or password";
-      if (error.message?.includes("Email not confirmed")) {
+      if (error instanceof Error && error.message.includes("Email not confirmed")) {
         errorMessage = "Please confirm your email before signing in";
       }
       toast({
@@ -309,173 +309,245 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/20 flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        <Button variant="ghost" asChild className="mb-4">
-          <Link to="/">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            {labels.backToHome}
-          </Link>
-        </Button>
+    <div className="relative min-h-screen overflow-hidden bg-[linear-gradient(130deg,#d8ecff_0%,#eff6ff_48%,#f7f2db_100%)] dark:bg-[radial-gradient(circle_at_80%_20%,rgba(56,189,248,0.24),transparent_42%),radial-gradient(circle_at_15%_12%,rgba(59,130,246,0.24),transparent_38%),linear-gradient(145deg,#041024_0%,#081c3f_58%,#0d2a59_100%)]">
+      <div className="pointer-events-none absolute inset-0 opacity-45 [background-image:linear-gradient(to_right,rgba(15,23,42,0.07)_1px,transparent_1px),linear-gradient(to_bottom,rgba(15,23,42,0.07)_1px,transparent_1px)] [background-size:70px_70px] dark:opacity-55 dark:[background-image:linear-gradient(to_right,rgba(191,219,254,0.15)_1px,transparent_1px),linear-gradient(to_bottom,rgba(191,219,254,0.15)_1px,transparent_1px)]" />
+      <div className="pointer-events-none absolute -left-24 top-20 h-72 w-72 rounded-full bg-cyan-300/24 blur-3xl dark:bg-cyan-400/18" />
+      <div className="pointer-events-none absolute -right-20 bottom-10 h-72 w-72 rounded-full bg-blue-300/22 blur-3xl dark:bg-blue-400/18" />
 
-        <Card className="p-8 shadow-lg">
-          <div className="text-center mb-6">
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent mb-2">
-              Aide
-            </h1>
-            <p className="text-muted-foreground">{labels.signInTitle}</p>
-          </div>
+      <div className="relative mx-auto flex min-h-screen w-full max-w-7xl flex-col px-4 py-6 sm:px-6 lg:px-8">
+        <div className="mb-5">
+          <Button
+            variant="ghost"
+            asChild
+            className="rounded-full border border-slate-300/80 bg-white/70 text-slate-700 hover:bg-white/90 dark:border-white/15 dark:bg-slate-900/60 dark:text-zinc-100 dark:hover:bg-slate-900/85"
+          >
+            <Link to="/">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              {labels.backToHome}
+            </Link>
+          </Button>
+        </div>
 
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-2 mb-6">
-              <TabsTrigger value="signin">{labels.signIn}</TabsTrigger>
-              <TabsTrigger value="signup">{labels.signUp}</TabsTrigger>
-            </TabsList>
+        <div className="grid flex-1 items-stretch gap-6 pb-8 lg:grid-cols-12">
+          <section className="relative overflow-hidden rounded-[2rem] border border-slate-200/90 bg-white/65 p-6 shadow-[0_22px_70px_rgba(59,130,246,0.14)] backdrop-blur-2xl sm:p-8 dark:border-white/12 dark:bg-slate-950/62 dark:shadow-[0_22px_70px_rgba(2,6,23,0.55)] lg:col-span-5 xl:col-span-6">
+            <div className="pointer-events-none absolute -right-20 -top-20 h-52 w-52 rounded-full bg-cyan-300/20 blur-3xl dark:bg-cyan-300/22" />
+            <div className="pointer-events-none absolute -bottom-16 -left-12 h-48 w-48 rounded-full bg-blue-300/22 blur-3xl dark:bg-blue-500/20" />
 
-            <TabsContent value="signin">
-              <form onSubmit={handleSignIn} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="signin-email">{labels.email}</Label>
-                  <Input
-                    id="signin-email"
-                    type="email"
-                    placeholder={labels.emailPlaceholder}
-                    value={signInEmail}
-                    onChange={(e) => setSignInEmail(e.target.value)}
-                    required
-                    disabled={loading}
-                    maxLength={255}
-                  />
+            <div className="relative">
+              <div className="inline-flex items-center gap-2 rounded-full border border-blue-300/70 bg-white/70 px-3.5 py-1.5 text-xs font-medium text-slate-700 dark:border-cyan-300/35 dark:bg-slate-900/80 dark:text-cyan-50">
+                <Sparkles className="h-3.5 w-3.5 text-blue-600 dark:text-cyan-200" />
+                Aide
+              </div>
+
+              <h1 className="mt-5 max-w-[15ch] text-3xl font-black leading-[1.02] tracking-tight text-slate-900 sm:text-4xl dark:text-slate-50">
+                {labels.signInTitle}
+              </h1>
+              <p className="mt-3 max-w-[44ch] text-sm leading-relaxed text-slate-600 sm:text-base dark:text-blue-100/88">
+                {labels.startFree}
+              </p>
+
+              <div className="mt-6 flex flex-wrap gap-2">
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-300/85 bg-white/72 px-3 py-1.5 text-xs font-medium text-slate-700 dark:border-blue-200/25 dark:bg-slate-900/72 dark:text-blue-50/95">
+                  <Brain className="h-3.5 w-3.5 text-blue-500 dark:text-cyan-300" />
+                  Neural Maps
+                </span>
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-300/85 bg-white/72 px-3 py-1.5 text-xs font-medium text-slate-700 dark:border-blue-200/25 dark:bg-slate-900/72 dark:text-blue-50/95">
+                  <MessageSquare className="h-3.5 w-3.5 text-blue-500 dark:text-cyan-300" />
+                  AI Tutor
+                </span>
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-300/85 bg-white/72 px-3 py-1.5 text-xs font-medium text-slate-700 dark:border-blue-200/25 dark:bg-slate-900/72 dark:text-blue-50/95">
+                  <Mic className="h-3.5 w-3.5 text-blue-500 dark:text-cyan-300" />
+                  Study Podcasts
+                </span>
+              </div>
+
+              <div className="mt-8 flex justify-center lg:mt-10">
+                <img
+                  src="/aide-mascot.svg"
+                  alt="Aide mascot"
+                  className="w-full max-w-[18rem] drop-shadow-[0_22px_36px_rgba(15,23,42,0.22)] dark:drop-shadow-[0_24px_44px_rgba(2,6,23,0.7)] sm:max-w-[21rem]"
+                />
+              </div>
+            </div>
+          </section>
+
+          <section className="lg:col-span-7 xl:col-span-6">
+            <Card className="relative h-full overflow-hidden rounded-[2rem] border border-slate-200/90 bg-white/74 p-6 shadow-[0_22px_70px_rgba(59,130,246,0.14)] backdrop-blur-2xl sm:p-8 dark:border-white/14 dark:bg-slate-950/68 dark:shadow-[0_22px_70px_rgba(2,6,23,0.58)]">
+              <div className="pointer-events-none absolute -top-14 right-[-4rem] h-40 w-40 rounded-full bg-cyan-300/18 blur-3xl dark:bg-cyan-300/20" />
+              <div className="relative">
+                <div className="mb-6 text-center">
+                  <h2 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-50">Aide</h2>
+                  <p className="mt-2 text-sm text-slate-600 dark:text-blue-100/82">{labels.signInTitle}</p>
                 </div>
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="signin-password">{labels.password}</Label>
-                    <button
-                      type="button"
-                      onClick={async () => {
-                        if (!signInEmail.trim()) {
-                          toast({
-                            title: labels.emailRequired,
-                            description: labels.emailRequiredDesc,
-                            variant: "destructive"
-                          });
-                          return;
-                        }
-                        setLoading(true);
-                        try {
-                          const { error } = await supabase.auth.resetPasswordForEmail(signInEmail.trim(), {
-                            redirectTo: `${window.location.origin}/auth?reset=true`
-                          });
-                          if (error) throw error;
-                          toast({
-                            title: labels.checkEmail,
-                            description: labels.resetLinkSent
-                          });
-                        } catch (error: any) {
-                          toast({
-                            title: labels.error,
-                            description: error.message || "Failed to send reset email",
-                            variant: "destructive"
-                          });
-                        } finally {
-                          setLoading(false);
-                        }
-                      }}
-                      className="text-xs text-primary hover:underline"
-                      disabled={loading}
+
+                <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                  <TabsList className="mb-6 grid h-11 w-full grid-cols-2 rounded-full border border-slate-300/80 bg-white/75 p-1 dark:border-white/15 dark:bg-slate-900/70">
+                    <TabsTrigger
+                      value="signin"
+                      className="rounded-full text-slate-600 data-[state=active]:bg-blue-600 data-[state=active]:text-white dark:text-zinc-300 dark:data-[state=active]:bg-cyan-300 dark:data-[state=active]:text-slate-950"
                     >
-                      {labels.forgotPassword}
-                    </button>
-                  </div>
-                  <Input
-                    id="signin-password"
-                    type="password"
-                    placeholder={labels.passwordPlaceholder}
-                    value={signInPassword}
-                    onChange={(e) => setSignInPassword(e.target.value)}
-                    required
-                    disabled={loading}
-                    maxLength={72}
-                  />
-                </div>
-                <Button
-                  type="submit"
-                  className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-90"
-                  disabled={loading}
-                >
-                  {loading ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      {labels.loadingSignIn}
-                    </>
-                  ) : labels.signIn}
-                </Button>
-              </form>
-            </TabsContent>
+                      {labels.signIn}
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="signup"
+                      className="rounded-full text-slate-600 data-[state=active]:bg-blue-600 data-[state=active]:text-white dark:text-zinc-300 dark:data-[state=active]:bg-cyan-300 dark:data-[state=active]:text-slate-950"
+                    >
+                      {labels.signUp}
+                    </TabsTrigger>
+                  </TabsList>
 
-            <TabsContent value="signup">
-              <form onSubmit={handleSignUp} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="signup-name">{labels.fullName}</Label>
-                  <Input
-                    id="signup-name"
-                    type="text"
-                    placeholder={labels.namePlaceholder}
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                    required
-                    disabled={loading}
-                    maxLength={100}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="signup-email">{labels.email}</Label>
-                  <Input
-                    id="signup-email"
-                    type="email"
-                    placeholder={labels.emailPlaceholder}
-                    value={signUpEmail}
-                    onChange={(e) => setSignUpEmail(e.target.value)}
-                    required
-                    disabled={loading}
-                    maxLength={255}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="signup-password">{labels.password}</Label>
-                  <Input
-                    id="signup-password"
-                    type="password"
-                    placeholder={labels.passwordPlaceholder}
-                    value={signUpPassword}
-                    onChange={(e) => setSignUpPassword(e.target.value)}
-                    required
-                    disabled={loading}
-                    maxLength={72}
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    {labels.mustBeAtLeast8}
-                  </p>
-                </div>
-                <Button
-                  type="submit"
-                  className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-90"
-                  disabled={loading}
-                >
-                  {loading ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      {labels.loadingSignUp}
-                    </>
-                  ) : labels.createAccount}
-                </Button>
-                <p className="text-xs text-center text-muted-foreground">
-                  {labels.startFree}
-                </p>
-              </form>
-            </TabsContent>
-          </Tabs>
-        </Card>
+                  <TabsContent value="signin">
+                    <form onSubmit={handleSignIn} className="space-y-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="signin-email" className="text-slate-700 dark:text-blue-100/90">{labels.email}</Label>
+                        <Input
+                          id="signin-email"
+                          type="email"
+                          placeholder={labels.emailPlaceholder}
+                          value={signInEmail}
+                          onChange={(e) => setSignInEmail(e.target.value)}
+                          required
+                          disabled={loading}
+                          maxLength={255}
+                          className="h-11 rounded-xl border-slate-300/85 bg-white/85 text-slate-800 placeholder:text-slate-400 focus-visible:ring-blue-500 dark:border-white/16 dark:bg-slate-900/76 dark:text-zinc-100 dark:placeholder:text-zinc-500 dark:focus-visible:ring-cyan-300"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <Label htmlFor="signin-password" className="text-slate-700 dark:text-blue-100/90">{labels.password}</Label>
+                          <button
+                            type="button"
+                            onClick={async () => {
+                              if (!signInEmail.trim()) {
+                                toast({
+                                  title: labels.emailRequired,
+                                  description: labels.emailRequiredDesc,
+                                  variant: "destructive"
+                                });
+                                return;
+                              }
+                              setLoading(true);
+                              try {
+                                const { error } = await supabase.auth.resetPasswordForEmail(signInEmail.trim(), {
+                                  redirectTo: `${window.location.origin}/auth?reset=true`
+                                });
+                                if (error) throw error;
+                                toast({
+                                  title: labels.checkEmail,
+                                  description: labels.resetLinkSent
+                                });
+                              } catch (error: unknown) {
+                                toast({
+                                  title: labels.error,
+                                  description: error instanceof Error ? error.message : "Failed to send reset email",
+                                  variant: "destructive"
+                                });
+                              } finally {
+                                setLoading(false);
+                              }
+                            }}
+                            className="text-xs font-medium text-blue-600 transition-colors hover:text-blue-500 dark:text-cyan-300 dark:hover:text-cyan-200"
+                            disabled={loading}
+                          >
+                            {labels.forgotPassword}
+                          </button>
+                        </div>
+                        <Input
+                          id="signin-password"
+                          type="password"
+                          placeholder={labels.passwordPlaceholder}
+                          value={signInPassword}
+                          onChange={(e) => setSignInPassword(e.target.value)}
+                          required
+                          disabled={loading}
+                          maxLength={72}
+                          className="h-11 rounded-xl border-slate-300/85 bg-white/85 text-slate-800 placeholder:text-slate-400 focus-visible:ring-blue-500 dark:border-white/16 dark:bg-slate-900/76 dark:text-zinc-100 dark:placeholder:text-zinc-500 dark:focus-visible:ring-cyan-300"
+                        />
+                      </div>
+                      <Button
+                        type="submit"
+                        className="h-11 w-full rounded-xl bg-blue-600 text-white transition-all hover:bg-blue-500 dark:bg-cyan-300 dark:text-slate-950 dark:hover:bg-cyan-200"
+                        disabled={loading}
+                      >
+                        {loading ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            {labels.loadingSignIn}
+                          </>
+                        ) : labels.signIn}
+                      </Button>
+                    </form>
+                  </TabsContent>
+
+                  <TabsContent value="signup">
+                    <form onSubmit={handleSignUp} className="space-y-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="signup-name" className="text-slate-700 dark:text-blue-100/90">{labels.fullName}</Label>
+                        <Input
+                          id="signup-name"
+                          type="text"
+                          placeholder={labels.namePlaceholder}
+                          value={fullName}
+                          onChange={(e) => setFullName(e.target.value)}
+                          required
+                          disabled={loading}
+                          maxLength={100}
+                          className="h-11 rounded-xl border-slate-300/85 bg-white/85 text-slate-800 placeholder:text-slate-400 focus-visible:ring-blue-500 dark:border-white/16 dark:bg-slate-900/76 dark:text-zinc-100 dark:placeholder:text-zinc-500 dark:focus-visible:ring-cyan-300"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="signup-email" className="text-slate-700 dark:text-blue-100/90">{labels.email}</Label>
+                        <Input
+                          id="signup-email"
+                          type="email"
+                          placeholder={labels.emailPlaceholder}
+                          value={signUpEmail}
+                          onChange={(e) => setSignUpEmail(e.target.value)}
+                          required
+                          disabled={loading}
+                          maxLength={255}
+                          className="h-11 rounded-xl border-slate-300/85 bg-white/85 text-slate-800 placeholder:text-slate-400 focus-visible:ring-blue-500 dark:border-white/16 dark:bg-slate-900/76 dark:text-zinc-100 dark:placeholder:text-zinc-500 dark:focus-visible:ring-cyan-300"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="signup-password" className="text-slate-700 dark:text-blue-100/90">{labels.password}</Label>
+                        <Input
+                          id="signup-password"
+                          type="password"
+                          placeholder={labels.passwordPlaceholder}
+                          value={signUpPassword}
+                          onChange={(e) => setSignUpPassword(e.target.value)}
+                          required
+                          disabled={loading}
+                          maxLength={72}
+                          className="h-11 rounded-xl border-slate-300/85 bg-white/85 text-slate-800 placeholder:text-slate-400 focus-visible:ring-blue-500 dark:border-white/16 dark:bg-slate-900/76 dark:text-zinc-100 dark:placeholder:text-zinc-500 dark:focus-visible:ring-cyan-300"
+                        />
+                        <p className="text-xs text-slate-500 dark:text-zinc-400">
+                          {labels.mustBeAtLeast8}
+                        </p>
+                      </div>
+                      <Button
+                        type="submit"
+                        className="h-11 w-full rounded-xl bg-blue-600 text-white transition-all hover:bg-blue-500 dark:bg-cyan-300 dark:text-slate-950 dark:hover:bg-cyan-200"
+                        disabled={loading}
+                      >
+                        {loading ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            {labels.loadingSignUp}
+                          </>
+                        ) : labels.createAccount}
+                      </Button>
+                      <p className="text-center text-xs text-slate-500 dark:text-zinc-400">
+                        {labels.startFree}
+                      </p>
+                    </form>
+                  </TabsContent>
+                </Tabs>
+              </div>
+            </Card>
+          </section>
+        </div>
       </div>
     </div>
   );

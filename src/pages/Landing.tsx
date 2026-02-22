@@ -483,6 +483,22 @@ const copy: Record<Language, LandingCopy> = {
     featuresSubtitle: "Այն ամենը, ինչ պետք է ցանկացած առարկա հաղթահարելու համար:",
     capabilitiesTitle: "Aide-ի հնարավորությունները",
     capabilitiesSubtitle: "Տեխնոլոգիաներ, որոնք կօգնեն քեզ սովորել:",
+    capabilityIngestionTitle: "Բազմամոդալ մեկնարկ",
+    capabilityIngestionDesc: "Խոսիր, վերբեռնիր կամ տեղադրիր տեքստը և անմիջապես սկսիր:",
+    capabilityControlsTitle: "Հարմարվող թեստային շարժիչ",
+    capabilityControlsDesc: "Կառավարիր հարցերի քանակը, քարտերը և ակտիվ հիշողության ցիկլը:",
+    capabilityTutorTitle: "24/7 AI ուսուցիչ",
+    capabilityTutorDesc: "Քո նյութը հասկանում է և սխալները բացատրում է իրական ժամանակում:",
+    capabilityMapTitle: "Ինտերակտիվ գիտելիքի քարտեզներ",
+    capabilityMapDesc: "Տես գաղափարների կապերը, գտիր բացթողումները և կառուցիր ամբողջական պատկեր:",
+    capabilityPodcastTitle: "AI պոդկաստներ",
+    capabilityPodcastDesc: "Նշումները փոխակերպիր աուդիո դասերի՝ ճանապարհին կրկնելու համար:",
+    capabilityLibraryExportTitle: "Գրադարան և Pro արտահանում",
+    capabilityLibraryExportDesc: "Notion, PDF և Markdown՝ մեկ որոնելի ուսումնական արխիվից:",
+    capabilityLanguagesTitle: "4 լեզու",
+    capabilityLanguagesDesc: "Հայերեն, անգլերեն, ռուսերեն, կորեերեն",
+    capabilityOneClickTitle: "Արտահանում մեկ քլիքով",
+    capabilityOneClickDesc: "Կիսվիր պատրաստ նյութերով ակնթարթորեն",
     capabilityItems: [
       "PDF-ի, տեքստի և նկարների վերբեռնում:",
       "Ձայնային մուտք. խոսիր նշումներիդ հետ և ստացիր նյութեր:",
@@ -558,9 +574,6 @@ const Landing = () => {
   const { language, theme, setLanguage, setTheme } = useSettings();
   const [settingsOpen, setSettingsOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement | null>(null);
-  const stickySectionRef = useRef<HTMLElement | null>(null);
-  const stickyPinRef = useRef<HTMLDivElement | null>(null);
-  const stickyTrackRef = useRef<HTMLDivElement | null>(null);
   const t = copy[language] || copy.en;
   const heroWords = t.heroTitle.split(" ").filter(Boolean);
 
@@ -618,7 +631,7 @@ const Landing = () => {
 
       const ctx = gsap.context(() => {
         if (prefersReducedMotion) {
-          gsap.set("[data-hero-word], [data-hero-subtitle], [data-hero-cta], [data-hero-badges], [data-preview-panel], [data-reveal], [data-sticky-card], [data-bento-card], [data-mascot-shell]", {
+          gsap.set("[data-hero-word], [data-hero-subtitle], [data-hero-cta], [data-hero-badges], [data-preview-panel], [data-reveal], [data-capability-tile], [data-bento-card], [data-mascot-shell]", {
             autoAlpha: 1,
             y: 0,
             scale: 1,
@@ -839,51 +852,29 @@ const Landing = () => {
               },
             });
           });
-
-          if (!stickySectionRef.current || !stickyPinRef.current || !stickyTrackRef.current) {
-            return;
-          }
-
-          const stickyPinTrigger = ScrollTrigger.create({
-            trigger: stickySectionRef.current,
-            start: "top top+=110",
-            end: () =>
-              `+=${Math.max(
-                stickyTrackRef.current!.offsetHeight -
-                  stickyPinRef.current!.offsetHeight +
-                  140,
-                420
-              )}`,
-            pin: stickyPinRef.current,
-            pinSpacing: false,
-            invalidateOnRefresh: true,
-          });
-
-          return () => {
-            stickyPinTrigger.kill();
-          };
         });
 
-        gsap.utils.toArray<HTMLElement>("[data-sticky-card]").forEach((card) => {
+        const capabilityTiles = gsap.utils.toArray<HTMLElement>("[data-capability-tile]");
+        if (capabilityTiles.length > 0) {
           gsap.fromTo(
-            card,
-            { autoAlpha: 0, x: 20, y: 44, scale: 0.985 },
+            capabilityTiles,
+            { autoAlpha: 0, y: 38, scale: 0.985 },
             {
               autoAlpha: 1,
-              x: 0,
               y: 0,
               scale: 1,
-              duration: 0.9,
+              duration: 0.82,
+              stagger: 0.1,
               ease: "power3.out",
               scrollTrigger: {
-                trigger: card,
+                trigger: "#capability-bento",
                 start: "top 82%",
-                end: "top 58%",
+                end: "top 42%",
                 toggleActions: "play none none reverse",
               },
             }
           );
-        });
+        }
       }, root);
 
       const handleResize = () => ScrollTrigger.refresh();
@@ -1212,42 +1203,112 @@ const Landing = () => {
           </div>
         </section>
 
-        <section
-          ref={stickySectionRef}
-          className="container mx-auto max-w-7xl px-4 pb-16"
-        >
-          <div className="grid items-start gap-6 lg:grid-cols-12">
-            <div className="lg:col-span-5">
-              <div
-                ref={stickyPinRef}
-                className="rounded-3xl border border-white/24 bg-gradient-to-b from-white/[0.22] via-white/[0.12] to-white/[0.07] p-6 shadow-[0_18px_42px_rgba(2,12,37,0.35)] backdrop-blur-2xl lg:top-28 lg:p-7"
-              >
-                <p className="text-xs font-semibold uppercase tracking-[0.22em] text-blue-100/75">
-                  Live Capability Stack
-                </p>
-                <h3 className="mt-3 max-w-[18ch] break-words text-[clamp(1.85rem,3vw,2.6rem)] font-semibold leading-[1.08] tracking-tight text-slate-50">
-                  {t.capabilitiesTitle}
-                </h3>
-                <p className="mt-4 max-w-[28ch] text-sm leading-relaxed text-blue-100/90 md:text-[15px]">
-                  {t.capabilitiesSubtitle}
-                </p>
-              </div>
-            </div>
+        <section id="capability-bento" className="container mx-auto max-w-7xl px-4 pb-16">
+          <div data-reveal className="mb-6 max-w-3xl">
+            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-blue-100/75">
+              Live Capability Stack
+            </p>
+            <h3 className="mt-3 text-2xl font-semibold tracking-tight text-slate-50 md:text-4xl">
+              {t.capabilitiesTitle}
+            </h3>
+            <p className="mt-3 text-sm leading-relaxed text-blue-100/88 md:text-base">
+              {t.capabilitiesSubtitle}
+            </p>
+          </div>
 
-            <div ref={stickyTrackRef} className="space-y-3 lg:col-span-7">
-              {t.capabilityItems.map((item, index) => (
-                <div
-                  key={item}
-                  data-sticky-card
-                  className="flex items-start gap-3 rounded-2xl border border-white/20 bg-slate-950/35 px-4 py-4 shadow-[0_10px_28px_rgba(2,12,37,0.24)] backdrop-blur-xl transition-all duration-300 hover:border-cyan-200/65 hover:bg-slate-900/48"
-                >
-                  <span className="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-cyan-200/45 bg-cyan-300/16 text-[11px] font-semibold text-cyan-100">
-                    {index + 1}
-                  </span>
-                  <p className="break-words text-sm leading-7 text-blue-50/95 md:text-[15px] md:leading-7">{item}</p>
+          <div className="capability-bento-grid">
+            <article data-capability-tile className="capability-tile capability-area-tutor p-5 md:p-6">
+              <div className="mb-4 flex items-start justify-between gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-cyan-300/14 text-cyan-100">
+                  <Bot className="h-5 w-5" />
                 </div>
-              ))}
-            </div>
+                <div className="inline-flex items-center rounded-full border border-cyan-200/25 bg-cyan-300/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-cyan-100/85">
+                  {t.shipped}
+                </div>
+              </div>
+              <h4 className="text-lg font-semibold text-slate-50 md:text-xl">{t.capabilityTutorTitle}</h4>
+              <p className="mt-2 max-w-[40ch] text-sm leading-relaxed text-blue-100/88">{t.capabilityTutorDesc}</p>
+              <div className="mt-5 space-y-2">
+                <div className="max-w-[72%] rounded-xl border border-white/12 bg-white/[0.08] px-3 py-2 text-[11px] text-blue-50/90">
+                  Why is this concept true?
+                </div>
+                <div className="max-w-[86%] rounded-xl border border-cyan-200/26 bg-cyan-300/12 px-3 py-2 text-[11px] text-cyan-50/95">
+                  Because each step preserves the same relation between terms.
+                </div>
+                <div className="max-w-[62%] rounded-xl border border-white/12 bg-white/[0.06] px-3 py-2 text-[11px] text-blue-50/90">
+                  Generate 3 harder quizzes.
+                </div>
+              </div>
+            </article>
+
+            <article data-capability-tile className="capability-tile capability-area-map capability-tile-map p-5 md:p-6">
+              <div className="mb-4 flex items-start justify-between gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-300/14 text-blue-50">
+                  <Map className="h-5 w-5" />
+                </div>
+                <span className="text-[10px] font-medium uppercase tracking-[0.14em] text-blue-100/78">Neural Studio</span>
+              </div>
+              <h4 className="text-lg font-semibold text-slate-50 md:text-xl">{t.capabilityMapTitle}</h4>
+              <p className="mt-2 max-w-[42ch] text-sm leading-relaxed text-blue-100/88">{t.capabilityMapDesc}</p>
+              <div className="map-signal mt-5">
+                <svg viewBox="0 0 260 120" className="map-signal-lines" aria-hidden="true">
+                  <path d="M130 24 L74 88" />
+                  <path d="M130 24 L189 90" />
+                  <path d="M74 88 L189 90" />
+                </svg>
+                <span className="map-signal-node map-signal-core" />
+                <span className="map-signal-node map-signal-left" />
+                <span className="map-signal-node map-signal-right" />
+              </div>
+            </article>
+
+            <article data-capability-tile className="capability-tile capability-area-ingest p-5">
+              <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-white/10 text-blue-100">
+                <Upload className="h-4.5 w-4.5" />
+              </div>
+              <h4 className="text-base font-semibold text-slate-50">{t.capabilityIngestionTitle}</h4>
+              <p className="mt-2 text-sm leading-relaxed text-blue-100/84">{t.capabilityIngestionDesc}</p>
+            </article>
+
+            <article data-capability-tile className="capability-tile capability-area-controls p-5">
+              <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-white/10 text-blue-100">
+                <WandSparkles className="h-4.5 w-4.5" />
+              </div>
+              <h4 className="text-base font-semibold text-slate-50">{t.capabilityControlsTitle}</h4>
+              <p className="mt-2 text-sm leading-relaxed text-blue-100/84">{t.capabilityControlsDesc}</p>
+            </article>
+
+            <article data-capability-tile className="capability-tile capability-area-podcast p-5">
+              <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-white/10 text-blue-100">
+                <Mic className="h-4.5 w-4.5" />
+              </div>
+              <h4 className="text-base font-semibold text-slate-50">{t.capabilityPodcastTitle}</h4>
+              <p className="mt-2 text-sm leading-relaxed text-blue-100/84">{t.capabilityPodcastDesc}</p>
+            </article>
+
+            <article data-capability-tile className="capability-tile capability-area-exports p-5">
+              <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-white/10 text-blue-100">
+                <Library className="h-4.5 w-4.5" />
+              </div>
+              <h4 className="text-base font-semibold text-slate-50">{t.capabilityLibraryExportTitle}</h4>
+              <p className="mt-2 text-sm leading-relaxed text-blue-100/84">{t.capabilityLibraryExportDesc}</p>
+            </article>
+
+            <article data-capability-tile className="capability-tile capability-area-languages p-5">
+              <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-white/10 text-blue-100">
+                <Languages className="h-4.5 w-4.5" />
+              </div>
+              <h4 className="text-base font-semibold text-slate-50">{t.capabilityLanguagesTitle}</h4>
+              <p className="mt-2 text-sm leading-relaxed text-blue-100/84">{t.capabilityLanguagesDesc}</p>
+            </article>
+
+            <article data-capability-tile className="capability-tile capability-area-oneclick p-5">
+              <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-white/10 text-blue-100">
+                <Download className="h-4.5 w-4.5" />
+              </div>
+              <h4 className="text-base font-semibold text-slate-50">{t.capabilityOneClickTitle}</h4>
+              <p className="mt-2 text-sm leading-relaxed text-blue-100/84">{t.capabilityOneClickDesc}</p>
+            </article>
           </div>
         </section>
 
