@@ -91,7 +91,7 @@ const copy: Record<Language, LandingCopy> = {
     contact: "Contact",
     help: "Help",
     signIn: "Sign In",
-    heroEyebrow: "Codex-Grade Study Engine",
+    heroEyebrow: "AI-Powered Study Engine",
     heroTitle: "Turn Notes Into Quizzes, Maps, and Tutor Chat in Seconds",
     heroSubtitle:
       "Aide converts notes, PDFs, and images into structured study systems with summaries, flashcards, neural maps, course plans, and AI podcast audio.",
@@ -100,7 +100,7 @@ const copy: Record<Language, LandingCopy> = {
     freeBadge: "1 free analysis/day",
     langBadge: "4 languages",
     uploadBadge: "PDF + image + voice input",
-    previewTitle: "Live Codex Workspace",
+    previewTitle: "Live Aide Workspace",
     previewSubtitle: "Product-first interface preview",
     previewTab1: "Analysis",
     previewTab2: "Neural Map",
@@ -191,7 +191,7 @@ const copy: Record<Language, LandingCopy> = {
     contact: "Контакт",
     help: "Помощь",
     signIn: "Войти",
-    heroEyebrow: "Учебный движок уровня Codex",
+    heroEyebrow: "AI-движок для учебы",
     heroTitle: "Превращайте заметки в тесты, карты и AI-чат за секунды",
     heroSubtitle:
       "Aide преобразует заметки, PDF и изображения в структурированную систему обучения: конспекты, карточки, нейрокарты, планы курса и AI-подкасты.",
@@ -200,7 +200,7 @@ const copy: Record<Language, LandingCopy> = {
     freeBadge: "1 бесплатный анализ в день",
     langBadge: "4 языка",
     uploadBadge: "PDF + изображения + голос",
-    previewTitle: "Рабочее пространство Codex",
+    previewTitle: "Рабочее пространство Aide",
     previewSubtitle: "Превью интерфейса продукта",
     previewTab1: "Анализ",
     previewTab2: "Нейрокарта",
@@ -291,7 +291,7 @@ const copy: Record<Language, LandingCopy> = {
     contact: "Կապ",
     help: "Օգնություն",
     signIn: "Մուտք",
-    heroEyebrow: "Codex մակարդակի ուսումնական շարժիչ",
+    heroEyebrow: "AI ուսումնական շարժիչ",
     heroTitle: "Վերածեք նշումները թեստերի, քարտեզների և AI զրույցի՝ վայրկյանների ընթացքում",
     heroSubtitle:
       "Aide-ը փոխակերպում է նշումները, PDF-երը և պատկերները կառուցվածքային ուսուցման համակարգի՝ ամփոփումներ, քարտեր, նեյրոնային քարտեզներ, դասընթացի պլան և AI պոդկաստ:",
@@ -300,7 +300,7 @@ const copy: Record<Language, LandingCopy> = {
     freeBadge: "Օրական 1 անվճար վերլուծություն",
     langBadge: "4 լեզու",
     uploadBadge: "PDF + պատկեր + ձայն",
-    previewTitle: "Codex աշխատանքային տարածք",
+    previewTitle: "Aide աշխատանքային տարածք",
     previewSubtitle: "Արտադրանքի ինտերֆեյսի նախադիտում",
     previewTab1: "Վերլուծություն",
     previewTab2: "Նեյրոնային քարտեզ",
@@ -391,7 +391,7 @@ const copy: Record<Language, LandingCopy> = {
     contact: "문의",
     help: "도움말",
     signIn: "로그인",
-    heroEyebrow: "Codex급 학습 엔진",
+    heroEyebrow: "AI 기반 학습 엔진",
     heroTitle: "노트를 몇 초 만에 퀴즈, 맵, 튜터 채팅으로 전환",
     heroSubtitle:
       "Aide는 노트, PDF, 이미지를 요약, 플래시카드, 신경망 맵, 코스 플랜, AI 팟캐스트로 변환합니다.",
@@ -400,7 +400,7 @@ const copy: Record<Language, LandingCopy> = {
     freeBadge: "하루 1회 무료 분석",
     langBadge: "4개 언어",
     uploadBadge: "PDF + 이미지 + 음성 입력",
-    previewTitle: "Codex 워크스페이스",
+    previewTitle: "Aide 워크스페이스",
     previewSubtitle: "제품 UI 미리보기",
     previewTab1: "분석",
     previewTab2: "신경망 맵",
@@ -546,12 +546,17 @@ const Landing = () => {
       gsap.ticker.add(onTick);
       gsap.ticker.lagSmoothing(500, 33);
       const media = ScrollTrigger.matchMedia();
+      const isDarkTheme = theme === "dark";
+      const baseBodyBackground = isDarkTheme ? "#05070b" : "#ffffff";
+      const baseBodyColor = isDarkTheme ? "#f4f4f5" : "#0f172a";
+      const targetBodyBackground = isDarkTheme ? "#0e3cc8" : "#1459ff";
+      const targetBodyColor = "#eef4ff";
       const previousBodyBackground = document.body.style.backgroundColor;
       const previousBodyColor = document.body.style.color;
       const previousRootColor = root.style.color;
 
-      gsap.set(document.body, { backgroundColor: "#ffffff", color: "#0f172a" });
-      gsap.set(root, { color: "#0f172a" });
+      gsap.set(document.body, { backgroundColor: baseBodyBackground, color: baseBodyColor });
+      gsap.set(root, { color: baseBodyColor });
       const blueSection = root.querySelector<HTMLElement>("#blue-section");
       const transitionTarget = blueSection || root;
 
@@ -637,8 +642,8 @@ const Landing = () => {
 
         if (blueSection) {
           gsap.to("body", {
-            backgroundColor: "#1459ff",
-            color: "#eef4ff",
+            backgroundColor: targetBodyBackground,
+            color: targetBodyColor,
             ease: "none",
             scrollTrigger: {
               trigger: blueSection,
@@ -648,7 +653,7 @@ const Landing = () => {
             },
           });
 
-          gsap.to("[data-invert]", {
+          gsap.to("#transition-zone [data-invert]", {
             color: "#f8fbff",
             ease: "none",
             scrollTrigger: {
@@ -660,7 +665,7 @@ const Landing = () => {
           });
 
           gsap.to("[data-nav]", {
-            backgroundColor: "rgba(7, 26, 74, 0.58)",
+            backgroundColor: isDarkTheme ? "rgba(7, 26, 74, 0.7)" : "rgba(7, 26, 74, 0.58)",
             borderColor: "rgba(255,255,255,0.22)",
             ease: "none",
             scrollTrigger: {
@@ -850,12 +855,12 @@ const Landing = () => {
       cancelled = true;
       cleanup?.();
     };
-  }, [language]);
+  }, [language, theme]);
 
   return (
     <div
       ref={rootRef}
-      className="min-h-screen overflow-x-hidden text-slate-900"
+      className="min-h-screen overflow-x-hidden text-slate-900 dark:text-zinc-100"
     >
       <div
         data-depth="halo"
@@ -881,20 +886,20 @@ const Landing = () => {
 
       <nav
         data-nav
-        className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/78 backdrop-blur-xl"
+        className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/78 backdrop-blur-xl dark:border-white/10 dark:bg-black/45"
       >
         <div className="container mx-auto flex max-w-7xl items-center justify-between px-4 py-3 xl:pr-[22rem]">
           <div className="flex items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-cyan-400 shadow-lg shadow-blue-500/25">
               <Sparkles className="h-4 w-4 text-white" />
             </div>
-            <span data-nav-strong className="text-lg font-semibold tracking-tight text-slate-950">
+            <span data-nav-strong className="text-lg font-semibold tracking-tight text-slate-950 dark:text-zinc-50">
               Aide
             </span>
           </div>
 
           <div className="flex items-center gap-2">
-            <div className="flex items-center rounded-full border border-slate-300/90 bg-white/90 p-1">
+            <div className="flex items-center rounded-full border border-slate-300/90 bg-white/90 p-1 dark:border-white/10 dark:bg-white/5">
               {languageSwitch.map((item) => (
                 <button
                   key={item.code}
@@ -903,8 +908,8 @@ const Landing = () => {
                   data-nav-strong={language === item.code ? "true" : undefined}
                   className={`rounded-full px-2.5 py-1 text-xs transition-colors ${
                     language === item.code
-                      ? "bg-slate-900 text-white"
-                      : "text-slate-600 hover:text-slate-900"
+                      ? "bg-slate-900 text-white dark:bg-white/20 dark:text-white"
+                      : "text-slate-600 hover:text-slate-900 dark:text-zinc-400 dark:hover:text-white"
                   }`}
                 >
                   {item.label}
@@ -916,7 +921,7 @@ const Landing = () => {
               variant="ghost"
               size="sm"
               asChild
-              className="hidden text-slate-600 hover:bg-slate-100 hover:text-slate-900 sm:flex"
+              className="hidden text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-zinc-300 dark:hover:bg-white/10 dark:hover:text-white sm:flex"
             >
               <a data-nav-muted href="mailto:myaide.study@gmail.com">
                 <Mail className="h-4 w-4" />
@@ -927,7 +932,7 @@ const Landing = () => {
               variant="ghost"
               size="sm"
               asChild
-              className="hidden text-slate-600 hover:bg-slate-100 hover:text-slate-900 sm:flex"
+              className="hidden text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-zinc-300 dark:hover:bg-white/10 dark:hover:text-white sm:flex"
             >
               <Link data-nav-muted to="/help">
                 <HelpCircle className="h-4 w-4" />
@@ -938,11 +943,11 @@ const Landing = () => {
               variant="outline"
               size="icon"
               onClick={() => setSettingsOpen(true)}
-              className="border-slate-300/90 bg-white/85 text-slate-700 hover:bg-slate-100"
+              className="border-slate-300/90 bg-white/85 text-slate-700 hover:bg-slate-100 dark:border-white/20 dark:bg-white/5 dark:text-zinc-200 dark:hover:bg-white/12"
             >
               <Settings className="h-4 w-4" />
             </Button>
-            <Button asChild size="sm" className="bg-blue-600 text-white hover:bg-blue-500">
+            <Button asChild size="sm" className="bg-blue-600 text-white hover:bg-blue-500 dark:bg-white dark:text-black dark:hover:bg-zinc-200">
               <Link data-nav-strong to="/auth">{t.signIn}</Link>
             </Button>
           </div>
@@ -952,14 +957,13 @@ const Landing = () => {
       <section className="container mx-auto max-w-7xl px-4 pb-14 pt-16 md:pt-20 xl:pr-[22rem]">
         <div className="grid items-start gap-8 lg:grid-cols-12">
           <div className="lg:col-span-6">
-            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-blue-200 bg-white/80 px-3 py-1.5 text-xs text-slate-600">
+            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-blue-200 bg-white/80 px-3 py-1.5 text-xs text-slate-600 dark:border-white/15 dark:bg-white/6 dark:text-zinc-300">
               <Brain className="h-3.5 w-3.5 text-blue-400" />
               {t.heroEyebrow}
             </div>
 
             <h1
-              data-invert
-              className="text-[clamp(2.35rem,7vw,5.65rem)] font-black leading-[0.94] tracking-[-0.045em] text-slate-950"
+              className="text-[clamp(2.35rem,7vw,5.65rem)] font-black leading-[0.94] tracking-[-0.045em] text-slate-950 dark:text-zinc-50"
             >
               {heroWords.map((word, index) => (
                 <span
@@ -974,8 +978,7 @@ const Landing = () => {
 
             <p
               data-hero-subtitle
-              data-invert
-              className="mt-5 max-w-2xl text-base leading-relaxed text-slate-600 md:text-lg"
+              className="mt-5 max-w-2xl text-base leading-relaxed text-slate-600 md:text-lg dark:text-zinc-300"
             >
               {t.heroSubtitle}
             </p>
@@ -995,7 +998,7 @@ const Landing = () => {
                 asChild
                 size="lg"
                 variant="outline"
-                className="border-slate-300 bg-white text-slate-900 hover:bg-slate-100"
+                className="border-slate-300 bg-white text-slate-900 hover:bg-slate-100 dark:border-white/20 dark:bg-white/6 dark:text-zinc-100 dark:hover:bg-white/12"
               >
                 <a href="#flow">{t.seeFlow}</a>
               </Button>
@@ -1005,7 +1008,7 @@ const Landing = () => {
               {[t.freeBadge, t.langBadge, t.uploadBadge].map((badge) => (
                 <span
                   key={badge}
-                  className="rounded-full border border-slate-300 bg-white/80 px-3 py-1.5 text-xs text-slate-600"
+                  className="rounded-full border border-slate-300 bg-white/80 px-3 py-1.5 text-xs text-slate-600 dark:border-white/12 dark:bg-white/6 dark:text-zinc-300"
                 >
                   {badge}
                 </span>
@@ -1014,13 +1017,13 @@ const Landing = () => {
           </div>
 
           <div data-preview-panel data-depth="panel" className="lg:col-span-6">
-            <div className="relative rounded-3xl border border-slate-200 bg-white/75 p-4 shadow-2xl shadow-blue-100/60 backdrop-blur-2xl md:p-5">
+            <div className="relative rounded-3xl border border-slate-200 bg-white/75 p-4 shadow-2xl shadow-blue-100/60 backdrop-blur-2xl md:p-5 dark:border-white/15 dark:bg-white/[0.045] dark:shadow-black/45">
               <div className="pointer-events-none absolute -inset-px rounded-3xl bg-gradient-to-r from-blue-400/35 via-transparent to-cyan-300/35" />
               <div className="relative">
                 <div className="mb-4 flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-slate-800">{t.previewTitle}</p>
-                    <p className="text-xs text-slate-500">{t.previewSubtitle}</p>
+                    <p className="text-sm font-medium text-slate-800 dark:text-zinc-200">{t.previewTitle}</p>
+                    <p className="text-xs text-slate-500 dark:text-zinc-500">{t.previewSubtitle}</p>
                   </div>
                   <div className="inline-flex items-center gap-2 rounded-full border border-emerald-400/40 bg-emerald-500/10 px-3 py-1 text-[11px] text-emerald-700">
                     <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
@@ -1033,7 +1036,7 @@ const Landing = () => {
                     <div
                       key={tab}
                       className={`rounded-xl px-3 py-2 text-center text-xs ${
-                        idx === 0 ? "bg-blue-600 text-white" : "bg-slate-100 text-slate-500"
+                        idx === 0 ? "bg-blue-600 text-white dark:bg-white/15 dark:text-white" : "bg-slate-100 text-slate-500 dark:bg-white/5 dark:text-zinc-400"
                       }`}
                     >
                       {tab}
@@ -1042,31 +1045,31 @@ const Landing = () => {
                 </div>
 
                 <div className="grid gap-3 md:grid-cols-5">
-                  <Card className="rounded-2xl border-slate-200 bg-white/95 p-4 md:col-span-3">
+                  <Card className="rounded-2xl border-slate-200 bg-white/95 p-4 md:col-span-3 dark:border-white/10 dark:bg-black/25">
                     <div className="space-y-3">
-                      <div className="h-2 w-3/4 rounded bg-slate-300/70" />
-                      <div className="h-2 rounded bg-slate-200/80" />
-                      <div className="h-2 w-5/6 rounded bg-slate-200/80" />
+                      <div className="h-2 w-3/4 rounded bg-slate-300/70 dark:bg-white/15" />
+                      <div className="h-2 rounded bg-slate-200/80 dark:bg-white/10" />
+                      <div className="h-2 w-5/6 rounded bg-slate-200/80 dark:bg-white/10" />
                       <div className="grid grid-cols-2 gap-2 pt-2">
-                        <div className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 p-2 text-[11px] text-slate-700">
+                        <div className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 p-2 text-[11px] text-slate-700 dark:border-white/10 dark:bg-white/5 dark:text-zinc-300">
                           <FileText className="h-3.5 w-3.5 text-blue-400" /> {t.previewWidgetQuizNotes}
                         </div>
-                        <div className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 p-2 text-[11px] text-slate-700">
+                        <div className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 p-2 text-[11px] text-slate-700 dark:border-white/10 dark:bg-white/5 dark:text-zinc-300">
                           <Mic className="h-3.5 w-3.5 text-cyan-500" /> {t.previewWidgetPodcast}
                         </div>
                       </div>
                     </div>
                   </Card>
 
-                  <Card className="rounded-2xl border-slate-200 bg-white/95 p-4 md:col-span-2">
+                  <Card className="rounded-2xl border-slate-200 bg-white/95 p-4 md:col-span-2 dark:border-white/10 dark:bg-black/25">
                     <div className="relative h-full min-h-[150px]">
-                      <div className="absolute left-1/2 top-3 -translate-x-1/2 rounded-full border border-blue-300 bg-blue-100 px-2 py-1 text-[10px] text-blue-700">
+                      <div className="absolute left-1/2 top-3 -translate-x-1/2 rounded-full border border-blue-300 bg-blue-100 px-2 py-1 text-[10px] text-blue-700 dark:border-blue-300/40 dark:bg-blue-500/20 dark:text-blue-100">
                         {t.previewNodeCore}
                       </div>
-                      <div className="absolute bottom-10 left-4 rounded-full border border-cyan-300 bg-cyan-100 px-2 py-1 text-[10px] text-cyan-700">
+                      <div className="absolute bottom-10 left-4 rounded-full border border-cyan-300 bg-cyan-100 px-2 py-1 text-[10px] text-cyan-700 dark:border-cyan-300/40 dark:bg-cyan-500/20 dark:text-cyan-100">
                         {t.previewNodeQuiz}
                       </div>
-                      <div className="absolute bottom-8 right-4 rounded-full border border-emerald-300 bg-emerald-100 px-2 py-1 text-[10px] text-emerald-700">
+                      <div className="absolute bottom-8 right-4 rounded-full border border-emerald-300 bg-emerald-100 px-2 py-1 text-[10px] text-emerald-700 dark:border-emerald-300/40 dark:bg-emerald-500/20 dark:text-emerald-100">
                         {t.previewNodeChat}
                       </div>
                       <svg className="absolute inset-0 h-full w-full" viewBox="0 0 240 170" fill="none" aria-hidden="true">
@@ -1084,8 +1087,8 @@ const Landing = () => {
 
       <section id="flow" className="container mx-auto max-w-7xl px-4 pb-14 xl:pr-[22rem]">
         <div data-reveal className="mb-6">
-          <h2 data-invert className="text-2xl font-semibold tracking-tight text-slate-950 md:text-3xl">{t.flowTitle}</h2>
-          <p data-invert className="mt-2 text-slate-600">{t.flowSubtitle}</p>
+          <h2 className="text-2xl font-semibold tracking-tight text-slate-950 md:text-3xl dark:text-zinc-50">{t.flowTitle}</h2>
+          <p className="mt-2 text-slate-600 dark:text-zinc-300">{t.flowSubtitle}</p>
         </div>
 
         <div className="grid gap-3 md:grid-cols-3">
@@ -1099,13 +1102,13 @@ const Landing = () => {
                 <Card
                   key={item.title}
                   data-reveal
-                  className="h-full rounded-2xl border border-slate-200 bg-white/82 p-5 shadow-sm backdrop-blur-xl transition-transform duration-500 hover:scale-[1.02] hover:shadow-lg"
+                  className="h-full rounded-2xl border border-slate-200 bg-white/82 p-5 shadow-sm backdrop-blur-xl transition-transform duration-500 hover:scale-[1.02] hover:shadow-lg dark:border-white/12 dark:bg-white/[0.06] dark:hover:bg-white/[0.1]"
                 >
-                <div className="mb-4 flex h-9 w-9 items-center justify-center rounded-lg bg-slate-100">
+                <div className="mb-4 flex h-9 w-9 items-center justify-center rounded-lg bg-slate-100 dark:bg-white/12">
                   <Icon className="h-4.5 w-4.5 text-blue-500" />
                 </div>
-                <p className="mb-2 text-sm font-medium text-slate-900">{item.title}</p>
-                <p className="text-sm leading-relaxed text-slate-600">{item.desc}</p>
+                <p className="mb-2 text-sm font-medium text-slate-900 dark:text-zinc-100">{item.title}</p>
+                <p className="text-sm leading-relaxed text-slate-600 dark:text-zinc-300">{item.desc}</p>
               </Card>
             );
           })}
@@ -1115,15 +1118,15 @@ const Landing = () => {
       <section id="transition-zone" className="container mx-auto max-w-7xl px-4 pb-16 xl:pr-[22rem]">
         <div
           data-reveal
-          className="rounded-[2rem] border border-slate-300/70 bg-white/78 p-8 shadow-xl shadow-slate-200/80 backdrop-blur-xl md:p-10"
+          className="rounded-[2rem] border border-slate-300/70 bg-white/78 p-8 shadow-xl shadow-slate-200/80 backdrop-blur-xl md:p-10 dark:border-white/16 dark:bg-white/[0.06] dark:shadow-none"
         >
-          <p data-invert className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">
+          <p data-invert className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500 dark:text-zinc-300/75">
             Aide Transition System
           </p>
-          <h2 data-invert className="mt-3 text-3xl font-bold tracking-tight text-slate-950 md:text-4xl">
+          <h2 data-invert className="mt-3 text-3xl font-bold tracking-tight text-slate-950 md:text-4xl dark:text-zinc-50">
             {t.transitionTitle}
           </h2>
-          <p data-invert className="mt-3 max-w-3xl text-base text-slate-600 md:text-lg">
+          <p data-invert className="mt-3 max-w-3xl text-base text-slate-600 md:text-lg dark:text-zinc-300">
             {t.transitionSubtitle}
           </p>
         </div>
@@ -1184,8 +1187,11 @@ const Landing = () => {
             <div className="lg:col-span-4">
               <div
                 ref={stickyPinRef}
-                className="rounded-3xl border border-white/20 bg-white/[0.08] p-6 backdrop-blur-xl lg:top-28"
+                className="rounded-3xl border border-white/22 bg-gradient-to-b from-white/[0.16] to-white/[0.06] p-6 backdrop-blur-xl lg:top-28"
               >
+                <p className="text-xs font-semibold uppercase tracking-[0.22em] text-blue-100/75">
+                  Live Capability Stack
+                </p>
                 <h3 className="text-2xl font-semibold tracking-tight text-slate-50 md:text-3xl">
                   {t.capabilitiesTitle}
                 </h3>
@@ -1196,13 +1202,15 @@ const Landing = () => {
             </div>
 
             <div ref={stickyTrackRef} className="space-y-3 lg:col-span-8">
-              {t.capabilityItems.map((item) => (
+              {t.capabilityItems.map((item, index) => (
                 <div
                   key={item}
                   data-sticky-card
-                  className="flex items-start gap-2 rounded-2xl border border-white/18 bg-black/18 px-4 py-3 backdrop-blur-xl transition-all duration-500 hover:scale-[1.01] hover:border-cyan-200/65 hover:bg-black/28"
+                  className="flex items-start gap-3 rounded-2xl border border-white/18 bg-black/18 px-4 py-3 backdrop-blur-xl transition-all duration-500 hover:scale-[1.01] hover:border-cyan-200/65 hover:bg-black/28"
                 >
-                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-cyan-200" />
+                  <span className="mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-cyan-200/40 bg-cyan-300/15 text-[10px] font-semibold text-cyan-100">
+                    {index + 1}
+                  </span>
                   <p className="text-sm leading-relaxed text-blue-50/92">{item}</p>
                 </div>
               ))}
