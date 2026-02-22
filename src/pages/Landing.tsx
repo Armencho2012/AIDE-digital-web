@@ -855,30 +855,56 @@ const Landing = () => {
   return (
     <div
       ref={rootRef}
-      className="min-h-screen overflow-x-hidden bg-[#05070b] text-zinc-100"
+      className="min-h-screen overflow-x-hidden text-slate-900"
     >
-      <div className="fixed inset-0 -z-10 bg-[radial-gradient(circle_at_15%_15%,rgba(59,130,246,0.2),transparent_35%),radial-gradient(circle_at_85%_20%,rgba(99,102,241,0.18),transparent_35%),radial-gradient(circle_at_50%_80%,rgba(34,197,94,0.12),transparent_45%),linear-gradient(180deg,#05070b_0%,#090d14_100%)]" />
-      <div data-depth="halo" className="pointer-events-none fixed inset-x-0 top-[-25vh] -z-10 h-[55vh] bg-[radial-gradient(circle_at_50%_40%,rgba(59,130,246,0.22),transparent_58%)]" />
+      <div
+        data-depth="halo"
+        className="pointer-events-none fixed inset-x-0 top-[-10vh] -z-10 h-[56vh] bg-[radial-gradient(circle_at_50%_40%,rgba(59,130,246,0.26),transparent_58%)]"
+      />
 
-      <nav className="sticky top-0 z-50 border-b border-white/10 bg-black/35 backdrop-blur-xl">
-        <div className="container mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
+      <div className="pointer-events-none hidden xl:block">
+        <div className="fixed right-5 top-24 z-40 w-[300px] 2xl:right-[max(2rem,calc((100vw-86rem)/2))]">
+          <div data-speed="1.1" className="relative">
+            <div
+              data-mascot-glow
+              className="absolute inset-6 rounded-full bg-[radial-gradient(circle,rgba(84,169,255,0.9)_0%,rgba(66,124,255,0.55)_38%,rgba(35,56,145,0)_76%)] opacity-0 blur-3xl"
+            />
+            <img
+              data-mascot-shell
+              src="/aide-mascot.svg"
+              alt="Aide mascot"
+              className="relative w-full drop-shadow-[0_18px_30px_rgba(15,23,42,0.22)]"
+            />
+          </div>
+        </div>
+      </div>
+
+      <nav
+        data-nav
+        className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/78 backdrop-blur-xl"
+      >
+        <div className="container mx-auto flex max-w-7xl items-center justify-between px-4 py-3 xl:pr-[22rem]">
           <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-cyan-400 shadow-lg shadow-blue-500/30">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-cyan-400 shadow-lg shadow-blue-500/25">
               <Sparkles className="h-4 w-4 text-white" />
             </div>
-            <span className="text-lg font-semibold tracking-tight text-zinc-50">Aide</span>
+            <span data-nav-strong className="text-lg font-semibold tracking-tight text-slate-950">
+              Aide
+            </span>
           </div>
 
           <div className="flex items-center gap-2">
-            <div className="flex items-center rounded-full border border-white/10 bg-white/5 p-1">
+            <div className="flex items-center rounded-full border border-slate-300/90 bg-white/90 p-1">
               {languageSwitch.map((item) => (
                 <button
                   key={item.code}
                   onClick={() => setLanguage(item.code)}
+                  data-nav-muted={language !== item.code ? "true" : undefined}
+                  data-nav-strong={language === item.code ? "true" : undefined}
                   className={`rounded-full px-2.5 py-1 text-xs transition-colors ${
                     language === item.code
-                      ? "bg-white/15 text-white"
-                      : "text-zinc-400 hover:text-white"
+                      ? "bg-slate-900 text-white"
+                      : "text-slate-600 hover:text-slate-900"
                   }`}
                 >
                   {item.label}
@@ -890,9 +916,9 @@ const Landing = () => {
               variant="ghost"
               size="sm"
               asChild
-              className="hidden text-zinc-300 hover:bg-white/10 hover:text-white sm:flex"
+              className="hidden text-slate-600 hover:bg-slate-100 hover:text-slate-900 sm:flex"
             >
-              <a href="mailto:myaide.study@gmail.com">
+              <a data-nav-muted href="mailto:myaide.study@gmail.com">
                 <Mail className="h-4 w-4" />
                 {t.contact}
               </a>
@@ -901,9 +927,9 @@ const Landing = () => {
               variant="ghost"
               size="sm"
               asChild
-              className="hidden text-zinc-300 hover:bg-white/10 hover:text-white sm:flex"
+              className="hidden text-slate-600 hover:bg-slate-100 hover:text-slate-900 sm:flex"
             >
-              <Link to="/help">
+              <Link data-nav-muted to="/help">
                 <HelpCircle className="h-4 w-4" />
                 {t.help}
               </Link>
@@ -912,26 +938,29 @@ const Landing = () => {
               variant="outline"
               size="icon"
               onClick={() => setSettingsOpen(true)}
-              className="border-white/20 bg-white/5 hover:bg-white/10"
+              className="border-slate-300/90 bg-white/85 text-slate-700 hover:bg-slate-100"
             >
               <Settings className="h-4 w-4" />
             </Button>
-            <Button asChild size="sm" className="bg-white text-black hover:bg-zinc-200">
-              <Link to="/auth">{t.signIn}</Link>
+            <Button asChild size="sm" className="bg-blue-600 text-white hover:bg-blue-500">
+              <Link data-nav-strong to="/auth">{t.signIn}</Link>
             </Button>
           </div>
         </div>
       </nav>
 
-      <section className="container mx-auto max-w-7xl px-4 pb-14 pt-16 md:pt-20">
+      <section className="container mx-auto max-w-7xl px-4 pb-14 pt-16 md:pt-20 xl:pr-[22rem]">
         <div className="grid items-start gap-8 lg:grid-cols-12">
           <div className="lg:col-span-6">
-            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs text-zinc-300">
+            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-blue-200 bg-white/80 px-3 py-1.5 text-xs text-slate-600">
               <Brain className="h-3.5 w-3.5 text-blue-400" />
               {t.heroEyebrow}
             </div>
 
-            <h1 className="text-[clamp(2.35rem,7vw,5.65rem)] font-black leading-[0.94] tracking-[-0.045em] text-zinc-50">
+            <h1
+              data-invert
+              className="text-[clamp(2.35rem,7vw,5.65rem)] font-black leading-[0.94] tracking-[-0.045em] text-slate-950"
+            >
               {heroWords.map((word, index) => (
                 <span
                   key={`${word}-${index}`}
@@ -945,7 +974,8 @@ const Landing = () => {
 
             <p
               data-hero-subtitle
-              className="mt-5 max-w-2xl text-base leading-relaxed text-zinc-400 md:text-lg"
+              data-invert
+              className="mt-5 max-w-2xl text-base leading-relaxed text-slate-600 md:text-lg"
             >
               {t.heroSubtitle}
             </p>
@@ -965,7 +995,7 @@ const Landing = () => {
                 asChild
                 size="lg"
                 variant="outline"
-                className="border-white/20 bg-white/5 text-zinc-100 hover:bg-white/10"
+                className="border-slate-300 bg-white text-slate-900 hover:bg-slate-100"
               >
                 <a href="#flow">{t.seeFlow}</a>
               </Button>
@@ -975,7 +1005,7 @@ const Landing = () => {
               {[t.freeBadge, t.langBadge, t.uploadBadge].map((badge) => (
                 <span
                   key={badge}
-                  className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-zinc-300"
+                  className="rounded-full border border-slate-300 bg-white/80 px-3 py-1.5 text-xs text-slate-600"
                 >
                   {badge}
                 </span>
@@ -984,16 +1014,16 @@ const Landing = () => {
           </div>
 
           <div data-preview-panel data-depth="panel" className="lg:col-span-6">
-            <div className="relative rounded-3xl border border-white/15 bg-white/[0.045] p-4 shadow-2xl shadow-black/45 backdrop-blur-2xl md:p-5">
-              <div className="pointer-events-none absolute -inset-px rounded-3xl bg-gradient-to-r from-blue-500/30 via-transparent to-cyan-400/30" />
+            <div className="relative rounded-3xl border border-slate-200 bg-white/75 p-4 shadow-2xl shadow-blue-100/60 backdrop-blur-2xl md:p-5">
+              <div className="pointer-events-none absolute -inset-px rounded-3xl bg-gradient-to-r from-blue-400/35 via-transparent to-cyan-300/35" />
               <div className="relative">
                 <div className="mb-4 flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-zinc-300">{t.previewTitle}</p>
-                    <p className="text-xs text-zinc-500">{t.previewSubtitle}</p>
+                    <p className="text-sm font-medium text-slate-800">{t.previewTitle}</p>
+                    <p className="text-xs text-slate-500">{t.previewSubtitle}</p>
                   </div>
-                  <div className="inline-flex items-center gap-2 rounded-full border border-emerald-400/40 bg-emerald-500/10 px-3 py-1 text-[11px] text-emerald-300">
-                    <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-300" />
+                  <div className="inline-flex items-center gap-2 rounded-full border border-emerald-400/40 bg-emerald-500/10 px-3 py-1 text-[11px] text-emerald-700">
+                    <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
                     {t.previewStream}
                   </div>
                 </div>
@@ -1003,7 +1033,7 @@ const Landing = () => {
                     <div
                       key={tab}
                       className={`rounded-xl px-3 py-2 text-center text-xs ${
-                        idx === 0 ? "bg-white/15 text-white" : "bg-white/5 text-zinc-400"
+                        idx === 0 ? "bg-blue-600 text-white" : "bg-slate-100 text-slate-500"
                       }`}
                     >
                       {tab}
@@ -1012,31 +1042,31 @@ const Landing = () => {
                 </div>
 
                 <div className="grid gap-3 md:grid-cols-5">
-                  <Card className="rounded-2xl border-white/10 bg-black/25 p-4 md:col-span-3">
+                  <Card className="rounded-2xl border-slate-200 bg-white/95 p-4 md:col-span-3">
                     <div className="space-y-3">
-                      <div className="h-2 w-3/4 rounded bg-white/15" />
-                      <div className="h-2 rounded bg-white/10" />
-                      <div className="h-2 w-5/6 rounded bg-white/10" />
+                      <div className="h-2 w-3/4 rounded bg-slate-300/70" />
+                      <div className="h-2 rounded bg-slate-200/80" />
+                      <div className="h-2 w-5/6 rounded bg-slate-200/80" />
                       <div className="grid grid-cols-2 gap-2 pt-2">
-                        <div className="flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 p-2 text-[11px] text-zinc-300">
+                        <div className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 p-2 text-[11px] text-slate-700">
                           <FileText className="h-3.5 w-3.5 text-blue-400" /> {t.previewWidgetQuizNotes}
                         </div>
-                        <div className="flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 p-2 text-[11px] text-zinc-300">
-                          <Mic className="h-3.5 w-3.5 text-cyan-300" /> {t.previewWidgetPodcast}
+                        <div className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 p-2 text-[11px] text-slate-700">
+                          <Mic className="h-3.5 w-3.5 text-cyan-500" /> {t.previewWidgetPodcast}
                         </div>
                       </div>
                     </div>
                   </Card>
 
-                  <Card className="rounded-2xl border-white/10 bg-black/25 p-4 md:col-span-2">
+                  <Card className="rounded-2xl border-slate-200 bg-white/95 p-4 md:col-span-2">
                     <div className="relative h-full min-h-[150px]">
-                      <div className="absolute left-1/2 top-3 -translate-x-1/2 rounded-full border border-blue-400/40 bg-blue-500/20 px-2 py-1 text-[10px] text-blue-200">
+                      <div className="absolute left-1/2 top-3 -translate-x-1/2 rounded-full border border-blue-300 bg-blue-100 px-2 py-1 text-[10px] text-blue-700">
                         {t.previewNodeCore}
                       </div>
-                      <div className="absolute bottom-10 left-4 rounded-full border border-cyan-400/40 bg-cyan-500/20 px-2 py-1 text-[10px] text-cyan-100">
+                      <div className="absolute bottom-10 left-4 rounded-full border border-cyan-300 bg-cyan-100 px-2 py-1 text-[10px] text-cyan-700">
                         {t.previewNodeQuiz}
                       </div>
-                      <div className="absolute bottom-8 right-4 rounded-full border border-emerald-400/40 bg-emerald-500/20 px-2 py-1 text-[10px] text-emerald-200">
+                      <div className="absolute bottom-8 right-4 rounded-full border border-emerald-300 bg-emerald-100 px-2 py-1 text-[10px] text-emerald-700">
                         {t.previewNodeChat}
                       </div>
                       <svg className="absolute inset-0 h-full w-full" viewBox="0 0 240 170" fill="none" aria-hidden="true">
@@ -1052,10 +1082,10 @@ const Landing = () => {
         </div>
       </section>
 
-      <section id="flow" className="container mx-auto max-w-7xl px-4 pb-14">
+      <section id="flow" className="container mx-auto max-w-7xl px-4 pb-14 xl:pr-[22rem]">
         <div data-reveal className="mb-6">
-          <h2 className="text-2xl font-semibold tracking-tight text-zinc-50 md:text-3xl">{t.flowTitle}</h2>
-          <p className="mt-2 text-zinc-400">{t.flowSubtitle}</p>
+          <h2 data-invert className="text-2xl font-semibold tracking-tight text-slate-950 md:text-3xl">{t.flowTitle}</h2>
+          <p data-invert className="mt-2 text-slate-600">{t.flowSubtitle}</p>
         </div>
 
         <div className="grid gap-3 md:grid-cols-3">
@@ -1069,155 +1099,176 @@ const Landing = () => {
                 <Card
                   key={item.title}
                   data-reveal
-                  className="h-full rounded-2xl border-white/10 bg-white/[0.03] p-5 backdrop-blur-xl transition-transform duration-500 hover:scale-[1.02] hover:bg-white/[0.07]"
+                  className="h-full rounded-2xl border border-slate-200 bg-white/82 p-5 shadow-sm backdrop-blur-xl transition-transform duration-500 hover:scale-[1.02] hover:shadow-lg"
                 >
-                <div className="mb-4 flex h-9 w-9 items-center justify-center rounded-lg bg-white/10">
-                  <Icon className="h-4.5 w-4.5 text-blue-300" />
+                <div className="mb-4 flex h-9 w-9 items-center justify-center rounded-lg bg-slate-100">
+                  <Icon className="h-4.5 w-4.5 text-blue-500" />
                 </div>
-                <p className="mb-2 text-sm font-medium text-zinc-100">{item.title}</p>
-                <p className="text-sm leading-relaxed text-zinc-400">{item.desc}</p>
+                <p className="mb-2 text-sm font-medium text-slate-900">{item.title}</p>
+                <p className="text-sm leading-relaxed text-slate-600">{item.desc}</p>
               </Card>
             );
           })}
         </div>
       </section>
 
-      <section className="container mx-auto max-w-7xl px-4 pb-16">
-        <div data-reveal className="mb-6">
-          <h2 className="text-2xl font-semibold tracking-tight text-zinc-50 md:text-3xl">{t.featuresTitle}</h2>
-          <p className="mt-2 text-zinc-400">{t.featuresSubtitle}</p>
-        </div>
-
-        <div className="grid auto-rows-[minmax(220px,1fr)] gap-3 md:grid-cols-2 xl:grid-cols-4">
-          {t.featureCards.map((card, idx) => {
-            const Icon = card.icon;
-            return (
-              <article
-                key={card.title}
-                data-bento-card
-                className={`group ${bentoClasses[idx % bentoClasses.length]}`}
-              >
-                <Card className="h-full rounded-2xl border-white/10 bg-white/[0.04] p-5 backdrop-blur-xl transition-all duration-500 hover:scale-[1.02] hover:border-cyan-300/30 hover:bg-white/[0.08]">
-                  <div className="mb-3 flex items-start justify-between gap-4">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/10">
-                      <Icon className="h-4.5 w-4.5 text-blue-300" />
-                    </div>
-                    <div className="inline-flex items-center text-[10px] uppercase tracking-wider text-zinc-500">
-                      <Check className="mr-1 h-3 w-3" />
-                      {t.shipped}
-                    </div>
-                  </div>
-                  <h3 className="mb-2 text-sm font-semibold text-zinc-100">{card.title}</h3>
-                  <p className="mb-4 text-sm leading-relaxed text-zinc-400">{card.description}</p>
-                  <div className="flex flex-wrap gap-1.5">
-                    {card.chips.map((chip) => (
-                      <span
-                        key={chip}
-                        className="rounded-md border border-white/10 bg-black/30 px-2 py-1 text-[11px] text-zinc-300"
-                      >
-                        {chip}
-                      </span>
-                    ))}
-                  </div>
-                </Card>
-              </article>
-            );
-          })}
-        </div>
-      </section>
-
-      <section
-        ref={stickySectionRef}
-        className="container mx-auto max-w-7xl px-4 pb-16"
-      >
-        <div className="grid items-start gap-4 lg:grid-cols-12">
-          <div className="lg:col-span-4">
-            <div
-              ref={stickyPinRef}
-              className="rounded-3xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur-xl lg:top-28"
-            >
-              <h3 className="text-2xl font-semibold tracking-tight text-zinc-50 md:text-3xl">
-                {t.capabilitiesTitle}
-              </h3>
-              <p className="mt-3 text-sm text-zinc-400 md:text-base">
-                {t.capabilitiesSubtitle}
-              </p>
-            </div>
-          </div>
-
-          <div ref={stickyTrackRef} className="space-y-3 lg:col-span-8">
-            {t.capabilityItems.map((item) => (
-              <div
-                key={item}
-                data-sticky-card
-                className="flex items-start gap-2 rounded-2xl border border-white/10 bg-black/30 px-4 py-3 backdrop-blur-xl transition-all duration-500 hover:scale-[1.01] hover:border-cyan-300/35 hover:bg-black/45"
-              >
-                <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-300" />
-                <p className="text-sm leading-relaxed text-zinc-300">{item}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="container mx-auto max-w-7xl px-4 pb-16">
+      <section id="transition-zone" className="container mx-auto max-w-7xl px-4 pb-16 xl:pr-[22rem]">
         <div
           data-reveal
-          className="rounded-3xl border border-white/10 bg-white/[0.03] p-7 backdrop-blur-xl md:p-10"
+          className="rounded-[2rem] border border-slate-300/70 bg-white/78 p-8 shadow-xl shadow-slate-200/80 backdrop-blur-xl md:p-10"
         >
-          <div className="max-w-3xl">
-            <h3 className="text-2xl font-semibold tracking-tight text-zinc-50 md:text-4xl">
-              {t.ctaTitle}
-            </h3>
-            <p className="mt-4 text-base text-zinc-400">{t.ctaSubtitle}</p>
-          </div>
-          <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-            <Button asChild size="lg" className="bg-white text-black hover:bg-zinc-200">
-              <Link to="/auth">
-                {t.startNow}
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Link>
-            </Button>
-            <Button
-              asChild
-              size="lg"
-              variant="outline"
-              className="border-white/20 bg-white/5 text-zinc-100 hover:bg-white/10"
-            >
-              <Link to="/help">
-                <HelpCircle className="mr-2 h-5 w-5" />
-                {t.readGuide}
-              </Link>
-            </Button>
-          </div>
+          <p data-invert className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">
+            Aide Transition System
+          </p>
+          <h2 data-invert className="mt-3 text-3xl font-bold tracking-tight text-slate-950 md:text-4xl">
+            {t.transitionTitle}
+          </h2>
+          <p data-invert className="mt-3 max-w-3xl text-base text-slate-600 md:text-lg">
+            {t.transitionSubtitle}
+          </p>
         </div>
       </section>
 
-      <footer className="container mx-auto max-w-7xl px-4 pb-10">
-        <div className="flex flex-col items-center justify-between gap-3 border-t border-white/10 pt-5 text-sm text-zinc-500 sm:flex-row">
-          <p>{t.footer}</p>
-          <div className="flex items-center gap-4">
-            <Link
-              to="/billing"
-              className="flex items-center gap-1.5 transition-colors hover:text-zinc-300"
-            >
-              <Globe className="h-4 w-4" /> {t.plans}
-            </Link>
-            <a
-              href="mailto:myaide.study@gmail.com"
-              className="flex items-center gap-1.5 transition-colors hover:text-zinc-300"
-            >
-              <Mail className="h-4 w-4" /> {t.contact}
-            </a>
-            <Link
-              to="/help"
-              className="flex items-center gap-1.5 transition-colors hover:text-zinc-300"
-            >
-              <HelpCircle className="h-4 w-4" /> {t.help}
-            </Link>
+      <section id="blue-section" className="relative pb-16 pt-12 text-slate-50">
+        <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_20%_0%,rgba(255,255,255,0.22),transparent_48%),radial-gradient(circle_at_85%_16%,rgba(122,190,255,0.3),transparent_42%),linear-gradient(180deg,rgba(9,29,80,0.42)_0%,rgba(7,22,63,0.74)_100%)]" />
+
+        <section className="container mx-auto max-w-7xl px-4 pb-16 xl:pr-[22rem]">
+          <div data-reveal className="mb-6">
+            <h2 className="text-2xl font-semibold tracking-tight text-slate-50 md:text-3xl">{t.featuresTitle}</h2>
+            <p className="mt-2 text-blue-100/80">{t.featuresSubtitle}</p>
           </div>
-        </div>
-      </footer>
+
+          <div className="grid auto-rows-[minmax(220px,1fr)] gap-3 md:grid-cols-2 lg:grid-cols-12">
+            {t.featureCards.map((card, idx) => {
+              const Icon = card.icon;
+              return (
+                <article
+                  key={card.title}
+                  data-bento-card
+                  className={`group ${bentoClasses[idx % bentoClasses.length]}`}
+                >
+                  <Card className="h-full rounded-2xl border-white/20 bg-white/[0.08] p-5 backdrop-blur-xl transition-all duration-500 hover:scale-[1.02] hover:border-cyan-200/60 hover:bg-white/[0.14]">
+                    <div className="mb-3 flex items-start justify-between gap-4">
+                      <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/15">
+                        <Icon className="h-4.5 w-4.5 text-blue-100" />
+                      </div>
+                      <div className="inline-flex items-center text-[10px] uppercase tracking-wider text-blue-100/75">
+                        <Check className="mr-1 h-3 w-3" />
+                        {t.shipped}
+                      </div>
+                    </div>
+                    <h3 className="mb-2 text-sm font-semibold text-slate-50">{card.title}</h3>
+                    <p className="mb-4 text-sm leading-relaxed text-blue-100/85">{card.description}</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {card.chips.map((chip) => (
+                        <span
+                          key={chip}
+                          className="rounded-md border border-white/18 bg-black/20 px-2 py-1 text-[11px] text-blue-50/90"
+                        >
+                          {chip}
+                        </span>
+                      ))}
+                    </div>
+                  </Card>
+                </article>
+              );
+            })}
+          </div>
+        </section>
+
+        <section
+          ref={stickySectionRef}
+          className="container mx-auto max-w-7xl px-4 pb-16 xl:pr-[22rem]"
+        >
+          <div className="grid items-start gap-4 lg:grid-cols-12">
+            <div className="lg:col-span-4">
+              <div
+                ref={stickyPinRef}
+                className="rounded-3xl border border-white/20 bg-white/[0.08] p-6 backdrop-blur-xl lg:top-28"
+              >
+                <h3 className="text-2xl font-semibold tracking-tight text-slate-50 md:text-3xl">
+                  {t.capabilitiesTitle}
+                </h3>
+                <p className="mt-3 text-sm text-blue-100/82 md:text-base">
+                  {t.capabilitiesSubtitle}
+                </p>
+              </div>
+            </div>
+
+            <div ref={stickyTrackRef} className="space-y-3 lg:col-span-8">
+              {t.capabilityItems.map((item) => (
+                <div
+                  key={item}
+                  data-sticky-card
+                  className="flex items-start gap-2 rounded-2xl border border-white/18 bg-black/18 px-4 py-3 backdrop-blur-xl transition-all duration-500 hover:scale-[1.01] hover:border-cyan-200/65 hover:bg-black/28"
+                >
+                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-cyan-200" />
+                  <p className="text-sm leading-relaxed text-blue-50/92">{item}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="container mx-auto max-w-7xl px-4 pb-16 xl:pr-[22rem]">
+          <div
+            data-reveal
+            className="rounded-3xl border border-white/18 bg-white/[0.08] p-7 backdrop-blur-xl md:p-10"
+          >
+            <div className="max-w-3xl">
+              <h3 className="text-2xl font-semibold tracking-tight text-slate-50 md:text-4xl">
+                {t.ctaTitle}
+              </h3>
+              <p className="mt-4 text-base text-blue-100/85">{t.ctaSubtitle}</p>
+            </div>
+            <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+              <Button asChild size="lg" className="bg-white text-blue-700 hover:bg-blue-50">
+                <Link to="/auth">
+                  {t.startNow}
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Link>
+              </Button>
+              <Button
+                asChild
+                size="lg"
+                variant="outline"
+                className="border-white/28 bg-white/5 text-slate-50 hover:bg-white/16"
+              >
+                <Link to="/help">
+                  <HelpCircle className="mr-2 h-5 w-5" />
+                  {t.readGuide}
+                </Link>
+              </Button>
+            </div>
+          </div>
+        </section>
+
+        <footer className="container mx-auto max-w-7xl px-4 pb-10 xl:pr-[22rem]">
+          <div className="flex flex-col items-center justify-between gap-3 border-t border-white/16 pt-5 text-sm text-blue-100/80 sm:flex-row">
+            <p>{t.footer}</p>
+            <div className="flex items-center gap-4">
+              <Link
+                to="/billing"
+                className="flex items-center gap-1.5 transition-colors hover:text-white"
+              >
+                <Globe className="h-4 w-4" /> {t.plans}
+              </Link>
+              <a
+                href="mailto:myaide.study@gmail.com"
+                className="flex items-center gap-1.5 transition-colors hover:text-white"
+              >
+                <Mail className="h-4 w-4" /> {t.contact}
+              </a>
+              <Link
+                to="/help"
+                className="flex items-center gap-1.5 transition-colors hover:text-white"
+              >
+                <HelpCircle className="h-4 w-4" /> {t.help}
+              </Link>
+            </div>
+          </div>
+        </footer>
+      </section>
 
       <SettingsModal
         open={settingsOpen}
