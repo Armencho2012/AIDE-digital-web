@@ -21,6 +21,8 @@ const BASE_MAX_TOKENS = 4096;
 const PRO_MAP_MAX_TOKENS = 6144;
 const GEMINI_API_VERSION = Deno.env.get("GEMINI_API_VERSION")?.trim() || "v1beta";
 const GEMINI_MODEL = Deno.env.get("GEMINI_TEXT_MODEL")?.trim() || "gemini-flash-latest";
+const GEMINI_MAX_ATTEMPTS = Math.max(Number(Deno.env.get("GEMINI_MAX_ATTEMPTS")?.trim() || "3"), 1);
+const GEMINI_RETRY_BASE_MS = Math.max(Number(Deno.env.get("GEMINI_RETRY_BASE_MS")?.trim() || "700"), 100);
 
 const extractGeminiText = (payload: any): string => {
   const parts = payload?.candidates?.[0]?.content?.parts;
@@ -73,6 +75,31 @@ const parseGeminiJson = (rawText: string): any => {
   return {};
 };
 
+const sleep = (ms: number) =>
+  new Promise<void>((resolve) => {
+    setTimeout(resolve, ms);
+  });
+
+const parseProviderError = (rawText: string): { message: string; status?: string; code?: number } => {
+  const fallbackMessage = rawText?.trim()?.slice(0, 1200) || "Provider returned an unknown error";
+  try {
+    const parsed = JSON.parse(rawText);
+    const candidate = typeof parsed?.error === "object" && parsed.error ? parsed.error : parsed;
+    const message = typeof candidate?.message === "string" ? candidate.message : fallbackMessage;
+    const status = typeof candidate?.status === "string" ? candidate.status : undefined;
+    const code = typeof candidate?.code === "number" ? candidate.code : undefined;
+    return { message, status, code };
+  } catch {
+    return { message: fallbackMessage };
+  }
+};
+
+const isRetryableProviderFailure = (statusCode: number, providerStatus?: string, providerCode?: number): boolean => {
+  if (statusCode === 429 || statusCode >= 500) return true;
+  if (providerStatus === "UNAVAILABLE" || providerCode === 503) return true;
+  return false;
+};
+
 Deno.serve(async (req: Request) => {
   // 1. Handle CORS Preflight
   if (req.method === "OPTIONS") {
@@ -94,8 +121,8 @@ Deno.serve(async (req: Request) => {
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
     const apiKey = Deno.env.get("GEMINI_API_KEY") || Deno.env.get("LOVABLE_API_KEY");
 
-    if (!supabaseUrl || !apiKey || !serviceRoleKey) {
-      return new Response(JSON.stringify({ error: "Missing environment variables (SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, GEMINI_API_KEY/LOVABLE_API_KEY)" }), {
+    if (!supabaseUrl || !supabaseKey || !apiKey || !serviceRoleKey) {
+      return new Response(JSON.stringify({ error: "Missing environment variables (SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY, GEMINI_API_KEY/LOVABLE_API_KEY)" }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" }
       });
@@ -238,30 +265,102 @@ ${knowledgeMapInstruction ?? ''}`.trim();
     const model = GEMINI_MODEL;
     const apiVersion = GEMINI_API_VERSION;
     const endpoint = `https://generativelanguage.googleapis.com/${apiVersion}/models/${model}:generateContent?key=${apiKey}`;
-    const response = await fetch(endpoint, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(createGeminiPayload())
-    });
+    let response: Response | null = null;
+    let lastProviderError: { message: string; status?: string; code?: number } | null = null;
+    let lastProviderStatus = 0;
 
-    if (!response.ok) {
-      const providerError = await response.text();
-      console.error(`Gemini API error (${model} @ ${apiVersion}):`, response.status, providerError);
+    for (let attempt = 0; attempt < GEMINI_MAX_ATTEMPTS; attempt += 1) {
+      response = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(createGeminiPayload())
+      });
+
+      if (response.ok) break;
+
+      const providerErrorText = await response.text().catch(() => "");
+      lastProviderError = parseProviderError(providerErrorText);
+      lastProviderStatus = response.status;
+      console.error(
+        `Gemini API error (${model} @ ${apiVersion}) attempt ${attempt + 1}/${GEMINI_MAX_ATTEMPTS}:`,
+        response.status,
+        lastProviderError.message
+      );
+
+      const shouldRetry =
+        attempt < GEMINI_MAX_ATTEMPTS - 1 &&
+        isRetryableProviderFailure(response.status, lastProviderError.status, lastProviderError.code);
+
+      if (shouldRetry) {
+        const delayMs = GEMINI_RETRY_BASE_MS * Math.pow(2, attempt) + Math.floor(Math.random() * 250);
+        await sleep(delayMs);
+        continue;
+      }
+
       if (response.status === 429) {
-        return new Response(JSON.stringify({ error: "Rate limits exceeded, please try again later.", details: providerError }), {
+        return new Response(JSON.stringify({
+          error: "Rate limits exceeded, please try again later.",
+          model,
+          apiVersion,
+          details: lastProviderError.message
+        }), {
           status: 429,
           headers: { ...corsHeaders, "Content-Type": "application/json" }
         });
       }
-      return new Response(JSON.stringify({ error: "Gemini API error", model, apiVersion, details: providerError }), {
+
+      if (
+        response.status === 503 ||
+        lastProviderError.status === "UNAVAILABLE" ||
+        lastProviderError.code === 503
+      ) {
+        return new Response(JSON.stringify({
+          error: "The model is currently experiencing high demand. Please try again shortly.",
+          model,
+          apiVersion,
+          details: lastProviderError.message
+        }), {
+          status: 503,
+          headers: { ...corsHeaders, "Content-Type": "application/json" }
+        });
+      }
+
+      return new Response(JSON.stringify({
+        error: "Gemini API error",
+        model,
+        apiVersion,
+        details: lastProviderError.message
+      }), {
         status: 502,
         headers: { ...corsHeaders, "Content-Type": "application/json" }
       });
     }
 
-    const responseData = await response.json();
+    if (!response || !response.ok) {
+      return new Response(JSON.stringify({
+        error: "Model provider is temporarily unavailable.",
+        model,
+        apiVersion,
+        details: lastProviderError?.message || `Provider returned ${lastProviderStatus || "unknown status"}`
+      }), {
+        status: 503,
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
+      });
+    }
+
+    const responseData = await response.json().catch(() => null);
+    if (!responseData) {
+      return new Response(JSON.stringify({
+        error: "Gemini returned an invalid JSON payload",
+        model,
+        apiVersion
+      }), {
+        status: 502,
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
+      });
+    }
     const jsonText = extractGeminiText(responseData);
     if (!jsonText) {
       return new Response(JSON.stringify({

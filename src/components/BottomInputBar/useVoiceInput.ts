@@ -78,7 +78,10 @@ export const useVoiceInput = ({ onTranscript, language = 'en' }: UseVoiceInputOp
       };
 
       recognitionRef.current.onerror = (event: SpeechRecognitionErrorEvent) => {
-        console.error('Speech recognition error:', event.error);
+        // Permission/no-speech errors are common user/browser states, not app faults.
+        if (!['not-allowed', 'service-not-allowed', 'aborted', 'no-speech'].includes(event.error)) {
+          console.error('Speech recognition error:', event.error);
+        }
         setIsListening(false);
       };
 
@@ -113,7 +116,11 @@ export const useVoiceInput = ({ onTranscript, language = 'en' }: UseVoiceInputOp
         recognitionRef.current.start();
         setIsListening(true);
       } catch (error) {
-        console.error('Failed to start speech recognition:', error);
+        const name = error instanceof DOMException ? error.name : '';
+        if (!['NotAllowedError', 'SecurityError', 'InvalidStateError'].includes(name)) {
+          console.error('Failed to start speech recognition:', error);
+        }
+        setIsListening(false);
       }
     }
   }, [isListening]);

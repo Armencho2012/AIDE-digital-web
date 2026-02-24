@@ -14,6 +14,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { usePodcast } from "@/hooks/usePodcast";
 import { useUsageLimit } from "@/hooks/useUsageLimit";
 import { supabase } from "@/integrations/supabase/client";
+import { invokeAnalyzeText } from "@/lib/analyzeText";
 
 const uiLabels = {
   en: {
@@ -270,33 +271,13 @@ const Dashboard = () => {
         // Handle analyze and course modes
         const mediaPayload = media && media.length > 0 ? { data: media[0].data, mimeType: media[0].mimeType } : null;
 
-        const { data, error } = await supabase.functions.invoke('analyze-text', {
-          body: {
-            text,
-            media: mediaPayload,
-            language,
-            isCourse: mode === 'course',
-            generationOptions: generationOptions || { quiz: true, flashcards: true, map: true, course: mode === 'course', podcast: false }
-          }
+        const data = await invokeAnalyzeText({
+          text,
+          media: mediaPayload,
+          language,
+          isCourse: mode === 'course',
+          generationOptions: generationOptions || { quiz: true, flashcards: true, map: true, course: mode === 'course', podcast: false }
         });
-
-        if (error) {
-          let detailedMessage = error.message || 'Failed to analyze content';
-          const context = (error as any)?.context;
-          if (context?.json) {
-            const payload = await context.json().catch(() => null);
-            if (payload?.details && typeof payload.details === 'string') {
-              detailedMessage = payload.details;
-            } else if (payload?.error && typeof payload.error === 'string') {
-              detailedMessage = payload.error;
-            }
-          }
-          throw new Error(detailedMessage);
-        }
-
-        if (!data) {
-          throw new Error('No data returned from analysis');
-        }
 
         setAnalysisData(data);
 

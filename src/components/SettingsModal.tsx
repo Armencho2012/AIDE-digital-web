@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import {
@@ -141,6 +141,9 @@ export const SettingsModal = ({
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>{t('title')}</DialogTitle>
+            <DialogDescription className="sr-only">
+              Change your language, theme, and account preferences.
+            </DialogDescription>
           </DialogHeader>
           <div className="space-y-6 py-4">
             <div className="space-y-3">

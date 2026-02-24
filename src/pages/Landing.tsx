@@ -620,11 +620,13 @@ const Landing = () => {
       const baseBodyColor = isDarkTheme ? "#f4f4f5" : "#0f172a";
       const targetBodyBackground = isDarkTheme ? "#0e3cc8" : "#1459ff";
       const targetBodyColor = "#eef4ff";
-      const previousBodyBackground = document.body.style.backgroundColor;
-      const previousBodyColor = document.body.style.color;
+      const body = document.body;
+      if (!body) return;
+      const previousBodyBackground = body.style.backgroundColor;
+      const previousBodyColor = body.style.color;
       const previousRootColor = root.style.color;
 
-      gsap.set(document.body, { backgroundColor: baseBodyBackground, color: baseBodyColor });
+      gsap.set(body, { backgroundColor: baseBodyBackground, color: baseBodyColor });
       gsap.set(root, { color: baseBodyColor });
       const blueSection = root.querySelector<HTMLElement>("#blue-section");
       const transitionTarget = blueSection || root;
@@ -710,7 +712,7 @@ const Landing = () => {
         });
 
         if (blueSection) {
-          gsap.to("body", {
+          gsap.to(body, {
             backgroundColor: targetBodyBackground,
             color: targetBodyColor,
             ease: "none",
@@ -888,8 +890,8 @@ const Landing = () => {
         lenis.destroy();
         media.kill();
         gsap.ticker.remove(onTick);
-        document.body.style.backgroundColor = previousBodyBackground;
-        document.body.style.color = previousBodyColor;
+        body.style.backgroundColor = previousBodyBackground;
+        body.style.color = previousBodyColor;
         root.style.color = previousRootColor;
       };
     };

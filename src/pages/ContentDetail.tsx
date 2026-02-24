@@ -11,6 +11,7 @@ import { KnowledgeMap } from '@/components/KnowledgeMap';
 import { MissingAssetsBar } from '@/components/MissingAssetsBar';
 import { PodcastPlayer } from '@/components/PodcastPlayer';
 import { supabase } from '@/integrations/supabase/client';
+import { invokeAnalyzeText } from '@/lib/analyzeText';
 import jsPDF from 'jspdf';
 
 type Language = 'en' | 'ru' | 'hy' | 'ko';
@@ -188,15 +189,11 @@ const ContentDetail = () => {
           podcast: false // Handle podcast separately
         };
 
-        const { data, error } = await supabase.functions.invoke('analyze-text', {
-          body: {
-            text: content.original_text,
-            language: content.language || 'en',
-            generationOptions
-          }
+        const data = await invokeAnalyzeText({
+          text: content.original_text,
+          language: content.language || 'en',
+          generationOptions
         });
-
-        if (error) throw error;
 
         const existingAnalysis = content.analysis_data || {};
 
@@ -342,7 +339,7 @@ const ContentDetail = () => {
       
       toast({
         title: 'Error',
-        description: 'Failed to generate missing assets.',
+        description: error instanceof Error ? error.message : 'Failed to generate missing assets.',
         variant: 'destructive'
       });
     } finally {
