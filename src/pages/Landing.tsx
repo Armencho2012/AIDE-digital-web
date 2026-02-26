@@ -37,6 +37,7 @@ interface LandingCopy {
   contact: string;
   help: string;
   signIn: string;
+  trustedBy: string;
   heroEyebrow: string;
   heroTitle: string;
   heroSubtitle: string;
@@ -108,6 +109,7 @@ const copy: Record<Language, LandingCopy> = {
     contact: "Contact",
     help: "Help",
     signIn: "Log In",
+    trustedBy: "Trusted by",
     heroEyebrow: "AI-Powered Study Assistant",
     heroTitle: "Stop Rewriting. Start Remembering.",
     heroSubtitle: "Aide turns your messy notes into neural maps, practice tests, and AI podcasts. Spend 10 minutes studying, not 2 hours preparing.",
@@ -222,6 +224,7 @@ const copy: Record<Language, LandingCopy> = {
     contact: "문의",
     help: "도움말",
     signIn: "로그인",
+    trustedBy: "신뢰하는 기관",
     heroEyebrow: "AI 기반 학습 비서",
     heroTitle: "받아쓰기는 끝. 이제는 기억할 시간.",
     heroSubtitle: "Aide는 복잡한 노트를 신경망 맵, 모의고사, AI 팟캐스트로 바꿔줍니다. 2시간 준비할 내용을 10분 만에 끝내세요.",
@@ -336,6 +339,7 @@ const copy: Record<Language, LandingCopy> = {
     contact: "Контакт",
     help: "Помощь",
     signIn: "Войти",
+    trustedBy: "Нам доверяют",
     heroEyebrow: "Ваш AI-помощник в учебе",
     heroTitle: "Хватит переписывать. Пора запоминать.",
     heroSubtitle: "Aide превращает гору заметок в тесты, карты знаний и подкасты. Учись за 10 минут, а не за 2 часа.",
@@ -450,6 +454,7 @@ const copy: Record<Language, LandingCopy> = {
     contact: "Կապ",
     help: "Օգնություն",
     signIn: "Մուտք",
+    trustedBy: "Վստահում են",
     heroEyebrow: "AI ուսումնական օգնական",
     heroTitle: "Մի՛ արտագրիր: Սկսի՛ հիշել:",
     heroSubtitle: "Aide-ը քո նշումները վերածում է թեստերի, քարտեզների և պոդկաստների: Սովորիր 10 րոպեում, ոչ թե 2 ժամում:",
@@ -570,6 +575,14 @@ const bentoClasses = [
   "lg:col-span-5",
 ];
 
+const trustedBrands = [
+  "Northbridge",
+  "LearnLoop",
+  "ScholarWave",
+  "ExamForge",
+  "BrightPath",
+];
+
 const Landing = () => {
   const { language, theme, setLanguage, setTheme } = useSettings();
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -616,10 +629,10 @@ const Landing = () => {
       gsap.ticker.lagSmoothing(500, 33);
       const media = ScrollTrigger.matchMedia();
       const isDarkTheme = theme === "dark";
-      const baseBodyBackground = isDarkTheme ? "#05070b" : "#ffffff";
-      const baseBodyColor = isDarkTheme ? "#f4f4f5" : "#0f172a";
-      const targetBodyBackground = isDarkTheme ? "#0e3cc8" : "#1459ff";
-      const targetBodyColor = "#eef4ff";
+      const baseBodyBackground = isDarkTheme ? "#050816" : "#f9fafb";
+      const baseBodyColor = isDarkTheme ? "#f8fafc" : "#111827";
+      const targetBodyBackground = isDarkTheme ? "#1e1b4b" : "#4338ca";
+      const targetBodyColor = "#eef2ff";
       const body = document.body;
       if (!body) return;
       const previousBodyBackground = body.style.backgroundColor;
@@ -736,7 +749,7 @@ const Landing = () => {
           });
 
           gsap.to("[data-nav]", {
-            backgroundColor: isDarkTheme ? "rgba(7, 26, 74, 0.7)" : "rgba(7, 26, 74, 0.58)",
+            backgroundColor: isDarkTheme ? "rgba(22, 27, 63, 0.78)" : "rgba(42, 47, 113, 0.64)",
             borderColor: "rgba(255,255,255,0.22)",
             ease: "none",
             scrollTrigger: {
@@ -748,7 +761,7 @@ const Landing = () => {
           });
 
           gsap.to("[data-nav-muted]", {
-            color: "#d6e4ff",
+            color: "#dfe5ff",
             ease: "none",
             scrollTrigger: {
               trigger: blueSection,
@@ -782,7 +795,7 @@ const Landing = () => {
           });
 
           gsap.to("[data-mascot-shell]", {
-            filter: "drop-shadow(0 0 42px rgba(63,150,255,0.68)) saturate(1.28)",
+            filter: "drop-shadow(0 0 42px rgba(139,92,246,0.66)) saturate(1.22)",
             scale: 1.035,
             ease: "none",
             scrollTrigger: {
@@ -909,20 +922,20 @@ const Landing = () => {
   return (
     <div
       ref={rootRef}
-      className="min-h-screen overflow-x-hidden text-slate-900 dark:text-zinc-100"
+      className="min-h-screen overflow-x-hidden text-[#111827] dark:text-slate-100"
     >
       <div
         data-depth="halo"
-        className="pointer-events-none fixed inset-x-0 top-[-10vh] -z-10 h-[56vh] bg-[radial-gradient(circle_at_50%_40%,rgba(59,130,246,0.26),transparent_58%)]"
+        className="pointer-events-none fixed inset-x-0 top-[-14vh] -z-10 h-[66vh] bg-[radial-gradient(circle_at_14%_18%,rgba(196,181,253,0.42),transparent_42%),radial-gradient(circle_at_86%_8%,rgba(125,211,252,0.3),transparent_44%)] dark:bg-[radial-gradient(circle_at_12%_20%,rgba(167,139,250,0.28),transparent_42%),radial-gradient(circle_at_88%_12%,rgba(99,102,241,0.25),transparent_46%)]"
       />
 
       <nav
         data-nav
-        className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/78 backdrop-blur-xl dark:border-white/10 dark:bg-black/45"
+        className="sticky top-0 z-50 border-b border-slate-200/90 bg-white/82 backdrop-blur-xl dark:border-white/10 dark:bg-slate-950/58"
       >
         <div className="container mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
           <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-cyan-400 shadow-lg shadow-blue-500/25">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-violet-600 to-indigo-500 shadow-lg shadow-violet-500/30">
               <Sparkles className="h-4 w-4 text-white" />
             </div>
             <span data-nav-strong className="text-lg font-semibold tracking-tight text-slate-950 dark:text-zinc-50">
@@ -931,7 +944,7 @@ const Landing = () => {
           </div>
 
           <div className="flex items-center gap-2">
-            <div className="flex items-center rounded-full border border-slate-300/90 bg-white/90 p-1 dark:border-white/10 dark:bg-white/5">
+            <div className="flex items-center rounded-full border border-slate-300/90 bg-white/88 p-1 dark:border-white/15 dark:bg-white/[0.06]">
               {languageSwitch.map((item) => (
                 <button
                   key={item.code}
@@ -940,8 +953,8 @@ const Landing = () => {
                   data-nav-strong={language === item.code ? "true" : undefined}
                   className={`rounded-full px-2.5 py-1 text-xs transition-colors ${
                     language === item.code
-                      ? "bg-slate-900 text-white dark:bg-white/20 dark:text-white"
-                      : "text-slate-600 hover:text-slate-900 dark:text-zinc-400 dark:hover:text-white"
+                      ? "bg-violet-600 text-white dark:bg-violet-400/35 dark:text-violet-50"
+                      : "text-slate-600 hover:text-slate-900 dark:text-zinc-300 dark:hover:text-white"
                   }`}
                 >
                   {item.label}
@@ -953,7 +966,7 @@ const Landing = () => {
               variant="ghost"
               size="sm"
               asChild
-              className="hidden text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-zinc-300 dark:hover:bg-white/10 dark:hover:text-white sm:flex"
+              className="hidden text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-zinc-300 dark:hover:bg-white/12 dark:hover:text-white sm:flex"
             >
               <a data-nav-muted href="mailto:myaide.study@gmail.com">
                 <Mail className="h-4 w-4" />
@@ -964,7 +977,7 @@ const Landing = () => {
               variant="ghost"
               size="sm"
               asChild
-              className="hidden text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-zinc-300 dark:hover:bg-white/10 dark:hover:text-white sm:flex"
+              className="hidden text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-zinc-300 dark:hover:bg-white/12 dark:hover:text-white sm:flex"
             >
               <Link data-nav-muted to="/help">
                 <HelpCircle className="h-4 w-4" />
@@ -975,11 +988,11 @@ const Landing = () => {
               variant="outline"
               size="icon"
               onClick={() => setSettingsOpen(true)}
-              className="border-slate-300/90 bg-white/85 text-slate-700 hover:bg-slate-100 dark:border-white/20 dark:bg-white/5 dark:text-zinc-200 dark:hover:bg-white/12"
+              className="rounded-full border-slate-300/90 bg-white/85 text-slate-700 hover:bg-slate-100 dark:border-white/18 dark:bg-white/[0.06] dark:text-zinc-200 dark:hover:bg-white/12"
             >
               <Settings className="h-4 w-4" />
             </Button>
-            <Button asChild size="sm" className="bg-blue-600 text-white hover:bg-blue-500 dark:bg-white dark:text-black dark:hover:bg-zinc-200">
+            <Button asChild size="sm" className="rounded-full bg-violet-600 text-white hover:bg-violet-500 dark:bg-violet-500 dark:text-white dark:hover:bg-violet-400">
               <Link data-nav-strong to="/auth">{t.signIn}</Link>
             </Button>
           </div>
@@ -987,19 +1000,19 @@ const Landing = () => {
       </nav>
 
       <section className="container mx-auto max-w-7xl px-4 pb-14 pt-16 md:pt-20">
-        <div className="relative overflow-hidden rounded-[2.2rem] border border-slate-200/90 bg-[linear-gradient(120deg,#d8ecff_0%,#eff6ff_45%,#f7f2db_100%)] p-6 shadow-[0_24px_70px_rgba(59,130,246,0.16)] md:p-10 dark:border-white/12 dark:bg-[radial-gradient(circle_at_76%_25%,rgba(56,189,248,0.2),transparent_45%),radial-gradient(circle_at_18%_16%,rgba(59,130,246,0.22),transparent_40%),linear-gradient(145deg,#041024_0%,#081c3f_56%,#0d2a59_100%)] dark:shadow-[0_24px_70px_rgba(2,6,23,0.65)]">
-          <div className="pointer-events-none absolute inset-0 opacity-45 [background-image:linear-gradient(to_right,rgba(15,23,42,0.07)_1px,transparent_1px),linear-gradient(to_bottom,rgba(15,23,42,0.07)_1px,transparent_1px)] [background-size:72px_72px] dark:opacity-55 dark:[background-image:linear-gradient(to_right,rgba(191,219,254,0.15)_1px,transparent_1px),linear-gradient(to_bottom,rgba(191,219,254,0.15)_1px,transparent_1px)]" />
-          <div className="pointer-events-none absolute -left-24 top-16 h-64 w-64 rounded-full bg-cyan-300/28 blur-3xl dark:bg-cyan-300/18" />
-          <div className="pointer-events-none absolute -right-20 bottom-0 h-64 w-64 rounded-full bg-amber-300/26 blur-3xl dark:bg-blue-400/18" />
+        <div className="relative overflow-hidden rounded-[2.2rem] border border-slate-200/90 bg-[linear-gradient(135deg,#ffffff_0%,#f9fafb_48%,#f4f6ff_100%)] p-6 shadow-[0_28px_80px_rgba(79,70,229,0.14)] md:p-10 dark:border-white/10 dark:bg-[radial-gradient(circle_at_14%_16%,rgba(167,139,250,0.22),transparent_42%),radial-gradient(circle_at_88%_12%,rgba(99,102,241,0.2),transparent_45%),linear-gradient(145deg,#050816_0%,#0a1230_58%,#111b45_100%)] dark:shadow-[0_30px_90px_rgba(2,6,23,0.72)]">
+          <div className="pointer-events-none absolute inset-0 opacity-35 [background-image:linear-gradient(to_right,rgba(15,23,42,0.06)_1px,transparent_1px),linear-gradient(to_bottom,rgba(15,23,42,0.06)_1px,transparent_1px)] [background-size:72px_72px] dark:opacity-48 dark:[background-image:linear-gradient(to_right,rgba(216,180,254,0.14)_1px,transparent_1px),linear-gradient(to_bottom,rgba(216,180,254,0.12)_1px,transparent_1px)]" />
+          <div className="pointer-events-none absolute -left-24 top-16 h-64 w-64 rounded-full bg-violet-200/55 blur-3xl dark:bg-violet-400/20" />
+          <div className="pointer-events-none absolute -right-20 bottom-0 h-64 w-64 rounded-full bg-sky-200/55 blur-3xl dark:bg-indigo-400/20" />
 
           <div className="relative grid items-center gap-8 lg:grid-cols-12 xl:gap-10">
             <div className="lg:col-span-6 xl:col-span-7">
-              <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-blue-300/70 bg-white/70 px-3.5 py-1.5 text-xs font-medium text-slate-700 shadow-sm shadow-blue-100/60 dark:border-cyan-300/35 dark:bg-slate-900/85 dark:text-cyan-50 dark:shadow-black/30">
-                <Brain className="h-3.5 w-3.5 text-blue-600 dark:text-cyan-200" />
+              <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-violet-200/90 bg-white/62 px-3.5 py-1.5 text-xs font-medium text-slate-700 shadow-sm shadow-violet-100/75 backdrop-blur-xl dark:border-white/18 dark:bg-slate-900/58 dark:text-slate-100 dark:shadow-black/35">
+                <Brain className="h-3.5 w-3.5 text-violet-600 dark:text-violet-200" />
                 {t.heroEyebrow}
               </div>
 
-              <h1 className="max-w-[14ch] text-[clamp(2.4rem,7vw,5.5rem)] font-black leading-[0.93] tracking-[-0.042em] text-slate-900 dark:text-slate-50">
+              <h1 className="max-w-[14ch] text-[clamp(2.4rem,7vw,5.5rem)] font-black leading-[0.93] tracking-[-0.042em] text-[#111827] dark:text-white">
                 {heroWords.map((word, index) => (
                   <span
                     key={`${word}-${index}`}
@@ -1013,7 +1026,7 @@ const Landing = () => {
 
               <p
                 data-hero-subtitle
-                className="mt-5 max-w-2xl text-base leading-relaxed text-slate-600 md:text-lg dark:text-blue-100/88"
+                className="mt-5 max-w-2xl text-base leading-relaxed text-slate-600 md:text-lg dark:text-slate-300/92"
               >
                 {t.heroSubtitle}
               </p>
@@ -1022,7 +1035,7 @@ const Landing = () => {
                 <Button
                   asChild
                   size="lg"
-                  className="h-12 rounded-full bg-blue-600 px-7 text-base text-white shadow-lg shadow-blue-500/30 transition-all hover:bg-blue-500 hover:shadow-blue-400/35 dark:bg-cyan-300 dark:text-slate-950 dark:hover:bg-cyan-200"
+                  className="h-12 rounded-full bg-violet-600 px-7 text-base text-white shadow-lg shadow-violet-500/35 transition-all hover:bg-violet-500 hover:shadow-violet-400/35 dark:bg-violet-500 dark:text-white dark:hover:bg-violet-400"
                 >
                   <Link to="/auth">
                     {t.startNow}
@@ -1033,7 +1046,7 @@ const Landing = () => {
                   asChild
                   size="lg"
                   variant="outline"
-                  className="h-12 rounded-full border-blue-500/65 bg-white/65 px-7 text-base text-blue-700 transition-colors hover:bg-white/90 dark:border-cyan-200/45 dark:bg-slate-900/65 dark:text-cyan-100 dark:hover:bg-slate-900/90"
+                  className="h-12 rounded-full border-violet-300/80 bg-white/60 px-7 text-base text-violet-700 transition-colors hover:bg-white/88 dark:border-violet-200/40 dark:bg-slate-900/58 dark:text-violet-100 dark:hover:bg-slate-900/86"
                 >
                   <a href="#flow">{t.seeFlow}</a>
                 </Button>
@@ -1043,7 +1056,7 @@ const Landing = () => {
                 {[t.freeBadge, t.langBadge, t.uploadBadge].map((badge) => (
                   <span
                     key={badge}
-                    className="rounded-full border border-slate-300/80 bg-white/75 px-3 py-1.5 text-xs font-medium text-slate-700 shadow-sm shadow-slate-200/75 dark:border-blue-200/25 dark:bg-slate-900/72 dark:text-blue-50/95"
+                    className="rounded-full border border-slate-300/85 bg-white/74 px-3 py-1.5 text-xs font-medium text-slate-700 shadow-sm shadow-slate-200/75 backdrop-blur-xl dark:border-white/16 dark:bg-slate-900/54 dark:text-slate-100"
                   >
                     {badge}
                   </span>
@@ -1055,16 +1068,16 @@ const Landing = () => {
               <div className="relative mx-auto w-full max-w-[27rem]">
                 <div
                   data-mascot-glow
-                  className="pointer-events-none absolute inset-x-12 top-10 h-44 rounded-full bg-[radial-gradient(circle,rgba(84,169,255,0.82)_0%,rgba(66,124,255,0.52)_42%,rgba(35,56,145,0)_78%)] opacity-0 blur-3xl"
+                  className="pointer-events-none absolute inset-x-12 top-10 h-44 rounded-full bg-[radial-gradient(circle,rgba(167,139,250,0.82)_0%,rgba(99,102,241,0.5)_44%,rgba(42,34,109,0)_80%)] opacity-0 blur-3xl"
                 />
-                <Card className="relative overflow-hidden rounded-[1.85rem] border-slate-200/80 bg-white/72 p-5 shadow-2xl shadow-blue-200/70 backdrop-blur-2xl dark:border-white/16 dark:bg-slate-950/72 dark:shadow-black/55">
-                  <div className="pointer-events-none absolute -top-20 right-[-5.5rem] h-44 w-44 rounded-full bg-cyan-300/20 blur-3xl dark:bg-cyan-300/22" />
-                  <div className="pointer-events-none absolute bottom-0 left-[-5rem] h-40 w-40 rounded-full bg-blue-300/22 blur-3xl dark:bg-blue-400/24" />
+                <Card className="relative overflow-hidden rounded-[1.85rem] border border-slate-200/90 bg-white/56 p-5 shadow-[0_36px_100px_rgba(15,23,42,0.14)] backdrop-blur-3xl dark:border-white/16 dark:bg-slate-950/48 dark:shadow-[0_36px_100px_rgba(2,6,23,0.72)]">
+                  <div className="pointer-events-none absolute -top-20 right-[-5.5rem] h-44 w-44 rounded-full bg-violet-200/45 blur-3xl dark:bg-violet-400/22" />
+                  <div className="pointer-events-none absolute bottom-0 left-[-5rem] h-40 w-40 rounded-full bg-indigo-200/45 blur-3xl dark:bg-indigo-400/22" />
 
                   <div className="relative mb-4 flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-semibold text-slate-800 dark:text-zinc-100">{t.previewTitle}</p>
-                      <p className="text-xs text-slate-500 dark:text-blue-100/80">{t.previewSubtitle}</p>
+                      <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">{t.previewTitle}</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-300/86">{t.previewSubtitle}</p>
                     </div>
                     <div className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/35 bg-emerald-500/10 px-2.5 py-1 text-[11px] font-medium text-emerald-700 dark:text-emerald-200">
                       <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
@@ -1076,7 +1089,7 @@ const Landing = () => {
                     data-mascot-shell
                     src="/aide-mascot.svg"
                     alt="Aide mascot"
-                    className="relative mx-auto w-full max-w-[16.5rem] drop-shadow-[0_24px_40px_rgba(15,23,42,0.24)] dark:drop-shadow-[0_24px_44px_rgba(2,6,23,0.7)] md:max-w-[18rem]"
+                    className="relative mx-auto w-full max-w-[16.5rem] drop-shadow-[0_24px_40px_rgba(79,70,229,0.28)] dark:drop-shadow-[0_24px_44px_rgba(15,23,42,0.72)] md:max-w-[18rem]"
                   />
 
                   <div className="mt-4 grid grid-cols-3 gap-2">
@@ -1085,8 +1098,8 @@ const Landing = () => {
                         key={tab}
                         className={`rounded-xl px-2 py-1.5 text-center text-[11px] font-medium ${
                           idx === 0
-                            ? "bg-blue-600 text-white dark:bg-blue-500/35 dark:text-blue-50"
-                            : "bg-white/85 text-slate-600 dark:bg-slate-900/80 dark:text-zinc-200"
+                            ? "bg-violet-600 text-white dark:bg-violet-500/35 dark:text-violet-50"
+                            : "bg-white/82 text-slate-600 dark:bg-slate-900/78 dark:text-zinc-200"
                         }`}
                       >
                         {tab}
@@ -1095,18 +1108,36 @@ const Landing = () => {
                   </div>
 
                   <div className="mt-3 grid gap-2 sm:grid-cols-2">
-                    <div className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white/86 p-2 text-[11px] text-slate-700 dark:border-white/12 dark:bg-slate-900/76 dark:text-zinc-200">
-                      <FileText className="h-3.5 w-3.5 text-blue-500 dark:text-cyan-300" />
+                    <div className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white/84 p-2 text-[11px] text-slate-700 dark:border-white/12 dark:bg-slate-900/74 dark:text-zinc-200">
+                      <FileText className="h-3.5 w-3.5 text-violet-500 dark:text-violet-300" />
                       {t.previewWidgetQuizNotes}
                     </div>
-                    <div className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white/86 p-2 text-[11px] text-slate-700 dark:border-white/12 dark:bg-slate-900/76 dark:text-zinc-200">
-                      <Mic className="h-3.5 w-3.5 text-cyan-500" />
+                    <div className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white/84 p-2 text-[11px] text-slate-700 dark:border-white/12 dark:bg-slate-900/74 dark:text-zinc-200">
+                      <Mic className="h-3.5 w-3.5 text-indigo-500 dark:text-indigo-300" />
                       {t.previewWidgetPodcast}
                     </div>
                   </div>
                 </Card>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="container mx-auto max-w-7xl px-4 pb-14">
+        <div
+          data-reveal
+          className="rounded-full border border-slate-200/88 bg-white/62 px-4 py-3 shadow-[0_18px_52px_rgba(15,23,42,0.09)] backdrop-blur-2xl dark:border-white/12 dark:bg-slate-950/44 dark:shadow-[0_20px_55px_rgba(2,6,23,0.58)]"
+        >
+          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-center sm:gap-x-7">
+            <span className="text-[0.68rem] font-semibold uppercase tracking-[0.24em] text-slate-500 dark:text-slate-300/78">
+              {t.trustedBy}
+            </span>
+            {trustedBrands.map((brand) => (
+              <span key={brand} className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500/90 dark:text-slate-400/90">
+                {brand}
+              </span>
+            ))}
           </div>
         </div>
       </section>
