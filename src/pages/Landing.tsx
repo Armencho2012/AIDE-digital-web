@@ -1182,12 +1182,12 @@ const Landing = () => {
       <section className="container mx-auto max-w-7xl px-4 pb-14">
         <div
           data-reveal
-          className="relative overflow-hidden rounded-[1.9rem] border border-cyan-200/15 bg-[radial-gradient(circle_at_50%_-22%,rgba(34,211,238,0.16),transparent_46%),linear-gradient(180deg,#020c16_0%,#041321_54%,#020d18_100%)] px-5 py-8 shadow-[0_22px_70px_rgba(2,12,26,0.45)] dark:border-white/12 dark:bg-[radial-gradient(circle_at_50%_-22%,rgba(125,211,252,0.15),transparent_48%),linear-gradient(180deg,#020b14_0%,#03101d_52%,#020910_100%)] dark:shadow-[0_26px_78px_rgba(2,6,23,0.66)] sm:px-8"
+          className="relative overflow-hidden rounded-[1.9rem] border border-slate-200/85 bg-[radial-gradient(circle_at_50%_-24%,rgba(196,181,253,0.24),transparent_48%),linear-gradient(180deg,#f8fafc_0%,#f4f7ff_54%,#f9fafb_100%)] px-5 py-8 shadow-[0_20px_58px_rgba(79,70,229,0.12)] dark:border-white/12 dark:bg-[radial-gradient(circle_at_50%_-22%,rgba(125,211,252,0.15),transparent_48%),linear-gradient(180deg,#020b14_0%,#03101d_52%,#020910_100%)] dark:shadow-[0_26px_78px_rgba(2,6,23,0.66)] sm:px-8"
         >
-          <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-20 bg-gradient-to-r from-[#020d18] to-transparent dark:from-[#020910]" />
-          <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-20 bg-gradient-to-l from-[#020d18] to-transparent dark:from-[#020910]" />
+          <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-20 bg-gradient-to-r from-[#f8fafc] to-transparent dark:from-[#020910]" />
+          <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-20 bg-gradient-to-l from-[#f8fafc] to-transparent dark:from-[#020910]" />
 
-          <p className="text-center text-[0.96rem] font-semibold text-slate-100/92">
+          <p className="text-center text-[0.96rem] font-semibold text-slate-700 dark:text-slate-100/92">
             {t.trustedBy}
           </p>
 
