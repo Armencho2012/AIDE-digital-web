@@ -109,7 +109,7 @@ const copy: Record<Language, LandingCopy> = {
     contact: "Contact",
     help: "Help",
     signIn: "Log In",
-    trustedBy: "Trusted by",
+    trustedBy: "Aide is trusted by students and professionals at...",
     heroEyebrow: "AI-Powered Study Assistant",
     heroTitle: "Stop Rewriting. Start Remembering.",
     heroSubtitle: "Aide turns your messy notes into neural maps, practice tests, and AI podcasts. Spend 10 minutes studying, not 2 hours preparing.",
@@ -224,7 +224,7 @@ const copy: Record<Language, LandingCopy> = {
     contact: "문의",
     help: "도움말",
     signIn: "로그인",
-    trustedBy: "신뢰하는 기관",
+    trustedBy: "Aide를 신뢰하는 학생과 전문가들이 있는 곳",
     heroEyebrow: "AI 기반 학습 비서",
     heroTitle: "받아쓰기는 끝. 이제는 기억할 시간.",
     heroSubtitle: "Aide는 복잡한 노트를 신경망 맵, 모의고사, AI 팟캐스트로 바꿔줍니다. 2시간 준비할 내용을 10분 만에 끝내세요.",
@@ -339,7 +339,7 @@ const copy: Record<Language, LandingCopy> = {
     contact: "Контакт",
     help: "Помощь",
     signIn: "Войти",
-    trustedBy: "Нам доверяют",
+    trustedBy: "Aide выбирают студенты и специалисты из...",
     heroEyebrow: "Ваш AI-помощник в учебе",
     heroTitle: "Хватит переписывать. Пора запоминать.",
     heroSubtitle: "Aide превращает гору заметок в тесты, карты знаний и подкасты. Учись за 10 минут, а не за 2 часа.",
@@ -454,7 +454,7 @@ const copy: Record<Language, LandingCopy> = {
     contact: "Կապ",
     help: "Օգնություն",
     signIn: "Մուտք",
-    trustedBy: "Վստահում են",
+    trustedBy: "Aide-ին վստահում են ուսանողներն ու մասնագետները",
     heroEyebrow: "AI ուսումնական օգնական",
     heroTitle: "Մի՛ արտագրիր: Սկսի՛ հիշել:",
     heroSubtitle: "Aide-ը քո նշումները վերածում է թեստերի, քարտեզների և պոդկաստների: Սովորիր 10 րոպեում, ոչ թե 2 ժամում:",
@@ -576,11 +576,11 @@ const bentoClasses = [
 ];
 
 const trustedBrands = [
-  "Northbridge",
-  "LearnLoop",
-  "ScholarWave",
-  "ExamForge",
-  "BrightPath",
+  { name: "NORTHBRIDGE", className: "text-[1.55rem] font-semibold tracking-[-0.03em]" },
+  { name: "DUKEFORD", className: "font-serif text-[1.75rem] tracking-[-0.03em]" },
+  { name: "OXFORDIA", className: "font-serif text-[1.7rem] tracking-[0.01em]" },
+  { name: "GOOGLEX", className: "text-[2rem] font-semibold tracking-[-0.04em]" },
+  { name: "PRINCETONIC", className: "font-serif text-[1.45rem] tracking-[0.1em]" },
 ];
 
 const Landing = () => {
@@ -1127,18 +1127,28 @@ const Landing = () => {
       <section className="container mx-auto max-w-7xl px-4 pb-14">
         <div
           data-reveal
-          className="rounded-full border border-slate-200/88 bg-white/62 px-4 py-3 shadow-[0_18px_52px_rgba(15,23,42,0.09)] backdrop-blur-2xl dark:border-white/12 dark:bg-slate-950/44 dark:shadow-[0_20px_55px_rgba(2,6,23,0.58)]"
+          className="relative overflow-hidden rounded-[1.9rem] border border-cyan-200/15 bg-[radial-gradient(circle_at_50%_-22%,rgba(34,211,238,0.16),transparent_46%),linear-gradient(180deg,#020c16_0%,#041321_54%,#020d18_100%)] px-5 py-8 shadow-[0_22px_70px_rgba(2,12,26,0.45)] dark:border-white/12 dark:bg-[radial-gradient(circle_at_50%_-22%,rgba(125,211,252,0.15),transparent_48%),linear-gradient(180deg,#020b14_0%,#03101d_52%,#020910_100%)] dark:shadow-[0_26px_78px_rgba(2,6,23,0.66)] sm:px-8"
         >
-          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-center sm:gap-x-7">
-            <span className="text-[0.68rem] font-semibold uppercase tracking-[0.24em] text-slate-500 dark:text-slate-300/78">
-              {t.trustedBy}
-            </span>
-            {trustedBrands.map((brand) => (
-              <span key={brand} className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500/90 dark:text-slate-400/90">
-                {brand}
-              </span>
-            ))}
+          <div className="pointer-events-none absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-[#020d18] to-transparent dark:from-[#020910]" />
+          <div className="pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-[#020d18] to-transparent dark:from-[#020910]" />
+
+          <p className="text-center text-[0.96rem] font-semibold text-slate-100/92">
+            {t.trustedBy}
+          </p>
+
+          <div className="mt-6 flex overflow-x-auto pb-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+            <div className="mx-auto flex min-w-max items-end gap-8 px-3 text-slate-400/72 sm:gap-12 sm:px-10">
+              {trustedBrands.map((brand) => (
+                <span
+                  key={brand.name}
+                  className={`whitespace-nowrap leading-none transition-colors duration-300 hover:text-slate-200/90 ${brand.className}`}
+                >
+                  {brand.name}
+                </span>
+              ))}
+            </div>
           </div>
+
         </div>
       </section>
 
