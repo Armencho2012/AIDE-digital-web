@@ -183,6 +183,13 @@ html.lenis body {
   justify-content: center;
   min-width: clamp(120px, 12vw, 170px);
   height: clamp(64px, 8vw, 86px);
+  border-radius: 0.95rem;
+  background: rgba(15, 23, 42, 0.03);
+  padding: 0.35rem 0.45rem;
+}
+
+.dark .trusted-logo-item {
+  background: rgba(255, 255, 255, 0.03);
 }
 
 .trusted-logo-image {
@@ -190,14 +197,23 @@ html.lenis body {
   width: auto;
   max-width: 100%;
   object-fit: contain;
-  filter: grayscale(100%) contrast(0.92) brightness(1.25);
-  opacity: 0.72;
+  filter: grayscale(100%) contrast(1.1) brightness(0.72);
+  opacity: 0.82;
   transition: opacity 240ms ease, filter 240ms ease;
+}
+
+.dark .trusted-logo-image {
+  filter: grayscale(100%) contrast(0.92) brightness(1.22);
+  opacity: 0.74;
 }
 
 .trusted-logo-item:hover .trusted-logo-image {
   opacity: 0.95;
-  filter: grayscale(100%) contrast(1) brightness(1.34);
+  filter: grayscale(100%) contrast(1.2) brightness(0.58);
+}
+
+.dark .trusted-logo-item:hover .trusted-logo-image {
+  filter: grayscale(100%) contrast(1) brightness(1.35);
 }
 
 @keyframes trusted-logo-scroll {

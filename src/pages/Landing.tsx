@@ -1280,7 +1280,7 @@ const Landing = () => {
       </section>
 
       <section id="blue-section" className="relative pb-16 pt-6 text-slate-50">
-        <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_18%_0%,rgba(167,139,250,0.26),transparent_45%),radial-gradient(circle_at_84%_8%,rgba(56,189,248,0.28),transparent_42%),linear-gradient(180deg,rgba(15,23,42,0.35)_0%,rgba(9,15,40,0.78)_100%)]" />
+        <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_18%_0%,rgba(167,139,250,0.3),transparent_45%),radial-gradient(circle_at_84%_8%,rgba(56,189,248,0.32),transparent_42%),linear-gradient(180deg,rgba(21,34,78,0.45)_0%,rgba(9,15,40,0.8)_100%)] dark:bg-[radial-gradient(circle_at_20%_0%,rgba(139,92,246,0.22),transparent_44%),radial-gradient(circle_at_86%_10%,rgba(56,189,248,0.2),transparent_42%),linear-gradient(180deg,rgba(6,13,34,0.56)_0%,rgba(2,7,20,0.88)_100%)]" />
 
         <section id="what-you-can-do" className="container mx-auto max-w-7xl px-4 pb-16">
           <div data-reveal className="mb-8 max-w-3xl">
@@ -1297,8 +1297,8 @@ const Landing = () => {
                   data-bento-card
                   className="h-full rounded-2xl border border-white/18 bg-white/[0.08] p-5 backdrop-blur-xl transition-all duration-500 hover:-translate-y-1 hover:border-violet-200/55 hover:bg-white/[0.14]"
                 >
-                  <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-white/14">
-                    <Icon className="h-5 w-5 text-violet-100" />
+                  <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-white/18 dark:bg-white/16">
+                    <Icon className="h-5 w-5 text-white" />
                   </div>
                   <h3 className="mb-2 text-base font-semibold text-slate-50">{card.title}</h3>
                   <p className="mb-4 text-sm leading-relaxed text-blue-100/85">{card.description}</p>
@@ -1331,9 +1331,9 @@ const Landing = () => {
               {accessCards.map((item) => {
                 const Icon = item.icon;
                 return (
-                  <Card key={item.title} className="h-full rounded-2xl border border-white/16 bg-black/20 p-4 backdrop-blur-xl">
+                  <Card key={item.title} className="h-full rounded-2xl border border-white/16 bg-black/16 p-4 backdrop-blur-xl dark:bg-white/[0.07]">
                     <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-white/15">
-                      <Icon className="h-4.5 w-4.5 text-blue-100" />
+                      <Icon className="h-4.5 w-4.5 text-cyan-100" />
                     </div>
                     <p className="mb-1.5 text-sm font-semibold text-white">{item.title}</p>
                     <p className="text-sm text-blue-100/82">{item.description}</p>
@@ -1392,7 +1392,7 @@ const Landing = () => {
                       {row.aide}
                     </span>
                   </div>
-                  <div className="px-4 pb-4 text-sm text-blue-100/80 md:py-4">{row.traditional}</div>
+                  <div className="px-4 pb-4 text-sm text-slate-100/84 md:py-4">{row.traditional}</div>
                 </div>
               ))}
             </div>
