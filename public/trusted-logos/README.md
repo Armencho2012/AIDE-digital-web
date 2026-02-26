@@ -1,22 +1,20 @@
 # Trusted Logos
 
-1. Put your source grid image at `public/trusted-logos/source-grid.png`.
-2. Run:
+Current source of truth:
 
 ```bash
-python3 scripts/extract_trusted_logos.py
+python3 scripts/fetch_trusted_logos.py
 ```
 
-3. This generates transparent files used by the landing page marquee:
+This downloads and writes:
 
 - `logo-01.png`
 - `logo-02.png`
 - ...
 - `logo-16.png`
 
-If background cleanup is too aggressive or too weak, adjust tolerance:
+If you want to split from a custom collage image instead, you can still use:
 
 ```bash
-python3 scripts/extract_trusted_logos.py --tolerance 24
-python3 scripts/extract_trusted_logos.py --tolerance 34
+python3 scripts/extract_trusted_logos.py
 ```
