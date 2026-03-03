@@ -21,8 +21,9 @@ const BASE_MAX_TOKENS = 4096;
 const PRO_MAP_MAX_TOKENS = 6144;
 const GEMINI_API_VERSION = Deno.env.get("GEMINI_API_VERSION")?.trim() || "v1beta";
 const GEMINI_MODEL = Deno.env.get("GEMINI_TEXT_MODEL")?.trim() || "gemini-flash-latest";
-const GEMINI_MAX_ATTEMPTS = Math.max(Number(Deno.env.get("GEMINI_MAX_ATTEMPTS")?.trim() || "3"), 1);
+const GEMINI_MAX_ATTEMPTS = Math.max(Number(Deno.env.get("GEMINI_MAX_ATTEMPTS")?.trim() || "2"), 1);
 const GEMINI_RETRY_BASE_MS = Math.max(Number(Deno.env.get("GEMINI_RETRY_BASE_MS")?.trim() || "700"), 100);
+const GEMINI_REQUEST_TIMEOUT_MS = Math.max(Number(Deno.env.get("GEMINI_REQUEST_TIMEOUT_MS")?.trim() || "25000"), 5000);
 
 const extractGeminiText = (payload: any): string => {
   const parts = payload?.candidates?.[0]?.content?.parts;
@@ -100,6 +101,20 @@ const isRetryableProviderFailure = (statusCode: number, providerStatus?: string,
   return false;
 };
 
+const fetchWithTimeout = async (
+  input: RequestInfo | URL,
+  init: RequestInit,
+  timeoutMs: number,
+): Promise<Response> => {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    return await fetch(input, { ...init, signal: controller.signal });
+  } finally {
+    clearTimeout(timeoutId);
+  }
+};
+
 Deno.serve(async (req: Request) => {
   // 1. Handle CORS Preflight
   if (req.method === "OPTIONS") {
@@ -173,10 +188,6 @@ Deno.serve(async (req: Request) => {
       }
     }
 
-    // 4. AI Integration using Gemini API
-    const contentContext = textInput.substring(0, 15000);
-    const mediaContext = media ? "\n[Analyzing attached visual media]" : "";
-
     // Build conditional system prompt based on generation options
     const opts = {
       quiz: true,
@@ -205,6 +216,11 @@ Deno.serve(async (req: Request) => {
     const flashcardCount = opts.flashcards
       ? Math.min(Math.max(requestedFlashcardCount, flashcardLimits.min), flashcardLimits.max)
       : 0;
+
+    // 4. AI Integration using Gemini API
+    const contentCharLimit = opts.map || opts.course ? 12000 : 15000;
+    const contentContext = textInput.substring(0, contentCharLimit);
+    const mediaContext = media ? "\n[Analyzing attached visual media]" : "";
 
     const sections = [];
 
@@ -270,13 +286,38 @@ ${knowledgeMapInstruction ?? ''}`.trim();
     let lastProviderStatus = 0;
 
     for (let attempt = 0; attempt < GEMINI_MAX_ATTEMPTS; attempt += 1) {
-      response = await fetch(endpoint, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(createGeminiPayload())
-      });
+      try {
+        response = await fetchWithTimeout(endpoint, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(createGeminiPayload())
+        }, GEMINI_REQUEST_TIMEOUT_MS);
+      } catch (error) {
+        const isAbort = error instanceof DOMException && error.name === "AbortError";
+        lastProviderError = { message: isAbort ? "Model provider request timed out." : "Failed to reach model provider." };
+        lastProviderStatus = 504;
+        const shouldRetry = attempt < GEMINI_MAX_ATTEMPTS - 1;
+        console.error(
+          `Gemini API request failure (${model} @ ${apiVersion}) attempt ${attempt + 1}/${GEMINI_MAX_ATTEMPTS}:`,
+          lastProviderError.message
+        );
+        if (shouldRetry) {
+          const delayMs = GEMINI_RETRY_BASE_MS * Math.pow(2, attempt) + Math.floor(Math.random() * 250);
+          await sleep(delayMs);
+          continue;
+        }
+        return new Response(JSON.stringify({
+          error: isAbort ? "The model request timed out. Please try again." : "Model provider is temporarily unreachable.",
+          model,
+          apiVersion,
+          details: lastProviderError.message
+        }), {
+          status: 504,
+          headers: { ...corsHeaders, "Content-Type": "application/json" }
+        });
+      }
 
       if (response.ok) break;
 
