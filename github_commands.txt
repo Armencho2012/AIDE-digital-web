@@ -32,7 +32,7 @@ git remote -v – View remote repository URLs.
 git add .
 git commit -m "update"
 git push
-supabase functions deploy analyze-text
-supabase functions deploy content-chat
-supabase functions deploy scan-knowledge-map
-supabase functions deploy gumroad-checkout
+npx supabase functions deploy analyze-text
+npx supabase functions deploy content-chat
+npx supabase functions deploy scan-knowledge-map
+npx supabase functions deploy gumroad-checkout
