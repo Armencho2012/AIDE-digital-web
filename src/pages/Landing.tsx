@@ -1223,7 +1223,6 @@ const Landing = () => {
           </h2>
           <p className="mt-3 max-w-2xl text-slate-600 dark:text-zinc-300">{t.flowSubtitle}</p>
         </div>
-
         <div className="grid gap-4 md:grid-cols-3">
           {[
             { icon: Upload, title: t.step1Title, desc: t.step1Desc },
@@ -1235,7 +1234,7 @@ const Landing = () => {
               <Card
                 key={item.title}
                 data-reveal
-                className="h-full rounded-2xl border border-slate-200/85 bg-white/84 p-5 shadow-[0_16px_36px_rgba(15,23,42,0.08)] backdrop-blur-xl transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_24px_42px_rgba(79,70,229,0.14)] dark:border-white/14 dark:bg-slate-950/52 dark:shadow-[0_16px_36px_rgba(2,6,23,0.5)]"
+                className="h-full rounded-2xl border border-slate-200/85 bg-black/84 p-5 shadow-[0_16px_36px_rgba(15,23,42,0.08)] backdrop-blur-xl transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_24px_42px_rgba(79,70,229,0.14)] dark:border-white/14 dark:bg-slate-950/52 dark:shadow-[0_16px_36px_rgba(2,6,23,0.5)]"
               >
                 <div className="mb-4 flex items-center justify-between">
                   <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-violet-100 text-violet-700 dark:bg-violet-400/22 dark:text-violet-100">

@@ -137,7 +137,7 @@ const Dashboard = () => {
 
   const labels = uiLabels[language];
 
-  // Show upgrade modal when limit is reached
+  // Show upgrade modal when limit is reached 
   useEffect(() => {
     if (isLocked && userPlan === 'free') {
       setShowUpgradeModal(true);

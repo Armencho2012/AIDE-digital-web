@@ -1,3 +1,5 @@
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
@@ -29,6 +31,8 @@ Deno.serve(async (req: Request) => {
     const geminiKey = Deno.env.get('GEMINI_API_KEY')
     const elevenKey = Deno.env.get('ELEVEN_LABS_API_KEY')
     const voiceId = Deno.env.get('ELEVEN_LABS_VOICE_ID')
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')
+    const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
 
     if (!geminiKey || !elevenKey) {
       return jsonResponse({ error: 'Missing API keys' }, 500)
@@ -38,8 +42,13 @@ Deno.serve(async (req: Request) => {
       return jsonResponse({ error: 'Missing ElevenLabs voice ID' }, 500)
     }
 
+    if (!supabaseUrl || !serviceRoleKey) {
+      return jsonResponse({ error: 'Missing Supabase service role configuration' }, 500)
+    }
+
     const body = await req.json().catch(() => ({}))
-    const topic = body?.topic?.trim() || body?.knowledgeGap?.trim()
+    const topic =
+      body?.topic?.trim() || body?.knowledgeGap?.trim() || body?.prompt?.trim()
 
     if (!topic) {
       return jsonResponse({ error: 'Topic or knowledgeGap is required' }, 400)
@@ -101,11 +110,31 @@ Deno.serve(async (req: Request) => {
       )
     }
 
+    const audioBuffer = await ttsRes.arrayBuffer()
     const contentType = ttsRes.headers.get('content-type') || 'audio/mpeg'
-    return new Response(ttsRes.body, {
-      status: 200,
-      headers: { ...corsHeaders, 'Content-Type': contentType }
-    })
+    const ext = contentType.includes('mpeg') || contentType.includes('mp3') ? 'mp3' : 'audio'
+    const filename = `${Date.now()}-${crypto.randomUUID()}.${ext}`
+
+    const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey)
+    const { error: uploadError } = await supabaseAdmin.storage
+      .from('podcasts')
+      .upload(filename, new Uint8Array(audioBuffer), {
+        contentType,
+        upsert: true
+      })
+
+    if (uploadError) {
+      return jsonResponse({ error: 'Failed to store audio' }, 500)
+    }
+
+    const { data: urlData } = supabaseAdmin.storage.from('podcasts').getPublicUrl(filename)
+    const podcastUrl = urlData?.publicUrl
+
+    if (!podcastUrl) {
+      return jsonResponse({ error: 'Failed to generate public URL' }, 500)
+    }
+
+    return jsonResponse({ podcast_url: podcastUrl }, 200)
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unknown error'
     return jsonResponse({ error: message }, 500)
