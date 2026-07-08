@@ -26,6 +26,7 @@ import {
 import type { LucideIcon } from "lucide-react";
 import type { Language } from "@/lib/settings";
 
+
 interface FeatureCard {
   icon: LucideIcon;
   title: string;
@@ -37,7 +38,6 @@ interface LandingCopy {
   contact: string;
   help: string;
   signIn: string;
-  trustedBy: string;
   heroEyebrow: string;
   heroTitle: string;
   heroSubtitle: string;
@@ -109,8 +109,7 @@ const copy: Record<Language, LandingCopy> = {
     contact: "Contact",
     help: "Help",
     signIn: "Log In",
-    trustedBy: "Aide is trusted by students and professionals at...",
-    heroEyebrow: "AI-Powered Study Assistant",
+        heroEyebrow: "AI-Powered Study Assistant",
     heroTitle: "Stop Rewriting. Start Remembering.",
     heroSubtitle: "Aide turns your messy notes into neural maps, practice tests, and AI podcasts. Spend 10 minutes studying, not 2 hours preparing.",
     startNow: "Start Speedrunning",
@@ -176,7 +175,7 @@ const copy: Record<Language, LandingCopy> = {
       "Available in English, Russian, Armenian, and Korean."
     ],
     ctaTitle: "Ready to Ace Your Exams?",
-    ctaSubtitle: "Join the students using Aide to study 5x faster.",
+    ctaSubtitle: "Join the students using Aide to study smarter and remember more.",
     readGuide: "How to Prompt",
     footer: "© 2026 Aide. Built for students, by AI.",
     plans: "Plans",
@@ -224,8 +223,7 @@ const copy: Record<Language, LandingCopy> = {
     contact: "문의",
     help: "도움말",
     signIn: "로그인",
-    trustedBy: "Aide를 신뢰하는 학생과 전문가들이 있는 곳",
-    heroEyebrow: "AI 기반 학습 비서",
+        heroEyebrow: "AI 기반 학습 비서",
     heroTitle: "받아쓰기는 끝. 이제는 기억할 시간.",
     heroSubtitle: "Aide는 복잡한 노트를 신경망 맵, 모의고사, AI 팟캐스트로 바꿔줍니다. 2시간 준비할 내용을 10분 만에 끝내세요.",
     startNow: "지금 바로 시작",
@@ -291,7 +289,7 @@ const copy: Record<Language, LandingCopy> = {
       "지원 언어: 한국어, 영어, 러시아어, 아르메니아어."
     ],
     ctaTitle: "시험 점수를 올릴 준비가 되셨나요?",
-    ctaSubtitle: "Aide와 함께 5배 더 빠르게 공부하는 학생이 되어보세요.",
+    ctaSubtitle: "더 스마트하게 공부하고 더 많이 기억하는 학생이 되어보세요.",
     readGuide: "사용 가이드",
     footer: "© 2026 Aide. 학생들을 위해 AI가 만들었습니다.",
     plans: "요금제",
@@ -339,8 +337,7 @@ const copy: Record<Language, LandingCopy> = {
     contact: "Контакт",
     help: "Помощь",
     signIn: "Войти",
-    trustedBy: "Aide выбирают студенты и специалисты из...",
-    heroEyebrow: "Ваш AI-помощник в учебе",
+        heroEyebrow: "Ваш AI-помощник в учебе",
     heroTitle: "Хватит переписывать. Пора запоминать.",
     heroSubtitle: "Aide превращает гору заметок в тесты, карты знаний и подкасты. Учись за 10 минут, а не за 2 часа.",
     startNow: "Начать учиться",
@@ -406,7 +403,7 @@ const copy: Record<Language, LandingCopy> = {
       "Поддержка: RU, EN, HY, KO."
     ],
     ctaTitle: "Готов сдать всё на отлично?",
-    ctaSubtitle: "Учись в 5 раз быстрее вместе с Aide.",
+    ctaSubtitle: "Учись умнее и запоминай больше с Aide.",
     readGuide: "Как пользоваться",
     footer: "© 2026 Aide. Создано для студентов.",
     plans: "Тарифы",
@@ -454,8 +451,7 @@ const copy: Record<Language, LandingCopy> = {
     contact: "Կապ",
     help: "Օգնություն",
     signIn: "Մուտք",
-    trustedBy: "Aide-ին վստահում են ուսանողներն ու մասնագետները",
-    heroEyebrow: "AI ուսումնական օգնական",
+        heroEyebrow: "AI ուսումնական օգնական",
     heroTitle: "Մի՛ արտագրիր: Սկսի՛ հիշել:",
     heroSubtitle: "Aide-ը քո նշումները վերածում է թեստերի, քարտեզների և պոդկաստների: Սովորիր 10 րոպեում, ոչ թե 2 ժամում:",
     startNow: "Սկսել հիմա",
@@ -521,7 +517,7 @@ const copy: Record<Language, LandingCopy> = {
       "Հասանելի է հայերենով, անգլերենով, ռուսերենով և կորեերենով:"
     ],
     ctaTitle: "Պատրա՞ստ ես փայլել քննություններին:",
-    ctaSubtitle: "Սովորիր 5 անգամ ավելի արագ Aide-ի հետ:",
+    ctaSubtitle: "Սովորիր ավելի խելամտորեն և հիշողությունդ բարելավիր Aide-ի հետ:",
     readGuide: "Ինչպես օգտվել",
     footer: "© 2026 Aide. Ստեղծված է ուսանողների համար:",
     plans: "Պլաններ",
@@ -566,33 +562,7 @@ const copy: Record<Language, LandingCopy> = {
     ],
   },
 };
-const trustedLogos = [
-  { name: "Harvard", src: "/trusted-logos/logo-01.png" },
-  { name: "Princeton", src: "/trusted-logos/logo-02.png" },
-  { name: "Columbia", src: "/trusted-logos/logo-03.png" },
-  { name: "Cornell", src: "/trusted-logos/logo-04.png" },
-  { name: "Stanford", src: "/trusted-logos/logo-05.png" },
-  { name: "MIT", src: "/trusted-logos/logo-06.png" },
-  { name: "UC Berkeley", src: "/trusted-logos/logo-07.png" },
-  { name: "Caltech", src: "/trusted-logos/logo-08.png" },
-  { name: "UChicago", src: "/trusted-logos/logo-09.png" },
-  { name: "University of California", src: "/trusted-logos/logo-10.png" },
-  { name: "McGill", src: "/trusted-logos/logo-11.png" },
-  { name: "University of Washington", src: "/trusted-logos/logo-12.png" },
-  { name: "Yale", src: "/trusted-logos/logo-13.png" },
-  { name: "University of Maryland", src: "/trusted-logos/logo-14.png" },
-  { name: "University of Oxford", src: "/trusted-logos/logo-15.png" },
-  { name: "University of Cambridge", src: "/trusted-logos/logo-16.png" },
-];
 
-const gpaReviews = [
-  { student: "Amelia, Pre-Med", gpa: "2.8 -> 3.7", quote: "Daily recall mode stopped me from cramming." },
-  { student: "Daniel, Engineering", gpa: "3.0 -> 3.8", quote: "I finally understood difficult lectures in one pass." },
-  { student: "Sofia, Economics", gpa: "3.1 -> 3.9", quote: "The quiz loops made retention way easier." },
-  { student: "Arman, Computer Science", gpa: "2.9 -> 3.8", quote: "Aide turned messy notes into clear exam prep." },
-  { student: "Mina, Law", gpa: "3.2 -> 3.9", quote: "The AI tutor explained every missed point fast." },
-  { student: "Leo, Biology", gpa: "2.7 -> 3.6", quote: "Podcast mode helped me revise on commutes." },
-];
 
 const accessCards: Array<{ icon: LucideIcon; title: string; description: string }> = [
   {
@@ -613,7 +583,7 @@ const accessCards: Array<{ icon: LucideIcon; title: string; description: string 
 ];
 
 const comparisonRows = [
-  { metric: "Prep Time", aide: "10-15 min setup", traditional: "60-120 min setup" },
+  { metric: "Prep Time", aide: "Fast, focused setup", traditional: "Lengthy manual preparation" },
   { metric: "Retention", aide: "Active recall + repetition", traditional: "Passive rereading" },
   { metric: "Feedback Speed", aide: "Instant explanation loops", traditional: "Delayed grading cycles" },
   { metric: "Personalization", aide: "Per-topic adaptive quizzes", traditional: "One-size-fits-all review" },
@@ -1179,39 +1149,7 @@ const Landing = () => {
         </div>
       </section>
 
-      <section className="container mx-auto max-w-7xl px-4 pb-14">
-        <div
-          data-reveal
-          className="relative overflow-hidden rounded-[1.9rem] border border-slate-200/85 bg-[radial-gradient(circle_at_50%_-24%,rgba(196,181,253,0.24),transparent_48%),linear-gradient(180deg,#f8fafc_0%,#f4f7ff_54%,#f9fafb_100%)] px-5 py-8 shadow-[0_20px_58px_rgba(79,70,229,0.12)] dark:border-white/12 dark:bg-[radial-gradient(circle_at_50%_-22%,rgba(125,211,252,0.15),transparent_48%),linear-gradient(180deg,#020b14_0%,#03101d_52%,#020910_100%)] dark:shadow-[0_26px_78px_rgba(2,6,23,0.66)] sm:px-8"
-        >
-          <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-20 bg-gradient-to-r from-[#f8fafc] to-transparent dark:from-[#020910]" />
-          <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-20 bg-gradient-to-l from-[#f8fafc] to-transparent dark:from-[#020910]" />
 
-          <p className="text-center text-[0.96rem] font-semibold text-slate-700 dark:text-slate-100/92">
-            {t.trustedBy}
-          </p>
-
-          <div className="trusted-logo-marquee mt-6">
-            <div className="trusted-logo-track">
-              {[...trustedLogos, ...trustedLogos].map((logo, index) => (
-                <div
-                  key={`${logo.name}-${index}`}
-                  className="trusted-logo-item"
-                  aria-hidden={index >= trustedLogos.length}
-                >
-                  <img
-                    src={logo.src}
-                    alt={`${logo.name} logo`}
-                    loading="lazy"
-                    className="trusted-logo-image"
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-
-        </div>
-      </section>
 
       <section id="how-it-works" className="container mx-auto max-w-7xl px-4 pb-16">
         <div data-reveal className="mb-8">
@@ -1237,8 +1175,8 @@ const Landing = () => {
                 className="h-full rounded-2xl border border-slate-200/85 bg-black/84 p-5 shadow-[0_16px_36px_rgba(15,23,42,0.08)] backdrop-blur-xl transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_24px_42px_rgba(79,70,229,0.14)] dark:border-white/14 dark:bg-slate-950/52 dark:shadow-[0_16px_36px_rgba(2,6,23,0.5)]"
               >
                 <div className="mb-4 flex items-center justify-between">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-violet-100 text-violet-700 dark:bg-violet-400/22 dark:text-violet-100">
-                    <Icon className="h-4.5 w-4.5" />
+                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-violet-100 text-violet-700 dark:bg-violet-500/15 dark:text-violet-200">
+                    <Icon className="h-4.5 w-4.5 text-violet-700 dark:text-violet-200" />
                   </div>
                   <span className="rounded-full border border-violet-200/85 bg-white px-2.5 py-1 text-[11px] font-semibold text-violet-600 dark:border-white/18 dark:bg-white/[0.05] dark:text-violet-100">
                     Step {index + 1}
@@ -1252,31 +1190,7 @@ const Landing = () => {
         </div>
       </section>
 
-      <section id="gpa-reviews" className="container mx-auto max-w-7xl px-4 pb-16">
-        <div
-          data-reveal
-          className="relative overflow-hidden rounded-[2rem] border border-indigo-200/35 bg-[linear-gradient(145deg,#eef2ff_0%,#f8fafc_45%,#ffffff_100%)] p-6 shadow-[0_24px_60px_rgba(79,70,229,0.14)] dark:border-white/14 dark:bg-[radial-gradient(circle_at_18%_12%,rgba(167,139,250,0.2),transparent_38%),radial-gradient(circle_at_90%_18%,rgba(56,189,248,0.18),transparent_36%),linear-gradient(160deg,#0a1026_0%,#111b3e_54%,#1a2550_100%)] dark:shadow-[0_24px_60px_rgba(2,6,23,0.65)] md:p-8"
-        >
-          <h3 className="text-center text-2xl font-semibold tracking-tight text-slate-950 dark:text-white md:text-3xl">
-            Trusted by 1,000,000+ students
-          </h3>
-          <p className="mt-2 text-center text-sm text-slate-600 dark:text-blue-100/82 md:text-base">
-            Real GPA jumps shared by learners who use Aide every week.
-          </p>
-
-          <div className="gpa-review-marquee mt-6">
-            <div className="gpa-review-track">
-              {[...gpaReviews, ...gpaReviews].map((review, index) => (
-                <article key={`${review.student}-${index}`} className="gpa-review-card" aria-hidden={index >= gpaReviews.length}>
-                  <p className="gpa-review-gpa">{review.gpa}</p>
-                  <p className="gpa-review-student">{review.student}</p>
-                  <p className="gpa-review-quote">{review.quote}</p>
-                </article>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* TODO: INSERT REAL TESTIMONIALS HERE — requires verified student data */}
 
       <section id="blue-section" className="relative pb-16 pt-6 text-slate-50">
         <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_18%_0%,rgba(167,139,250,0.3),transparent_45%),radial-gradient(circle_at_84%_8%,rgba(56,189,248,0.32),transparent_42%),linear-gradient(180deg,rgba(21,34,78,0.45)_0%,rgba(9,15,40,0.8)_100%)] dark:bg-[radial-gradient(circle_at_20%_0%,rgba(139,92,246,0.22),transparent_44%),radial-gradient(circle_at_86%_10%,rgba(56,189,248,0.2),transparent_42%),linear-gradient(180deg,rgba(6,13,34,0.56)_0%,rgba(2,7,20,0.88)_100%)]" />

@@ -162,153 +162,7 @@ html.lenis body {
   overflow: hidden;
 }
 
-/* Trusted logo marquee */
-.trusted-logo-marquee {
-  position: relative;
-  overflow: hidden;
-}
 
-.trusted-logo-track {
-  display: flex;
-  align-items: center;
-  gap: 2.75rem;
-  width: max-content;
-  will-change: transform;
-  animation: trusted-logo-scroll 34s linear infinite;
-}
-
-.trusted-logo-item {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: clamp(120px, 12vw, 170px);
-  height: clamp(64px, 8vw, 86px);
-  border-radius: 0.95rem;
-  background: rgba(15, 23, 42, 0.03);
-  padding: 0.35rem 0.45rem;
-}
-
-.dark .trusted-logo-item {
-  background: rgba(255, 255, 255, 0.03);
-}
-
-.trusted-logo-image {
-  max-height: 76px;
-  width: auto;
-  max-width: 100%;
-  object-fit: contain;
-  filter: grayscale(100%) contrast(1.1) brightness(0.72);
-  opacity: 0.82;
-  transition: opacity 240ms ease, filter 240ms ease;
-}
-
-.dark .trusted-logo-image {
-  filter: grayscale(100%) contrast(0.92) brightness(1.22);
-  opacity: 0.74;
-}
-
-.trusted-logo-item:hover .trusted-logo-image {
-  opacity: 0.95;
-  filter: grayscale(100%) contrast(1.2) brightness(0.58);
-}
-
-.dark .trusted-logo-item:hover .trusted-logo-image {
-  filter: grayscale(100%) contrast(1) brightness(1.35);
-}
-
-@keyframes trusted-logo-scroll {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .trusted-logo-track {
-    animation: none;
-  }
-}
-
-/* GPA review marquee */
-.gpa-review-marquee {
-  position: relative;
-  overflow: hidden;
-}
-
-.gpa-review-track {
-  display: flex;
-  align-items: stretch;
-  gap: 1rem;
-  width: max-content;
-  will-change: transform;
-  animation: gpa-review-scroll 38s linear infinite;
-}
-
-.gpa-review-card {
-  width: min(84vw, 320px);
-  border: 1px solid rgba(99, 102, 241, 0.25);
-  border-radius: 1rem;
-  background: rgba(255, 255, 255, 0.74);
-  box-shadow: 0 12px 32px rgba(79, 70, 229, 0.1);
-  padding: 0.95rem 1rem;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-}
-
-.dark .gpa-review-card {
-  border-color: rgba(255, 255, 255, 0.15);
-  background: rgba(15, 23, 42, 0.5);
-  box-shadow: 0 14px 34px rgba(2, 6, 23, 0.5);
-}
-
-.gpa-review-gpa {
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: #4338ca;
-}
-
-.dark .gpa-review-gpa {
-  color: #c4b5fd;
-}
-
-.gpa-review-student {
-  margin-top: 0.2rem;
-  font-size: 0.77rem;
-  font-weight: 600;
-  color: #111827;
-}
-
-.dark .gpa-review-student {
-  color: #f8fafc;
-}
-
-.gpa-review-quote {
-  margin-top: 0.38rem;
-  font-size: 0.78rem;
-  line-height: 1.45;
-  color: #475569;
-}
-
-.dark .gpa-review-quote {
-  color: rgba(224, 231, 255, 0.86);
-}
-
-@keyframes gpa-review-scroll {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .gpa-review-track {
-    animation: none;
-  }
-}
 
 /* Capability bento system */
 .capability-bento-grid {
@@ -466,5 +320,110 @@ html.lenis body {
 
   .capability-area-oneclick {
     grid-area: oneclick;
+  }
+}
+
+/* ============================
+   StickyNoteScene — 3D scroll interaction
+   ============================ */
+
+.scene-scroll-container {
+  position: relative;
+  overflow: visible;
+}
+
+.scene-sticky-wrapper {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.scene-perspective {
+  position: relative;
+  width: 100%;
+  max-width: 900px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 1400px;
+  transform-style: preserve-3d;
+}
+
+.scene-note {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  transform-style: preserve-3d;
+  will-change: transform, opacity;
+}
+
+.scene-note-img {
+  width: clamp(140px, 20vw, 260px);
+  height: auto;
+  filter: drop-shadow(0 24px 48px rgba(79, 70, 229, 0.35));
+  transform-style: preserve-3d;
+}
+
+.scene-note-text {
+  text-align: center;
+  max-width: 280px;
+  padding: 1rem 1.25rem;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 1rem;
+  border: 1px solid rgba(139, 92, 246, 0.22);
+  box-shadow: 0 8px 28px rgba(79, 70, 229, 0.14);
+}
+
+.dark .scene-note-text {
+  background: rgba(15, 23, 42, 0.82);
+  border-color: rgba(167, 139, 250, 0.28);
+}
+
+.scene-piece {
+  position: absolute;
+  transform-style: preserve-3d;
+  will-change: transform, opacity;
+  pointer-events: none;
+}
+
+.scene-piece-img {
+  width: clamp(44px, 6.5vw, 88px);
+  height: auto;
+  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.22));
+}
+
+.scene-piece-sprite {
+  width: clamp(44px, 6.5vw, 88px);
+  height: clamp(44px, 6.5vw, 88px);
+  border-radius: 12px;
+  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.22));
+  mix-blend-mode: screen;
+}
+
+@media (max-width: 480px) {
+  .scene-piece-img {
+    width: clamp(28px, 7vw, 52px);
+  }
+  .scene-piece-sprite {
+    width: clamp(28px, 7vw, 52px);
+    height: clamp(28px, 7vw, 52px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scene-scroll-container {
+    height: auto;
+  }
+  .scene-sticky-wrapper {
+    position: static;
+    height: auto;
+    min-height: 0;
   }
 }
