@@ -1344,10 +1344,10 @@ const Landing = () => {
                   <Link to="/help" className="text-slate-700 transition-colors duration-300 hover:text-slate-950 dark:text-slate-300 dark:hover:text-white">
                     About Page
                   </Link>
-                  <a href="#how-it-works" className="text-white/60 transition-colors duration-300 hover:text-white">
+                  <a href="#how-it-works" className="text-slate-700 transition-colors duration-300 hover:text-slate-950 dark:text-slate-300 dark:hover:text-white">
                     How it Works
                   </a>
-                  <a href="#what-you-can-do" className="text-white/60 transition-colors duration-300 hover:text-white">
+                  <a href="#what-you-can-do" className="text-slate-700 transition-colors duration-300 hover:text-slate-950 dark:text-slate-300 dark:hover:text-white">
                     What You Can Do
                   </a>
                 </div>

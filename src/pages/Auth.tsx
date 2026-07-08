@@ -329,9 +329,9 @@ const Auth = () => {
         </div>
 
         <div className="grid flex-1 items-stretch gap-6 pb-8 lg:grid-cols-12">
-          <section className="relative overflow-hidden rounded-[2rem] border border-slate-200/90 bg-white/65 p-6 shadow-[0_22px_70px_rgba(59,130,246,0.14)] backdrop-blur-2xl sm:p-8 dark:border-white/12 dark:bg-slate-950/62 dark:shadow-[0_22px_70px_rgba(2,6,23,0.55)] lg:col-span-5 xl:col-span-6">
-            <div className="pointer-events-none absolute -right-20 -top-20 h-52 w-52 rounded-full bg-cyan-300/20 blur-3xl dark:bg-cyan-300/22" />
-            <div className="pointer-events-none absolute -bottom-16 -left-12 h-48 w-48 rounded-full bg-blue-300/22 blur-3xl dark:bg-blue-500/20" />
+          <section className="relative overflow-hidden rounded-[2rem] border border-slate-200/70 bg-white/95 p-6 shadow-[0_28px_90px_rgba(59,130,246,0.12)] backdrop-blur-2xl sm:p-8 dark:border-white/15 dark:bg-slate-950/90 dark:shadow-[0_28px_90px_rgba(2,6,23,0.45)] lg:col-span-5 xl:col-span-6">
+            <div className="pointer-events-none absolute -right-20 -top-20 h-52 w-52 rounded-full bg-cyan-300/24 blur-3xl dark:bg-cyan-300/22" />
+            <div className="pointer-events-none absolute -bottom-16 -left-12 h-48 w-48 rounded-full bg-blue-300/24 blur-3xl dark:bg-blue-500/20" />
 
             <div className="relative">
               <div className="inline-flex items-center gap-2 rounded-full border border-blue-300/70 bg-white/70 px-3.5 py-1.5 text-xs font-medium text-slate-700 dark:border-cyan-300/35 dark:bg-slate-900/80 dark:text-cyan-50">
@@ -372,8 +372,8 @@ const Auth = () => {
           </section>
 
           <section className="lg:col-span-7 xl:col-span-6">
-            <Card className="relative h-full overflow-hidden rounded-[2rem] border border-slate-200/90 bg-white/74 p-6 shadow-[0_22px_70px_rgba(59,130,246,0.14)] backdrop-blur-2xl sm:p-8 dark:border-white/14 dark:bg-slate-950/68 dark:shadow-[0_22px_70px_rgba(2,6,23,0.58)]">
-              <div className="pointer-events-none absolute -top-14 right-[-4rem] h-40 w-40 rounded-full bg-cyan-300/18 blur-3xl dark:bg-cyan-300/20" />
+            <Card className="relative h-full overflow-hidden rounded-[2rem] border border-slate-200/70 bg-white/95 p-6 shadow-[0_28px_90px_rgba(59,130,246,0.12)] backdrop-blur-2xl sm:p-8 dark:border-white/15 dark:bg-slate-950/85 dark:shadow-[0_28px_90px_rgba(2,6,23,0.45)]">
+              <div className="pointer-events-none absolute -top-14 right-[-4rem] h-40 w-40 rounded-full bg-cyan-300/24 blur-3xl dark:bg-cyan-300/22" />
               <div className="relative">
                 <div className="mb-6 text-center">
                   <h2 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-50">Aide</h2>
