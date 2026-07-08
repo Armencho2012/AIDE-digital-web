@@ -656,7 +656,7 @@ const Landing = () => {
       const isDarkTheme = theme === "dark";
       const baseBodyBackground = isDarkTheme ? "#050816" : "#f9fafb";
       const baseBodyColor = isDarkTheme ? "#f8fafc" : "#111827";
-      const targetBodyBackground = isDarkTheme ? "#1e1b4b" : "#eff6ff";
+      const targetBodyBackground = isDarkTheme ? "#1e1b4b" : "#eef2ff";
       const targetBodyColor = isDarkTheme ? "#eef2ff" : "#0f172a";
       const body = document.body;
       if (!body) return;
@@ -756,21 +756,33 @@ const Landing = () => {
             ease: "none",
             scrollTrigger: {
               trigger: blueSection,
-              start: "top 88%",
-              end: "top 12%",
+              start: "top 92%",
+              end: "top 22%",
               scrub: true,
             },
           });
 
-          const transitionTextColor = isDarkTheme ? "#f8fbff" : "#0f172a";
+          const transitionTextColor = isDarkTheme ? "#e2e8f0" : "#334155";
 
           gsap.to("#transition-zone [data-invert]", {
             color: transitionTextColor,
             ease: "none",
             scrollTrigger: {
               trigger: transitionTarget,
-              start: "top 88%",
-              end: "top 18%",
+              start: "top 92%",
+              end: "top 22%",
+              scrub: true,
+            },
+          });
+
+          gsap.to("#transition-zone [data-reveal]", {
+            backgroundColor: isDarkTheme ? "rgba(15,23,42,0.72)" : "rgba(248,250,252,0.92)",
+            borderColor: isDarkTheme ? "rgba(255,255,255,0.16)" : "rgba(203,213,225,0.7)",
+            ease: "none",
+            scrollTrigger: {
+              trigger: transitionTarget,
+              start: "top 92%",
+              end: "top 22%",
               scrub: true,
             },
           });
@@ -1194,8 +1206,8 @@ const Landing = () => {
 
       {/* TODO: INSERT REAL TESTIMONIALS HERE — requires verified student data */}
 
-      <section id="blue-section" className="relative pb-16 pt-6 text-slate-950">
-        <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_18%_0%,rgba(191,219,254,0.45),transparent_45%),radial-gradient(circle_at_84%_8%,rgba(56,189,248,0.24),transparent_42%),linear-gradient(180deg,rgba(219,234,254,1)_0%,rgba(191,219,254,0.95)_65%,rgba(164,211,254,1)_100%)] dark:bg-[radial-gradient(circle_at_20%_0%,rgba(56,189,248,0.22),transparent_44%),radial-gradient(circle_at_86%_10%,rgba(56,189,248,0.2),transparent_42%),linear-gradient(180deg,rgba(6,13,34,0.56)_0%,rgba(2,7,20,0.88)_100%)]" />
+<section id="blue-section" className="relative pb-16 pt-6 text-slate-900 dark:text-slate-100">
+        <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_18%_0%,rgba(191,219,254,0.36),transparent_45%),radial-gradient(circle_at_84%_8%,rgba(56,189,248,0.18),transparent_42%),linear-gradient(180deg,rgba(249,250,255,1)_0%,rgba(226,239,255,0.95)_55%,rgba(204,226,255,1)_100%)] dark:bg-[radial-gradient(circle_at_20%_0%,rgba(56,189,248,0.22),transparent_44%),radial-gradient(circle_at_86%_10%,rgba(56,189,248,0.18),transparent_42%),linear-gradient(180deg,rgba(6,13,34,0.56)_0%,rgba(2,7,20,0.88)_100%)]" />
 
         <section id="what-you-can-do" className="container mx-auto max-w-7xl px-4 pb-16">
           <div data-reveal className="mb-8 max-w-3xl">
@@ -1282,7 +1294,7 @@ const Landing = () => {
         <section id="transition-zone" className="container mx-auto max-w-7xl px-4 pb-16">
           <div
             data-reveal
-            className="rounded-[2rem] border border-slate-200/50 bg-white/90 p-6 backdrop-blur-xl md:p-10 dark:border-white/15 dark:bg-slate-950/60"
+            className="rounded-[2rem] border border-slate-200/70 bg-slate-50/96 p-6 backdrop-blur-xl md:p-10 dark:border-white/15 dark:bg-slate-950/68"
           >
             <h2 data-invert className="text-2xl font-bold tracking-tight text-slate-950 md:text-4xl dark:text-white">
               Why Our AI Study Tool Outperforms Traditional Methods
