@@ -622,11 +622,11 @@ const Landing = () => {
     let cancelled = false;
     let cleanup: (() => void) | undefined;
 
+
     const initMotion = async () => {
-      const [{ gsap }, { ScrollTrigger }, { default: Lenis }] = await Promise.all([
+      const [{ gsap }, { ScrollTrigger }] = await Promise.all([
         import("gsap"),
         import("gsap/ScrollTrigger"),
-        import("lenis"),
       ]);
 
       if (cancelled) return;
@@ -634,40 +634,26 @@ const Landing = () => {
       gsap.registerPlugin(ScrollTrigger);
       const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-      const lenis = new Lenis({
-        duration: 1.05,
-        smoothWheel: true,
-        smoothTouch: false,
-        lerp: 0.09,
-        wheelMultiplier: 0.9,
-        touchMultiplier: 1.1,
-        anchors: true,
-      });
-
-      const onLenisScroll = () => ScrollTrigger.update();
-      const onTick = (time: number) => {
-        lenis.raf(time * 1000);
-      };
-
-      lenis.on("scroll", onLenisScroll);
-      gsap.ticker.add(onTick);
+      const onScroll = () => ScrollTrigger.update();
+      window.addEventListener("scroll", onScroll);
       gsap.ticker.lagSmoothing(500, 33);
       const media = ScrollTrigger.matchMedia();
       const isDarkTheme = theme === "dark";
-      const baseBodyBackground = isDarkTheme ? "#050816" : "#f9fafb";
+      // Keep full-page gradients controlled by the Landing wrapper itself.
+      // Animating document.body background/foreground here can “wipe out” the gradient
+      // and cause inconsistent contrast during scroll transitions.
       const baseBodyColor = isDarkTheme ? "#f8fafc" : "#111827";
-      const targetBodyBackground = isDarkTheme ? "#1e1b4b" : "#eef2ff";
-      const targetBodyColor = isDarkTheme ? "#eef2ff" : "#0f172a";
       const body = document.body;
       if (!body) return;
-      const previousBodyBackground = body.style.backgroundColor;
       const previousBodyColor = body.style.color;
       const previousRootColor = root.style.color;
 
-      gsap.set(body, { backgroundColor: baseBodyBackground, color: baseBodyColor });
+
+      gsap.set(body, { color: baseBodyColor });
       gsap.set(root, { color: baseBodyColor });
       const blueSection = root.querySelector<HTMLElement>("#blue-section");
       const transitionTarget = blueSection || root;
+
 
       const ctx = gsap.context(() => {
         if (prefersReducedMotion) {
@@ -727,32 +713,36 @@ const Landing = () => {
           );
         });
 
-        gsap.to("[data-depth='panel']", {
-          yPercent: -9,
-          ease: "none",
-          scrollTrigger: {
-            trigger: root,
-            start: "top top",
-            end: "bottom top",
-            scrub: 0.5,
-          },
-        });
+        // remove the rectangular preview panel parallax motion on initial scroll
+        // gsap.to("[data-depth='panel']", {
+        //   yPercent: -9,
+        //   ease: "none",
+        //   scrollTrigger: {
+        //     trigger: root,
+        //     start: "top top",
+        //     end: "bottom top",
+        //     scrub: 0.5,
+        //   },
+        // });
 
-        gsap.to("[data-depth='halo']", {
-          yPercent: -14,
-          ease: "none",
-          scrollTrigger: {
-            trigger: root,
-            start: "top top",
-            end: "bottom top",
-            scrub: 0.6,
-          },
-        });
+        // disable the halo parallax motion to keep the hero section static
+        // gsap.to("[data-depth='halo']", {
+        //   yPercent: -14,
+        //   ease: "none",
+        //   scrollTrigger: {
+        //     trigger: root,
+        //     start: "top top",
+        //     end: "bottom top",
+        //     scrub: 0.6,
+        //   },
+        // });
 
         if (blueSection) {
+          // Only animate text color during the scroll transition; keep background controlled by the wrapper gradients.
+          const targetBodyColor = isDarkTheme ? "#eef2ff" : "#0f172a";
           gsap.to(body, {
-            backgroundColor: targetBodyBackground,
             color: targetBodyColor,
+
             ease: "none",
             scrollTrigger: {
               trigger: blueSection,
@@ -761,6 +751,7 @@ const Landing = () => {
               scrub: true,
             },
           });
+
 
           const transitionTextColor = isDarkTheme ? "#e2e8f0" : "#334155";
 
@@ -935,17 +926,15 @@ const Landing = () => {
       window.addEventListener("resize", handleResize);
       ScrollTrigger.refresh();
 
-      cleanup = () => {
+        cleanup = () => {
         window.removeEventListener("resize", handleResize);
+        window.removeEventListener("scroll", onScroll);
         ctx.revert();
-        lenis.off("scroll", onLenisScroll);
-        lenis.destroy();
         media.kill();
-        gsap.ticker.remove(onTick);
-        body.style.backgroundColor = previousBodyBackground;
         body.style.color = previousBodyColor;
         root.style.color = previousRootColor;
       };
+
     };
 
     void initMotion().catch((error) => {
@@ -961,16 +950,11 @@ const Landing = () => {
   return (
     <div
       ref={rootRef}
-      className="min-h-screen overflow-x-hidden text-[#111827] dark:text-slate-100"
+      className="min-h-screen overflow-x-hidden bg-[radial-gradient(circle_at_top,rgba(56,189,248,0.18),rgba(245,249,255,0.94),rgba(255,255,255,1))] text-[#111827] dark:bg-[radial-gradient(circle_at_top,rgba(96,165,250,0.18),rgba(15,23,42,0.96),rgba(15,23,42,1))] dark:text-slate-100"
     >
-      <div
-        data-depth="halo"
-        className="pointer-events-none fixed inset-x-0 top-[-14vh] -z-10 h-[66vh] bg-[radial-gradient(circle_at_14%_18%,rgba(56,189,248,0.42),transparent_42%),radial-gradient(circle_at_86%_8%,rgba(125,211,252,0.3),transparent_44%)] dark:bg-[radial-gradient(circle_at_12%_20%,rgba(56,189,248,0.28),transparent_42%),radial-gradient(circle_at_88%_12%,rgba(99,102,241,0.25),transparent_46%)]"
-      />
-
       <nav
         data-nav
-        className="sticky top-0 z-50 border-b border-slate-200/90 bg-white/82 backdrop-blur-xl dark:border-white/10 dark:bg-slate-950/58"
+        className="sticky top-0 z-50 border-b border-slate-200/90 bg-transparent backdrop-blur-xl dark:border-white/10 dark:bg-transparent"
       >
         <div className="container mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
           <div className="flex items-center gap-2">
@@ -1039,10 +1023,7 @@ const Landing = () => {
       </nav>
 
       <section className="container mx-auto max-w-7xl px-4 pb-14 pt-16 md:pt-20">
-        <div className="relative overflow-hidden rounded-[2.2rem] border border-slate-200/90 bg-[linear-gradient(135deg,#ffffff_0%,#f9fafb_48%,#f4f6ff_100%)] p-6 shadow-[0_28px_80px_rgba(56,189,248,0.14)] md:p-10 dark:border-white/10 dark:bg-[radial-gradient(circle_at_14%_16%,rgba(56,189,248,0.22),transparent_42%),radial-gradient(circle_at_88%_12%,rgba(67,227,216,0.2),transparent_45%),linear-gradient(145deg,#050816_0%,#0a1230_58%,#111b45_100%)] dark:shadow-[0_30px_90px_rgba(2,6,23,0.72)]">
-          <div className="pointer-events-none absolute inset-0 opacity-35 [background-image:linear-gradient(to_right,rgba(15,23,42,0.06)_1px,transparent_1px),linear-gradient(to_bottom,rgba(15,23,42,0.06)_1px,transparent_1px)] [background-size:72px_72px] dark:opacity-48 dark:[background-image:linear-gradient(to_right,rgba(56,189,248,0.14)_1px,transparent_1px),linear-gradient(to_bottom,rgba(56,189,248,0.12)_1px,transparent_1px)]" />
-          <div className="pointer-events-none absolute -left-24 top-16 h-64 w-64 rounded-full bg-sky-200/55 blur-3xl dark:bg-sky-400/20" />
-          <div className="pointer-events-none absolute -right-20 bottom-0 h-64 w-64 rounded-full bg-sky-200/55 blur-3xl dark:bg-cyan-400/22" />
+        <div className="relative p-0 md:p-0 bg-transparent shadow-none border-none rounded-none">
 
           <div className="relative grid items-center gap-8 lg:grid-cols-12 xl:gap-10">
             <div className="lg:col-span-6 xl:col-span-7">
@@ -1103,15 +1084,13 @@ const Landing = () => {
               </div>
             </div>
 
-            <div data-preview-panel data-depth="panel" className="lg:col-span-6 xl:col-span-5">
+            <div data-preview-panel className="lg:col-span-6 xl:col-span-5">
               <div className="relative mx-auto w-full max-w-[27rem]">
                 <div
                   data-mascot-glow
-                  className="pointer-events-none absolute inset-x-12 top-10 h-44 rounded-full bg-[radial-gradient(circle,rgba(56,189,248,0.82)_0%,rgba(99,102,241,0.5)_44%,rgba(42,34,109,0)_80%)] opacity-0 blur-3xl"
+                  className="pointer-events-none absolute inset-x-12 top-10 h-44 rounded-full opacity-0 blur-3xl"
                 />
-                <Card className="relative overflow-hidden rounded-[1.85rem] border border-slate-200/90 bg-white/56 p-5 shadow-[0_36px_100px_rgba(15,23,42,0.14)] backdrop-blur-3xl dark:border-white/16 dark:bg-slate-950/48 dark:shadow-[0_36px_100px_rgba(2,6,23,0.72)]">
-                  <div className="pointer-events-none absolute -top-20 right-[-5.5rem] h-44 w-44 rounded-full bg-sky-200/45 blur-3xl dark:bg-sky-400/22" />
-                  <div className="pointer-events-none absolute bottom-0 left-[-5rem] h-40 w-40 rounded-full bg-indigo-200/45 blur-3xl dark:bg-indigo-400/22" />
+                <Card className="relative overflow-hidden rounded-[1.85rem] bg-transparent p-0 shadow-none border-none">
 
                   <div className="relative mb-4 flex items-center justify-between">
                     <div>
@@ -1207,7 +1186,6 @@ const Landing = () => {
       {/* TODO: INSERT REAL TESTIMONIALS HERE — requires verified student data */}
 
 <section id="blue-section" className="relative pb-16 pt-6 text-slate-900 dark:text-slate-100">
-        <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_18%_0%,rgba(191,219,254,0.36),transparent_45%),radial-gradient(circle_at_84%_8%,rgba(56,189,248,0.18),transparent_42%),linear-gradient(180deg,rgba(249,250,255,1)_0%,rgba(226,239,255,0.95)_55%,rgba(204,226,255,1)_100%)] dark:bg-[radial-gradient(circle_at_20%_0%,rgba(56,189,248,0.22),transparent_44%),radial-gradient(circle_at_86%_10%,rgba(56,189,248,0.18),transparent_42%),linear-gradient(180deg,rgba(6,13,34,0.56)_0%,rgba(2,7,20,0.88)_100%)]" />
 
         <section id="what-you-can-do" className="container mx-auto max-w-7xl px-4 pb-16">
           <div data-reveal className="mb-8 max-w-3xl">
@@ -1245,7 +1223,7 @@ const Landing = () => {
         <section id="access-anywhere" className="container mx-auto max-w-7xl px-4 pb-16">
           <div
             data-reveal
-            className="relative overflow-hidden rounded-[2rem] border border-white/18 bg-white/[0.08] p-6 backdrop-blur-xl md:p-10"
+            className="relative overflow-hidden rounded-[2rem] border border-white/18 bg-transparent p-6 backdrop-blur-xl md:p-10"
           >
             <h2 className="text-2xl font-semibold tracking-tight text-slate-50 md:text-4xl">
               Access the Aide AI Study Tool Anywhere, Anytime
@@ -1294,7 +1272,7 @@ const Landing = () => {
         <section id="transition-zone" className="container mx-auto max-w-7xl px-4 pb-16">
           <div
             data-reveal
-            className="rounded-[2rem] border border-slate-200/70 bg-slate-50/96 p-6 backdrop-blur-xl md:p-10 dark:border-white/15 dark:bg-slate-950/68"
+            className="rounded-[2rem] border border-slate-200/70 bg-transparent p-6 backdrop-blur-xl md:p-10 dark:border-white/15 dark:bg-transparent"
           >
             <h2 data-invert className="text-2xl font-bold tracking-tight text-slate-950 md:text-4xl dark:text-white">
               Why Our AI Study Tool Outperforms Traditional Methods
