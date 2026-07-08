@@ -656,8 +656,8 @@ const Landing = () => {
       const isDarkTheme = theme === "dark";
       const baseBodyBackground = isDarkTheme ? "#050816" : "#f9fafb";
       const baseBodyColor = isDarkTheme ? "#f8fafc" : "#111827";
-      const targetBodyBackground = isDarkTheme ? "#1e1b4b" : "#4338ca";
-      const targetBodyColor = "#eef2ff";
+      const targetBodyBackground = isDarkTheme ? "#1e1b4b" : "#eff6ff";
+      const targetBodyColor = isDarkTheme ? "#eef2ff" : "#0f172a";
       const body = document.body;
       if (!body) return;
       const previousBodyBackground = body.style.backgroundColor;
@@ -762,8 +762,10 @@ const Landing = () => {
             },
           });
 
+          const transitionTextColor = isDarkTheme ? "#f8fbff" : "#0f172a";
+
           gsap.to("#transition-zone [data-invert]", {
-            color: "#f8fbff",
+            color: transitionTextColor,
             ease: "none",
             scrollTrigger: {
               trigger: transitionTarget,
@@ -774,8 +776,8 @@ const Landing = () => {
           });
 
           gsap.to("[data-nav]", {
-            backgroundColor: isDarkTheme ? "rgba(22, 27, 63, 0.78)" : "rgba(42, 47, 113, 0.64)",
-            borderColor: "rgba(255,255,255,0.22)",
+            backgroundColor: isDarkTheme ? "rgba(22, 27, 63, 0.78)" : "rgba(255, 255, 255, 0.92)",
+            borderColor: isDarkTheme ? "rgba(255,255,255,0.22)" : "rgba(148,163,184,0.35)",
             ease: "none",
             scrollTrigger: {
               trigger: blueSection,
@@ -786,7 +788,7 @@ const Landing = () => {
           });
 
           gsap.to("[data-nav-muted]", {
-            color: "#dfe5ff",
+            color: isDarkTheme ? "#dfe5ff" : "#475569",
             ease: "none",
             scrollTrigger: {
               trigger: blueSection,
@@ -797,7 +799,7 @@ const Landing = () => {
           });
 
           gsap.to("[data-nav-strong]", {
-            color: "#ffffff",
+            color: isDarkTheme ? "#ffffff" : "#0f172a",
             ease: "none",
             scrollTrigger: {
               trigger: blueSection,
@@ -951,7 +953,7 @@ const Landing = () => {
     >
       <div
         data-depth="halo"
-        className="pointer-events-none fixed inset-x-0 top-[-14vh] -z-10 h-[66vh] bg-[radial-gradient(circle_at_14%_18%,rgba(196,181,253,0.42),transparent_42%),radial-gradient(circle_at_86%_8%,rgba(125,211,252,0.3),transparent_44%)] dark:bg-[radial-gradient(circle_at_12%_20%,rgba(167,139,250,0.28),transparent_42%),radial-gradient(circle_at_88%_12%,rgba(99,102,241,0.25),transparent_46%)]"
+        className="pointer-events-none fixed inset-x-0 top-[-14vh] -z-10 h-[66vh] bg-[radial-gradient(circle_at_14%_18%,rgba(56,189,248,0.42),transparent_42%),radial-gradient(circle_at_86%_8%,rgba(125,211,252,0.3),transparent_44%)] dark:bg-[radial-gradient(circle_at_12%_20%,rgba(56,189,248,0.28),transparent_42%),radial-gradient(circle_at_88%_12%,rgba(99,102,241,0.25),transparent_46%)]"
       />
 
       <nav
@@ -960,7 +962,7 @@ const Landing = () => {
       >
         <div className="container mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
           <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-violet-600 to-indigo-500 shadow-lg shadow-violet-500/30">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-sky-600 to-cyan-500 shadow-lg shadow-sky-500/30">
               <Sparkles className="h-4 w-4 text-white" />
             </div>
             <span data-nav-strong className="text-lg font-semibold tracking-tight text-slate-950 dark:text-zinc-50">
@@ -978,7 +980,7 @@ const Landing = () => {
                   data-nav-strong={language === item.code ? "true" : undefined}
                   className={`rounded-full px-2.5 py-1 text-xs transition-colors ${
                     language === item.code
-                      ? "bg-violet-600 text-white dark:bg-violet-400/35 dark:text-violet-50"
+                      ? "bg-sky-600 text-white dark:bg-sky-400/35 dark:text-sky-50"
                       : "text-slate-600 hover:text-slate-900 dark:text-zinc-300 dark:hover:text-white"
                   }`}
                 >
@@ -1017,7 +1019,7 @@ const Landing = () => {
             >
               <Settings className="h-4 w-4" />
             </Button>
-            <Button asChild size="sm" className="rounded-full bg-violet-600 text-white hover:bg-violet-500 dark:bg-violet-500 dark:text-white dark:hover:bg-violet-400">
+            <Button asChild size="sm" className="rounded-full bg-sky-600 text-white hover:bg-sky-500 dark:bg-sky-500 dark:text-white dark:hover:bg-sky-400">
               <Link data-nav-strong to="/auth">{t.signIn}</Link>
             </Button>
           </div>
@@ -1025,15 +1027,15 @@ const Landing = () => {
       </nav>
 
       <section className="container mx-auto max-w-7xl px-4 pb-14 pt-16 md:pt-20">
-        <div className="relative overflow-hidden rounded-[2.2rem] border border-slate-200/90 bg-[linear-gradient(135deg,#ffffff_0%,#f9fafb_48%,#f4f6ff_100%)] p-6 shadow-[0_28px_80px_rgba(79,70,229,0.14)] md:p-10 dark:border-white/10 dark:bg-[radial-gradient(circle_at_14%_16%,rgba(167,139,250,0.22),transparent_42%),radial-gradient(circle_at_88%_12%,rgba(99,102,241,0.2),transparent_45%),linear-gradient(145deg,#050816_0%,#0a1230_58%,#111b45_100%)] dark:shadow-[0_30px_90px_rgba(2,6,23,0.72)]">
-          <div className="pointer-events-none absolute inset-0 opacity-35 [background-image:linear-gradient(to_right,rgba(15,23,42,0.06)_1px,transparent_1px),linear-gradient(to_bottom,rgba(15,23,42,0.06)_1px,transparent_1px)] [background-size:72px_72px] dark:opacity-48 dark:[background-image:linear-gradient(to_right,rgba(216,180,254,0.14)_1px,transparent_1px),linear-gradient(to_bottom,rgba(216,180,254,0.12)_1px,transparent_1px)]" />
-          <div className="pointer-events-none absolute -left-24 top-16 h-64 w-64 rounded-full bg-violet-200/55 blur-3xl dark:bg-violet-400/20" />
-          <div className="pointer-events-none absolute -right-20 bottom-0 h-64 w-64 rounded-full bg-sky-200/55 blur-3xl dark:bg-indigo-400/20" />
+        <div className="relative overflow-hidden rounded-[2.2rem] border border-slate-200/90 bg-[linear-gradient(135deg,#ffffff_0%,#f9fafb_48%,#f4f6ff_100%)] p-6 shadow-[0_28px_80px_rgba(56,189,248,0.14)] md:p-10 dark:border-white/10 dark:bg-[radial-gradient(circle_at_14%_16%,rgba(56,189,248,0.22),transparent_42%),radial-gradient(circle_at_88%_12%,rgba(67,227,216,0.2),transparent_45%),linear-gradient(145deg,#050816_0%,#0a1230_58%,#111b45_100%)] dark:shadow-[0_30px_90px_rgba(2,6,23,0.72)]">
+          <div className="pointer-events-none absolute inset-0 opacity-35 [background-image:linear-gradient(to_right,rgba(15,23,42,0.06)_1px,transparent_1px),linear-gradient(to_bottom,rgba(15,23,42,0.06)_1px,transparent_1px)] [background-size:72px_72px] dark:opacity-48 dark:[background-image:linear-gradient(to_right,rgba(56,189,248,0.14)_1px,transparent_1px),linear-gradient(to_bottom,rgba(56,189,248,0.12)_1px,transparent_1px)]" />
+          <div className="pointer-events-none absolute -left-24 top-16 h-64 w-64 rounded-full bg-sky-200/55 blur-3xl dark:bg-sky-400/20" />
+          <div className="pointer-events-none absolute -right-20 bottom-0 h-64 w-64 rounded-full bg-sky-200/55 blur-3xl dark:bg-cyan-400/22" />
 
           <div className="relative grid items-center gap-8 lg:grid-cols-12 xl:gap-10">
             <div className="lg:col-span-6 xl:col-span-7">
-              <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-violet-200/90 bg-white/62 px-3.5 py-1.5 text-xs font-medium text-slate-700 shadow-sm shadow-violet-100/75 backdrop-blur-xl dark:border-white/18 dark:bg-slate-900/58 dark:text-slate-100 dark:shadow-black/35">
-                <Brain className="h-3.5 w-3.5 text-violet-600 dark:text-violet-200" />
+              <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-sky-200/90 bg-white/62 px-3.5 py-1.5 text-xs font-medium text-slate-700 shadow-sm shadow-sky-100/75 backdrop-blur-xl dark:border-white/18 dark:bg-slate-900/58 dark:text-slate-100 dark:shadow-black/35">
+                <Brain className="h-3.5 w-3.5 text-sky-600 dark:text-sky-200" />
                 {t.heroEyebrow}
               </div>
 
@@ -1060,7 +1062,7 @@ const Landing = () => {
                 <Button
                   asChild
                   size="lg"
-                  className="h-12 rounded-full bg-violet-600 px-7 text-base text-white shadow-lg shadow-violet-500/35 transition-all hover:bg-violet-500 hover:shadow-violet-400/35 dark:bg-violet-500 dark:text-white dark:hover:bg-violet-400"
+                  className="h-12 rounded-full bg-sky-600 px-7 text-base text-white shadow-lg shadow-sky-500/35 transition-all hover:bg-sky-500 hover:shadow-sky-400/35 dark:bg-sky-500 dark:text-white dark:hover:bg-sky-400"
                 >
                   <Link to="/auth">
                     {t.startNow}
@@ -1071,7 +1073,7 @@ const Landing = () => {
                   asChild
                   size="lg"
                   variant="outline"
-                  className="h-12 rounded-full border-violet-300/80 bg-white/60 px-7 text-base text-violet-700 transition-colors hover:bg-white/88 dark:border-violet-200/40 dark:bg-slate-900/58 dark:text-violet-100 dark:hover:bg-slate-900/86"
+                  className="h-12 rounded-full border-sky-300/80 bg-white/60 px-7 text-base text-sky-700 transition-colors hover:bg-white/88 dark:border-sky-200/40 dark:bg-slate-900/58 dark:text-sky-100 dark:hover:bg-slate-900/86"
                 >
                   <a href="#how-it-works">{t.seeFlow}</a>
                 </Button>
@@ -1093,10 +1095,10 @@ const Landing = () => {
               <div className="relative mx-auto w-full max-w-[27rem]">
                 <div
                   data-mascot-glow
-                  className="pointer-events-none absolute inset-x-12 top-10 h-44 rounded-full bg-[radial-gradient(circle,rgba(167,139,250,0.82)_0%,rgba(99,102,241,0.5)_44%,rgba(42,34,109,0)_80%)] opacity-0 blur-3xl"
+                  className="pointer-events-none absolute inset-x-12 top-10 h-44 rounded-full bg-[radial-gradient(circle,rgba(56,189,248,0.82)_0%,rgba(99,102,241,0.5)_44%,rgba(42,34,109,0)_80%)] opacity-0 blur-3xl"
                 />
                 <Card className="relative overflow-hidden rounded-[1.85rem] border border-slate-200/90 bg-white/56 p-5 shadow-[0_36px_100px_rgba(15,23,42,0.14)] backdrop-blur-3xl dark:border-white/16 dark:bg-slate-950/48 dark:shadow-[0_36px_100px_rgba(2,6,23,0.72)]">
-                  <div className="pointer-events-none absolute -top-20 right-[-5.5rem] h-44 w-44 rounded-full bg-violet-200/45 blur-3xl dark:bg-violet-400/22" />
+                  <div className="pointer-events-none absolute -top-20 right-[-5.5rem] h-44 w-44 rounded-full bg-sky-200/45 blur-3xl dark:bg-sky-400/22" />
                   <div className="pointer-events-none absolute bottom-0 left-[-5rem] h-40 w-40 rounded-full bg-indigo-200/45 blur-3xl dark:bg-indigo-400/22" />
 
                   <div className="relative mb-4 flex items-center justify-between">
@@ -1112,9 +1114,9 @@ const Landing = () => {
 
                   <img
                     data-mascot-shell
-                    src="/aide-mascot.svg"
-                    alt="Aide mascot"
-                    className="relative mx-auto w-full max-w-[16.5rem] drop-shadow-[0_24px_40px_rgba(79,70,229,0.28)] dark:drop-shadow-[0_24px_44px_rgba(15,23,42,0.72)] md:max-w-[18rem]"
+                    src="/Aido.png"
+                    alt="Aido mascot"
+                    className="relative mx-auto w-full max-w-[18rem] drop-shadow-[0_24px_40px_rgba(56,189,248,0.28)] dark:drop-shadow-[0_24px_44px_rgba(15,23,42,0.72)] sm:max-w-[42rem]"
                   />
 
                   <div className="mt-4 grid grid-cols-3 gap-2">
@@ -1123,7 +1125,7 @@ const Landing = () => {
                         key={tab}
                         className={`rounded-xl px-2 py-1.5 text-center text-[11px] font-medium ${
                           idx === 0
-                            ? "bg-violet-600 text-white dark:bg-violet-500/35 dark:text-violet-50"
+                            ? "bg-sky-600 text-white dark:bg-sky-500/35 dark:text-sky-50"
                             : "bg-white/82 text-slate-600 dark:bg-slate-900/78 dark:text-zinc-200"
                         }`}
                       >
@@ -1134,7 +1136,7 @@ const Landing = () => {
 
                   <div className="mt-3 grid gap-2 sm:grid-cols-2">
                     <div className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white/84 p-2 text-[11px] text-slate-700 dark:border-white/12 dark:bg-slate-900/74 dark:text-zinc-200">
-                      <FileText className="h-3.5 w-3.5 text-violet-500 dark:text-violet-300" />
+                      <FileText className="h-3.5 w-3.5 text-sky-500 dark:text-sky-300" />
                       {t.previewWidgetQuizNotes}
                     </div>
                     <div className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white/84 p-2 text-[11px] text-slate-700 dark:border-white/12 dark:bg-slate-900/74 dark:text-zinc-200">
@@ -1153,7 +1155,7 @@ const Landing = () => {
 
       <section id="how-it-works" className="container mx-auto max-w-7xl px-4 pb-16">
         <div data-reveal className="mb-8">
-          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-violet-600 dark:text-violet-300">
+          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-sky-600 dark:text-sky-300">
             How it works
           </p>
           <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-950 md:text-4xl dark:text-zinc-50">
@@ -1175,10 +1177,10 @@ const Landing = () => {
                 className="h-full rounded-2xl border border-slate-200/85 bg-black/84 p-5 shadow-[0_16px_36px_rgba(15,23,42,0.08)] backdrop-blur-xl transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_24px_42px_rgba(79,70,229,0.14)] dark:border-white/14 dark:bg-slate-950/52 dark:shadow-[0_16px_36px_rgba(2,6,23,0.5)]"
               >
                 <div className="mb-4 flex items-center justify-between">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-violet-100 text-violet-700 dark:bg-violet-500/15 dark:text-violet-200">
-                    <Icon className="h-4.5 w-4.5 text-violet-700 dark:text-violet-200" />
+                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-sky-100 text-sky-700 dark:bg-sky-500/15 dark:text-sky-200">
+                    <Icon className="h-4.5 w-4.5 text-sky-700 dark:text-sky-200" />
                   </div>
-                  <span className="rounded-full border border-violet-200/85 bg-white px-2.5 py-1 text-[11px] font-semibold text-violet-600 dark:border-white/18 dark:bg-white/[0.05] dark:text-violet-100">
+                  <span className="rounded-full border border-sky-200/85 bg-white px-2.5 py-1 text-[11px] font-semibold text-sky-600 dark:border-white/18 dark:bg-white/[0.05] dark:text-sky-100">
                     Step {index + 1}
                   </span>
                 </div>
@@ -1192,13 +1194,13 @@ const Landing = () => {
 
       {/* TODO: INSERT REAL TESTIMONIALS HERE — requires verified student data */}
 
-      <section id="blue-section" className="relative pb-16 pt-6 text-slate-50">
-        <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_18%_0%,rgba(167,139,250,0.3),transparent_45%),radial-gradient(circle_at_84%_8%,rgba(56,189,248,0.32),transparent_42%),linear-gradient(180deg,rgba(21,34,78,0.45)_0%,rgba(9,15,40,0.8)_100%)] dark:bg-[radial-gradient(circle_at_20%_0%,rgba(139,92,246,0.22),transparent_44%),radial-gradient(circle_at_86%_10%,rgba(56,189,248,0.2),transparent_42%),linear-gradient(180deg,rgba(6,13,34,0.56)_0%,rgba(2,7,20,0.88)_100%)]" />
+      <section id="blue-section" className="relative pb-16 pt-6 text-slate-950">
+        <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_18%_0%,rgba(191,219,254,0.45),transparent_45%),radial-gradient(circle_at_84%_8%,rgba(56,189,248,0.24),transparent_42%),linear-gradient(180deg,rgba(219,234,254,1)_0%,rgba(191,219,254,0.95)_65%,rgba(164,211,254,1)_100%)] dark:bg-[radial-gradient(circle_at_20%_0%,rgba(56,189,248,0.22),transparent_44%),radial-gradient(circle_at_86%_10%,rgba(56,189,248,0.2),transparent_42%),linear-gradient(180deg,rgba(6,13,34,0.56)_0%,rgba(2,7,20,0.88)_100%)]" />
 
         <section id="what-you-can-do" className="container mx-auto max-w-7xl px-4 pb-16">
           <div data-reveal className="mb-8 max-w-3xl">
-            <h2 className="text-2xl font-semibold tracking-tight text-slate-50 md:text-4xl">What you can do with Aide</h2>
-            <p className="mt-3 text-blue-100/82">{t.featuresSubtitle}</p>
+            <h2 className="text-2xl font-semibold tracking-tight text-slate-950 md:text-4xl">What you can do with Aide</h2>
+            <p className="mt-3 text-slate-700">{t.featuresSubtitle}</p>
           </div>
 
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
@@ -1208,16 +1210,16 @@ const Landing = () => {
                 <Card
                   key={card.title}
                   data-bento-card
-                  className="h-full rounded-2xl border border-white/18 bg-white/[0.08] p-5 backdrop-blur-xl transition-all duration-500 hover:-translate-y-1 hover:border-violet-200/55 hover:bg-white/[0.14]"
+                  className="h-full rounded-2xl border border-slate-200/50 bg-white/90 p-5 backdrop-blur-xl transition-all duration-500 hover:-translate-y-1 hover:border-sky-300/60 hover:bg-sky-50 dark:border-white/10 dark:bg-slate-950/50"
                 >
-                  <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-white/18 dark:bg-white/16">
-                    <Icon className="h-5 w-5 text-white" />
+                  <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-sky-100/70 dark:bg-sky-500/20">
+                    <Icon className="h-5 w-5 text-slate-950 dark:text-white" />
                   </div>
-                  <h3 className="mb-2 text-base font-semibold text-slate-50">{card.title}</h3>
-                  <p className="mb-4 text-sm leading-relaxed text-blue-100/85">{card.description}</p>
+                  <h3 className="mb-2 text-base font-semibold text-slate-950 dark:text-white">{card.title}</h3>
+                  <p className="mb-4 text-sm leading-relaxed text-slate-700 dark:text-slate-300">{card.description}</p>
                   <div className="flex flex-wrap gap-2">
                     {card.chips.map((chip) => (
-                      <span key={chip} className="rounded-full border border-white/18 bg-black/20 px-2.5 py-1 text-[11px] text-blue-50/92">
+                      <span key={chip} className="rounded-full border border-slate-200/60 bg-slate-100/85 px-2.5 py-1 text-[11px] text-slate-700 dark:border-white/20 dark:bg-slate-900/50 dark:text-slate-100">
                         {chip}
                       </span>
                     ))}
@@ -1244,12 +1246,12 @@ const Landing = () => {
               {accessCards.map((item) => {
                 const Icon = item.icon;
                 return (
-                  <Card key={item.title} className="h-full rounded-2xl border border-white/16 bg-black/16 p-4 backdrop-blur-xl dark:bg-white/[0.07]">
-                    <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-white/15">
-                      <Icon className="h-4.5 w-4.5 text-cyan-100" />
+                  <Card key={item.title} className="h-full rounded-2xl border border-slate-200/60 bg-white/90 p-4 backdrop-blur-xl dark:border-white/15 dark:bg-slate-950/60">
+                    <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-sky-500 text-white">
+                      <Icon className="h-4.5 w-4.5" />
                     </div>
-                    <p className="mb-1.5 text-sm font-semibold text-white">{item.title}</p>
-                    <p className="text-sm text-blue-100/82">{item.description}</p>
+                    <p className="mb-1.5 text-sm font-semibold text-slate-950 dark:text-white">{item.title}</p>
+                    <p className="text-sm text-slate-700 dark:text-slate-300">{item.description}</p>
                   </Card>
                 );
               })}
@@ -1280,32 +1282,32 @@ const Landing = () => {
         <section id="transition-zone" className="container mx-auto max-w-7xl px-4 pb-16">
           <div
             data-reveal
-            className="rounded-[2rem] border border-white/18 bg-white/[0.08] p-6 backdrop-blur-xl md:p-10"
+            className="rounded-[2rem] border border-slate-200/50 bg-white/90 p-6 backdrop-blur-xl md:p-10 dark:border-white/15 dark:bg-slate-950/60"
           >
-            <h2 data-invert className="text-2xl font-bold tracking-tight text-slate-50 md:text-4xl">
+            <h2 data-invert className="text-2xl font-bold tracking-tight text-slate-950 md:text-4xl dark:text-white">
               Why Our AI Study Tool Outperforms Traditional Methods
             </h2>
-            <p data-invert className="mt-3 max-w-4xl text-sm leading-relaxed text-blue-100/84 md:text-base">
+            <p data-invert className="mt-3 max-w-4xl text-sm leading-relaxed text-slate-700 md:text-base dark:text-slate-300">
               Experience the advantages of AI-powered studying compared to conventional methods. Our approach is
               designed to save you time, boost retention, and make learning more effective.
             </p>
 
             <div className="mt-7 overflow-hidden rounded-2xl border border-white/16">
-              <div className="hidden grid-cols-3 bg-white/[0.1] text-xs font-semibold uppercase tracking-[0.14em] text-blue-100/85 md:grid">
+              <div className="hidden grid-cols-3 bg-slate-100/80 text-xs font-semibold uppercase tracking-[0.14em] text-slate-700 md:grid dark:bg-slate-900/40 dark:text-blue-100/85">
                 <div className="px-4 py-3">Category</div>
                 <div className="px-4 py-3">Aide AI</div>
                 <div className="px-4 py-3">Traditional Methods</div>
               </div>
               {comparisonRows.map((row) => (
-                <div key={row.metric} className="grid border-t border-white/12 md:grid-cols-3 md:items-center">
-                  <div className="px-4 pt-4 text-sm font-semibold text-slate-50 md:py-4">{row.metric}</div>
-                  <div className="px-4 py-2 text-sm text-emerald-200 md:py-4">
+                <div key={row.metric} className="grid border-t border-slate-200/40 md:grid-cols-3 md:items-center dark:border-white/10">
+                  <div className="px-4 pt-4 text-sm font-semibold text-slate-950 md:py-4 dark:text-white">{row.metric}</div>
+                  <div className="px-4 py-2 text-sm text-slate-700 md:py-4 dark:text-emerald-200">
                     <span className="inline-flex items-center gap-1.5">
-                      <Check className="h-4 w-4" />
+                      <Check className="h-4 w-4 text-slate-700 dark:text-emerald-200" />
                       {row.aide}
                     </span>
                   </div>
-                  <div className="px-4 pb-4 text-sm text-slate-100/84 md:py-4">{row.traditional}</div>
+                  <div className="px-4 pb-4 text-sm text-slate-700/90 md:py-4 dark:text-slate-100/84">{row.traditional}</div>
                 </div>
               ))}
             </div>
@@ -1321,25 +1323,25 @@ const Landing = () => {
               <details
                 key={item.q}
                 data-reveal
-                className="group rounded-2xl border border-white/16 bg-white/[0.08] backdrop-blur-xl"
+                className="group rounded-3xl border border-slate-200/60 bg-white/90 dark:border-white/10 dark:bg-slate-950/50"
               >
-                <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-5 py-4 text-sm font-medium text-slate-50">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-5 py-4 text-sm font-medium text-slate-950 transition-colors duration-300 hover:text-slate-900 dark:text-white dark:hover:text-slate-100">
                   <span>{item.q}</span>
-                  <span className="text-lg leading-none text-blue-100 transition-transform duration-300 group-open:rotate-45">+</span>
+                  <span className="text-lg leading-none text-slate-950 transition-transform duration-300 group-open:rotate-45 dark:text-white">+</span>
                 </summary>
-                <p className="px-5 pb-5 text-sm leading-relaxed text-blue-100/85">{item.a}</p>
+                <p className="px-5 pb-5 text-sm leading-relaxed text-slate-700 dark:text-slate-300">{item.a}</p>
               </details>
             ))}
           </div>
         </section>
 
         <footer className="container mx-auto max-w-7xl px-4 pb-10">
-          <div className="rounded-3xl border-t border-[rgba(255,255,255,0.1)] bg-gradient-to-b from-slate-950/88 via-slate-950/92 to-blue-950/92 px-6 py-8 shadow-[0_-18px_45px_rgba(2,6,23,0.28)] md:px-8 md:py-10">
+          <div className="rounded-3xl border-t border-slate-200/60 bg-slate-100/90 px-6 py-8 shadow-sm shadow-slate-400/10 transition-colors duration-300 dark:border-white/10 dark:bg-slate-950/95 dark:shadow-none md:px-8 md:py-10">
             <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
               <div>
-                <h4 className="text-xs font-semibold uppercase tracking-[0.2em] text-white/90">Product</h4>
+                <h4 className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-950/90 dark:text-white/90">Product</h4>
                 <div className="mt-4 flex flex-col gap-2.5 text-sm font-medium">
-                  <Link to="/help" className="text-white/60 transition-colors duration-300 hover:text-white">
+                  <Link to="/help" className="text-slate-700 transition-colors duration-300 hover:text-slate-950 dark:text-slate-300 dark:hover:text-white">
                     About Page
                   </Link>
                   <a href="#how-it-works" className="text-white/60 transition-colors duration-300 hover:text-white">
@@ -1352,20 +1354,20 @@ const Landing = () => {
               </div>
 
               <div>
-                <h4 className="text-xs font-semibold uppercase tracking-[0.2em] text-white/90">Support</h4>
+                <h4 className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-950/90 dark:text-white/90">Support</h4>
                 <div className="mt-4 flex flex-col gap-2.5 text-sm font-medium">
-                  <Link to="/help" className="text-white/60 transition-colors duration-300 hover:text-white">
+                  <Link to="/help" className="text-slate-700 transition-colors duration-300 hover:text-slate-950 dark:text-slate-300 dark:hover:text-white">
                     Help Center
                   </Link>
                   <a
                     href="mailto:myaide.study@gmail.com?subject=Aide%20Support"
-                    className="text-white/60 transition-colors duration-300 hover:text-white"
+                    className="text-slate-700 transition-colors duration-300 hover:text-slate-950 dark:text-slate-300 dark:hover:text-white"
                   >
                     Support
                   </a>
                   <a
                     href="mailto:myaide.study@gmail.com"
-                    className="text-white/60 transition-colors duration-300 hover:text-white"
+                    className="text-slate-700 transition-colors duration-300 hover:text-slate-950 dark:text-slate-300 dark:hover:text-white"
                   >
                     Contact Us
                   </a>
@@ -1373,28 +1375,28 @@ const Landing = () => {
               </div>
 
               <div>
-                <h4 className="text-xs font-semibold uppercase tracking-[0.2em] text-white/90">Legal</h4>
+                <h4 className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-950/90 dark:text-white/90">Legal</h4>
                 <div className="mt-4 flex flex-col gap-2.5 text-sm font-medium">
-                  <Link to="/help#privacy-policy" className="text-white/60 transition-colors duration-300 hover:text-white">
+                  <Link to="/help#privacy-policy" className="text-slate-700 transition-colors duration-300 hover:text-slate-950 dark:text-slate-300 dark:hover:text-white">
                     Privacy Policy
                   </Link>
-                  <Link to="/help#terms-of-service" className="text-white/60 transition-colors duration-300 hover:text-white">
+                  <Link to="/help#terms-of-service" className="text-slate-700 transition-colors duration-300 hover:text-slate-950 dark:text-slate-300 dark:hover:text-white">
                     Terms of Service
                   </Link>
-                  <Link to="/help#community-guidelines" className="text-white/60 transition-colors duration-300 hover:text-white">
+                  <Link to="/help#community-guidelines" className="text-slate-700 transition-colors duration-300 hover:text-slate-950 dark:text-slate-300 dark:hover:text-white">
                     Community Guidelines
                   </Link>
                 </div>
               </div>
 
               <div>
-                <h4 className="text-xs font-semibold uppercase tracking-[0.2em] text-white/90">Social</h4>
+                <h4 className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-950/90 dark:text-white/90">Social</h4>
                 <div className="mt-4 flex flex-col gap-2.5 text-sm font-medium">
                   <a
                     href="https://www.instagram.com/myaide.study/"
                     target="_blank"
                     rel="noreferrer"
-                    className="text-white/60 transition-colors duration-300 hover:text-white"
+                    className="text-slate-700 transition-colors duration-300 hover:text-slate-950 dark:text-slate-300 dark:hover:text-white"
                   >
                     Instagram
                   </a>
@@ -1402,7 +1404,7 @@ const Landing = () => {
                     href="https://www.facebook.com/profile.php?id=61587146428880"
                     target="_blank"
                     rel="noreferrer"
-                    className="text-white/60 transition-colors duration-300 hover:text-white"
+                    className="text-slate-700 transition-colors duration-300 hover:text-slate-950 dark:text-slate-300 dark:hover:text-white"
                   >
                     Facebook
                   </a>
@@ -1410,7 +1412,7 @@ const Landing = () => {
               </div>
             </div>
 
-            <div className="mt-8 border-t border-white/10 pt-4 text-xs tracking-wide text-white/70">
+            <div className="mt-8 border-t border-slate-200/60 pt-4 text-xs tracking-wide text-slate-700/80 dark:border-white/10 dark:text-slate-300">
               © 2026 Aide. All rights reserved.
             </div>
           </div>
