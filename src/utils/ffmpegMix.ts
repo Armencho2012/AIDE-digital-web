@@ -13,7 +13,7 @@ worker.onmessage = (event: MessageEvent<MixResult>) => {
   const entry = pending.get(message.id)
   if (!entry) return
   pending.delete(message.id)
-  if (!message.ok) {
+  if (message.ok === false) {
     entry.reject(new Error(message.error))
     return
   }

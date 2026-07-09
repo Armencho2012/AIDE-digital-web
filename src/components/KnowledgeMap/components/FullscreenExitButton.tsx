@@ -11,7 +11,7 @@ export const FullscreenExitButton = ({ onExit }: FullscreenExitButtonProps) => {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    let timeout: NodeJS.Timeout;
+    let timeout: ReturnType<typeof setTimeout>;
 
     const handleMouseMove = (e: MouseEvent) => {
       // Show button when mouse is near the top
