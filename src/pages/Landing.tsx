@@ -958,9 +958,8 @@ const Landing = () => {
       >
         <div className="container mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
           <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-sky-600 to-cyan-500 shadow-lg shadow-sky-500/30">
-              <Sparkles className="h-4 w-4 text-white" />
-            </div>
+            <img src="/Aido.png" alt="Aide logo" className="h-8 w-8 rounded-full object-contain" />
+
             <span data-nav-strong className="text-lg font-semibold tracking-tight text-slate-950 dark:text-zinc-50">
               Aide
             </span>
@@ -1055,7 +1054,7 @@ const Landing = () => {
                 <Button
                   asChild
                   size="lg"
-                  className="h-12 rounded-full bg-sky-600 px-7 text-base text-white shadow-lg shadow-sky-500/35 transition-all hover:bg-sky-500 hover:shadow-sky-400/35 dark:bg-gradient-to-r dark:from-indigo-500 dark:to-fuchsia-500 dark:text-white dark:shadow-indigo-500/40 dark:hover:from-indigo-400 dark:hover:to-fuchsia-400"
+                  className="h-12 rounded-full bg-sky-600 px-7 text-base text-white shadow-lg shadow-sky-500/35 transition-all hover:bg-sky-500 hover:shadow-sky-400/35 dark:bg-indigo-500 dark:text-white dark:shadow-indigo-500/40 dark:hover:bg-indigo-400"
                 >
                   <Link to="/auth">
                     {t.startNow}
@@ -1107,7 +1106,7 @@ const Landing = () => {
                     data-mascot-shell
                     src="/Aido.png"
                     alt="Aido mascot"
-                    className="relative mx-auto w-full max-w-[18rem] drop-shadow-[0_24px_40px_rgba(56,189,248,0.28)] dark:drop-shadow-[0_24px_44px_rgba(15,23,42,0.72)] sm:max-w-[42rem]"
+                    className="relative mx-auto w-full max-w-[18rem] drop-shadow-[0_24px_40px_rgba(56,189,248,0.28)] dark:drop-shadow-[0_24px_44px_rgba(15,23,42,0.72)]"
                   />
 
                   <div className="mt-4 grid grid-cols-3 gap-2">
