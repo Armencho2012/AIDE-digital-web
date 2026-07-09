@@ -320,7 +320,7 @@ const ChatPage = () => {
                     disabled={isSending}
                   />
                   <Button
-                    onClick={handleSend}
+                    onClick={() => handleSend()}
                     disabled={!input.trim() || isSending}
                     className="px-3 sm:px-4"
                     size="default"

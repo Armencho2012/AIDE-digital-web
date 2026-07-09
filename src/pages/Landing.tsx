@@ -637,7 +637,7 @@ const Landing = () => {
       const onScroll = () => ScrollTrigger.update();
       window.addEventListener("scroll", onScroll);
       gsap.ticker.lagSmoothing(500, 33);
-      const media = ScrollTrigger.matchMedia();
+      const media = gsap.matchMedia();
       const isDarkTheme = theme === "dark";
       // Keep full-page gradients controlled by the Landing wrapper itself.
       // Animating document.body background/foreground here can “wipe out” the gradient

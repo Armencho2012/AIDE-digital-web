@@ -1,3 +1,4 @@
+/// <reference lib="webworker" />
 import { FFmpeg } from '@ffmpeg/ffmpeg'
 import { toBlobURL } from '@ffmpeg/util'
 

@@ -195,7 +195,8 @@ const ContentDetail = () => {
           generationOptions
         });
 
-        const existingAnalysis = content.analysis_data || {};
+        const existingAnalysis: any = content.analysis_data || {};
+        const data: any = await Promise.resolve(dataRaw);
 
         const mergeQuizQuestions = (existing: any[] = [], incoming: any[] = []) => {
           const seen = new Set(
