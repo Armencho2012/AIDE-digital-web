@@ -958,7 +958,7 @@ const Landing = () => {
       >
         <div className="container mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
           <div className="flex items-center gap-2">
-            <img src="/Aido.png" alt="Aide logo" className="h-8 w-8 rounded-full object-contain" />
+            <img src="/favicon.ico" alt="Aide logo" className="h-8 w-8 rounded-full object-contain" />
 
             <span data-nav-strong className="text-lg font-semibold tracking-tight text-slate-950 dark:text-zinc-50">
               Aide
