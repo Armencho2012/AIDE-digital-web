@@ -950,7 +950,7 @@ const Landing = () => {
   return (
     <div
       ref={rootRef}
-      className="min-h-screen overflow-x-hidden bg-[radial-gradient(circle_at_top,rgba(56,189,248,0.18),rgba(245,249,255,0.94),rgba(255,255,255,1))] text-[#111827] dark:bg-[radial-gradient(circle_at_top,rgba(96,165,250,0.18),rgba(15,23,42,0.96),rgba(15,23,42,1))] dark:text-slate-100"
+      className="min-h-screen overflow-x-hidden bg-[radial-gradient(ellipse_120%_80%_at_50%_-10%,rgba(56,189,248,0.42),rgba(199,220,255,0.5)_28%,rgba(240,247,255,0.85)_55%,rgba(255,255,255,1)_85%)] text-[#111827] dark:bg-[radial-gradient(ellipse_120%_80%_at_50%_-10%,rgba(129,140,248,0.38),rgba(59,89,152,0.32)_26%,rgba(20,30,58,0.98)_60%,rgba(10,15,32,1)_88%)] dark:text-slate-100"
     >
       <nav
         data-nav
@@ -1055,7 +1055,7 @@ const Landing = () => {
                 <Button
                   asChild
                   size="lg"
-                  className="h-12 rounded-full bg-sky-600 px-7 text-base text-white shadow-lg shadow-sky-500/35 transition-all hover:bg-sky-500 hover:shadow-sky-400/35 dark:bg-sky-500 dark:text-white dark:hover:bg-sky-400"
+                  className="h-12 rounded-full bg-sky-600 px-7 text-base text-white shadow-lg shadow-sky-500/35 transition-all hover:bg-sky-500 hover:shadow-sky-400/35 dark:bg-gradient-to-r dark:from-indigo-500 dark:to-fuchsia-500 dark:text-white dark:shadow-indigo-500/40 dark:hover:from-indigo-400 dark:hover:to-fuchsia-400"
                 >
                   <Link to="/auth">
                     {t.startNow}
@@ -1165,7 +1165,7 @@ const Landing = () => {
               <Card
                 key={item.title}
                 data-reveal
-                className="h-full rounded-2xl border border-slate-200/85 bg-black/84 p-5 shadow-[0_16px_36px_rgba(15,23,42,0.08)] backdrop-blur-xl transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_24px_42px_rgba(79,70,229,0.14)] dark:border-white/14 dark:bg-slate-950/52 dark:shadow-[0_16px_36px_rgba(2,6,23,0.5)]"
+                className="h-full rounded-2xl border border-slate-200/85 bg-white/88 p-5 shadow-[0_16px_36px_rgba(15,23,42,0.08)] backdrop-blur-xl transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_24px_42px_rgba(79,70,229,0.14)] dark:border-white/14 dark:bg-slate-950/52 dark:shadow-[0_16px_36px_rgba(2,6,23,0.5)]"
               >
                 <div className="mb-4 flex items-center justify-between">
                   <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-sky-100 text-sky-700 dark:bg-sky-500/15 dark:text-sky-200">
@@ -1189,8 +1189,8 @@ const Landing = () => {
 
         <section id="what-you-can-do" className="container mx-auto max-w-7xl px-4 pb-16">
           <div data-reveal className="mb-8 max-w-3xl">
-            <h2 className="text-2xl font-semibold tracking-tight text-slate-950 md:text-4xl">What you can do with Aide</h2>
-            <p className="mt-3 text-slate-700">{t.featuresSubtitle}</p>
+            <h2 className="text-2xl font-semibold tracking-tight text-slate-800 md:text-4xl dark:text-zinc-50">What you can do with Aide</h2>
+            <p className="mt-3 text-slate-600 dark:text-zinc-300">{t.featuresSubtitle}</p>
           </div>
 
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
@@ -1202,11 +1202,11 @@ const Landing = () => {
                   data-bento-card
                   className="h-full rounded-2xl border border-slate-200/50 bg-white/90 p-5 backdrop-blur-xl transition-all duration-500 hover:-translate-y-1 hover:border-sky-300/60 hover:bg-sky-50 dark:border-white/10 dark:bg-slate-950/50"
                 >
-                  <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-sky-100/70 dark:bg-sky-500/20">
-                    <Icon className="h-5 w-5 text-slate-950 dark:text-white" />
+                  <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-sky-100/80 dark:bg-sky-500/20">
+                    <Icon className="h-5 w-5 text-sky-600 dark:text-sky-300" />
                   </div>
-                  <h3 className="mb-2 text-base font-semibold text-slate-950 dark:text-white">{card.title}</h3>
-                  <p className="mb-4 text-sm leading-relaxed text-slate-700 dark:text-slate-300">{card.description}</p>
+                  <h3 className="mb-2 text-base font-semibold text-slate-800 dark:text-white">{card.title}</h3>
+                  <p className="mb-4 text-sm leading-relaxed text-slate-600 dark:text-slate-300">{card.description}</p>
                   <div className="flex flex-wrap gap-2">
                     {card.chips.map((chip) => (
                       <span key={chip} className="rounded-full border border-slate-200/60 bg-slate-100/85 px-2.5 py-1 text-[11px] text-slate-700 dark:border-white/20 dark:bg-slate-900/50 dark:text-slate-100">
@@ -1225,10 +1225,10 @@ const Landing = () => {
             data-reveal
             className="relative overflow-hidden rounded-[2rem] border border-white/18 bg-transparent p-6 backdrop-blur-xl md:p-10"
           >
-            <h2 className="text-2xl font-semibold tracking-tight text-slate-50 md:text-4xl">
+            <h2 className="text-2xl font-semibold tracking-tight text-slate-800 md:text-4xl dark:text-slate-50">
               Access the Aide AI Study Tool Anywhere, Anytime
             </h2>
-            <p className="mt-3 max-w-3xl text-blue-100/84">
+            <p className="mt-3 max-w-3xl text-slate-600 dark:text-blue-100/84">
               Start on desktop, continue on mobile, and keep your progress synced across every study session.
             </p>
 
@@ -1258,7 +1258,7 @@ const Landing = () => {
                 asChild
                 size="lg"
                 variant="outline"
-                className="border-white/28 bg-white/5 text-slate-50 hover:bg-white/16"
+                className="border-blue-300 bg-white/70 text-blue-700 hover:bg-white/90 dark:border-white/28 dark:bg-white/5 dark:text-slate-50 dark:hover:bg-white/16"
               >
                 <Link to="/help">
                   <HelpCircle className="mr-2 h-5 w-5" />
@@ -1297,7 +1297,7 @@ const Landing = () => {
                       {row.aide}
                     </span>
                   </div>
-                  <div className="px-4 pb-4 text-sm text-slate-700/90 md:py-4 dark:text-slate-100/84">{row.traditional}</div>
+                  <div className="px-4 pb-4 text-sm text-slate-700 md:py-4 dark:text-slate-100">{row.traditional}</div>
                 </div>
               ))}
             </div>
@@ -1306,7 +1306,7 @@ const Landing = () => {
 
         <section id="faq" className="container mx-auto max-w-7xl px-4 pb-16">
           <div data-reveal className="mb-8">
-            <h2 className="text-2xl font-semibold tracking-tight text-slate-50 md:text-4xl">FAQ&apos;s</h2>
+            <h2 className="text-2xl font-semibold tracking-tight text-slate-800 md:text-4xl dark:text-slate-50">FAQ&apos;s</h2>
           </div>
           <div className="space-y-3">
             {faqItems.map((item) => (
