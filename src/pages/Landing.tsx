@@ -622,7 +622,6 @@ const Landing = () => {
     let cancelled = false;
     let cleanup: (() => void) | undefined;
 
-
     const initMotion = async () => {
       const [{ gsap }, { ScrollTrigger }] = await Promise.all([
         import("gsap"),
@@ -639,21 +638,20 @@ const Landing = () => {
       gsap.ticker.lagSmoothing(500, 33);
       const media = ScrollTrigger.matchMedia();
       const isDarkTheme = theme === "dark";
-      // Keep full-page gradients controlled by the Landing wrapper itself.
-      // Animating document.body background/foreground here can “wipe out” the gradient
-      // and cause inconsistent contrast during scroll transitions.
+      const baseBodyBackground = isDarkTheme ? "#050816" : "#f9fafb";
       const baseBodyColor = isDarkTheme ? "#f8fafc" : "#111827";
+      const targetBodyBackground = isDarkTheme ? "#1e1b4b" : "#eef2ff";
+      const targetBodyColor = isDarkTheme ? "#eef2ff" : "#0f172a";
       const body = document.body;
       if (!body) return;
+      const previousBodyBackground = body.style.backgroundColor;
       const previousBodyColor = body.style.color;
       const previousRootColor = root.style.color;
 
-
-      gsap.set(body, { color: baseBodyColor });
+      gsap.set(body, { backgroundColor: baseBodyBackground, color: baseBodyColor });
       gsap.set(root, { color: baseBodyColor });
       const blueSection = root.querySelector<HTMLElement>("#blue-section");
       const transitionTarget = blueSection || root;
-
 
       const ctx = gsap.context(() => {
         if (prefersReducedMotion) {
@@ -738,11 +736,9 @@ const Landing = () => {
         // });
 
         if (blueSection) {
-          // Only animate text color during the scroll transition; keep background controlled by the wrapper gradients.
-          const targetBodyColor = isDarkTheme ? "#eef2ff" : "#0f172a";
           gsap.to(body, {
+            backgroundColor: targetBodyBackground,
             color: targetBodyColor,
-
             ease: "none",
             scrollTrigger: {
               trigger: blueSection,
@@ -751,7 +747,6 @@ const Landing = () => {
               scrub: true,
             },
           });
-
 
           const transitionTextColor = isDarkTheme ? "#e2e8f0" : "#334155";
 
@@ -926,15 +921,15 @@ const Landing = () => {
       window.addEventListener("resize", handleResize);
       ScrollTrigger.refresh();
 
-        cleanup = () => {
+      cleanup = () => {
         window.removeEventListener("resize", handleResize);
         window.removeEventListener("scroll", onScroll);
         ctx.revert();
         media.kill();
+        body.style.backgroundColor = previousBodyBackground;
         body.style.color = previousBodyColor;
         root.style.color = previousRootColor;
       };
-
     };
 
     void initMotion().catch((error) => {
