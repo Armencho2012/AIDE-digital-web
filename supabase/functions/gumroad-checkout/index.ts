@@ -69,7 +69,7 @@ Deno.serve(async (req: Request) => {
     const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY");
     const gumroadAccessToken = Deno.env.get("GUMROAD_ACCESS_TOKEN");
     if (!supabaseUrl || !supabaseAnonKey) {
-      return new Response(JSON.stringify({ error: "Missing environment configuration" }), {
+      return new Response(JSON.stringify({ error: "Service temporarily unavailable" }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
@@ -103,7 +103,7 @@ Deno.serve(async (req: Request) => {
     if (!baseUrl) {
       if (!gumroadAccessToken || !productId) {
         return new Response(JSON.stringify({
-          error: `Missing Gumroad credentials for resolving product URL for plan ${planType}`,
+          error: "Checkout is temporarily unavailable",
         }), {
           status: 500,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -126,7 +126,8 @@ Deno.serve(async (req: Request) => {
 
         if (!productsResp.ok) {
           const details = await productsResp.text();
-          return new Response(JSON.stringify({ error: "Unable to query Gumroad products", details }), {
+          console.error("Unable to query Gumroad products:", productsResp.status, details);
+          return new Response(JSON.stringify({ error: "Checkout is temporarily unavailable" }), {
             status: 502,
             headers: { ...corsHeaders, "Content-Type": "application/json" },
           });
@@ -148,9 +149,9 @@ Deno.serve(async (req: Request) => {
     }
 
     if (!baseUrl) {
+      console.error("Checkout URL could not be resolved for configured product:", planType);
       return new Response(JSON.stringify({
-        error: "Checkout URL could not be resolved for configured product",
-        plan: planType,
+        error: "Checkout is temporarily unavailable",
       }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -176,7 +177,8 @@ Deno.serve(async (req: Request) => {
     });
   } catch (error) {
     const err = error as Error;
-    return new Response(JSON.stringify({ error: err.message || "Unexpected error" }), {
+    console.error("gumroad-checkout error:", err.message);
+    return new Response(JSON.stringify({ error: "An unexpected error occurred. Please try again." }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });

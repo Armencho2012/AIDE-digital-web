@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Slider } from '@/components/ui/slider';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 type Language = 'en' | 'ru' | 'hy' | 'ko';
 
@@ -57,15 +58,60 @@ const labels = {
   }
 };
 
+const isRemoteUrl = (value: string) => /^https?:\/\//i.test(value);
+
 export const PodcastPlayer = ({ podcastUrl, language, onGenerate, isGenerating }: PodcastPlayerProps) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [playbackUrl, setPlaybackUrl] = useState<string | null>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
   const { toast } = useToast();
 
   const l = labels[language] || labels.en;
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const resolvePlaybackUrl = async () => {
+      setPlaybackUrl(null);
+      setIsPlaying(false);
+      setCurrentTime(0);
+      setDuration(0);
+
+      if (!podcastUrl) return;
+
+      if (isRemoteUrl(podcastUrl)) {
+        setPlaybackUrl(podcastUrl);
+        return;
+      }
+
+      const { data, error } = await supabase.storage
+        .from('podcasts')
+        .createSignedUrl(podcastUrl, 60 * 60);
+
+      if (!isMounted) return;
+
+      if (error || !data?.signedUrl) {
+        console.error('Failed to create signed podcast URL:', error);
+        toast({
+          title: 'Error',
+          description: 'Failed to prepare podcast playback',
+          variant: 'destructive'
+        });
+        return;
+      }
+
+      setPlaybackUrl(data.signedUrl);
+    };
+
+    resolvePlaybackUrl();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [podcastUrl, toast]);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -88,7 +134,7 @@ export const PodcastPlayer = ({ podcastUrl, language, onGenerate, isGenerating }
 
   const togglePlayback = () => {
     const audio = audioRef.current;
-    if (!audio) return;
+    if (!audio || !playbackUrl) return;
 
     if (isPlaying) {
       audio.pause();
@@ -115,10 +161,10 @@ export const PodcastPlayer = ({ podcastUrl, language, onGenerate, isGenerating }
   };
 
   const handleDownload = async () => {
-    if (!podcastUrl) return;
+    if (!playbackUrl) return;
 
     try {
-      const response = await fetch(podcastUrl);
+      const response = await fetch(playbackUrl);
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -210,6 +256,7 @@ export const PodcastPlayer = ({ podcastUrl, language, onGenerate, isGenerating }
               variant="outline"
               size="icon"
               onClick={togglePlayback}
+              disabled={!playbackUrl}
               className="h-14 w-14 rounded-full bg-primary/10 hover:bg-primary/20 border-primary/30"
             >
               {isPlaying ? (
@@ -251,6 +298,7 @@ export const PodcastPlayer = ({ podcastUrl, language, onGenerate, isGenerating }
               variant="outline"
               size="sm"
               onClick={handleDownload}
+              disabled={!playbackUrl}
               className="hidden sm:flex"
             >
               <Download className="h-4 w-4 mr-2" />
@@ -263,13 +311,14 @@ export const PodcastPlayer = ({ podcastUrl, language, onGenerate, isGenerating }
             variant="outline"
             size="sm"
             onClick={handleDownload}
+            disabled={!playbackUrl}
             className="w-full sm:hidden"
           >
             <Download className="h-4 w-4 mr-2" />
             {l.download}
           </Button>
 
-          <audio ref={audioRef} src={podcastUrl} className="hidden" />
+          <audio ref={audioRef} src={playbackUrl || undefined} className="hidden" />
         </div>
       </CardContent>
     </Card>

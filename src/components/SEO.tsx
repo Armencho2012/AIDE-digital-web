@@ -26,7 +26,7 @@ const localeMap: Record<Language, string> = {
 
 const landingSeoByLanguage: Record<Language, LocalizedSEO> = {
   en: {
-    title: 'Aide | Turn Notes into Quizzes, Flashcards, Maps, and Podcasts',
+    title: 'Aide | AI Study Assistant',
     description:
       'Aide transforms notes, PDFs, and images into AI study workflows: summaries, quizzes, flashcards, neural maps, tutor chat, course plans, and podcasts.',
     keywords:
@@ -56,7 +56,7 @@ const landingSeoByLanguage: Record<Language, LocalizedSEO> = {
 };
 
 const defaultSEO = {
-  title: 'Aide | Turn Notes into Quizzes, Flashcards, Maps, and Podcasts',
+  title: 'Aide | AI Study Assistant',
   description:
     'Aide transforms notes, PDFs, and images into AI study materials: summaries, quizzes, flashcards, knowledge maps, tutor chat, course plans, and podcasts.',
   keywords:
@@ -70,7 +70,7 @@ const pageSEO: Record<string, SEOProps> = {
     robots: 'index, follow',
   },
   '/help': {
-    title: 'Aide Help | Prompting Guide and Study Tips',
+    title: 'Aide Help | Study Tips',
     description:
       'Learn how to write better prompts, choose the right mode, and get stronger AI study results with Aide.',
     keywords: 'Aide help, prompting guide, study prompts, AI study tips',
@@ -83,7 +83,7 @@ const pageSEO: Record<string, SEOProps> = {
     robots: 'noindex, nofollow',
   },
   '/dashboard': {
-    title: 'Dashboard | Aide',
+    title: 'Aide Dashboard | Study Tools',
     description: 'Analyze text, files, and voice input to generate AI study tools in your Aide dashboard.',
     keywords: 'AI study dashboard, learning workflow',
     robots: 'noindex, nofollow',

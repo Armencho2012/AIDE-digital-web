@@ -13,6 +13,11 @@ const RATE_WINDOW_MS = 60000; // 1 minute window
 // Allowed form fields (whitelist)
 const ALLOWED_FIELDS = ['email', 'sale_id', 'product_id', 'event', 'seller_id', 'product_name', 'permalink', 'product_permalink', 'short_product_id', 'full_name', 'purchaser_id', 'subscription_id', 'variants', 'offer_code', 'test', 'ip_country', 'recurrence', 'is_gift_receiver_purchase', 'refunded', 'disputed', 'dispute_won', 'discover_fee_charged', 'can_contact', 'referrer', 'card', 'order_number', 'sale_timestamp', 'license_key', 'is_recurring_charge', 'is_preorder_authorization', 'affiliate', 'affiliate_email', 'is_gift_sender_purchase', 'gift_price', 'resource_name', 'quantity', 'shipping_information', 'url_params', 'custom_fields', 'price', 'gumroad_fee', 'currency'];
 
+type VerifiedGumroadSale = {
+  email: string;
+  productId: string | null;
+};
+
 function isRateLimited(identifier: string): boolean {
   const now = Date.now();
   const record = requestCounts.get(identifier);
@@ -64,8 +69,31 @@ function sanitizeString(input: string): string {
   return input.trim().slice(0, 500); // Limit length and trim
 }
 
+function normalizeEmail(email: unknown): string {
+  return typeof email === 'string' ? email.toLowerCase().trim() : '';
+}
+
+function extractVerifiedSale(data: any): VerifiedGumroadSale | null {
+  const sale = data?.sale;
+  if (data?.success !== true || !sale) return null;
+
+  const email = normalizeEmail(sale.email || sale.purchaser_email || sale.buyer_email);
+  if (!isValidEmail(email)) return null;
+
+  const rawProductId =
+    sale.product_id ||
+    sale.product?.id ||
+    sale.product?.product_id ||
+    null;
+
+  return {
+    email,
+    productId: rawProductId ? String(rawProductId) : null,
+  };
+}
+
 // Verify sale with Gumroad API
-async function verifySaleWithGumroad(saleId: string, accessToken: string): Promise<boolean> {
+async function verifySaleWithGumroad(saleId: string, accessToken: string): Promise<VerifiedGumroadSale | null> {
   try {
     const response = await fetch(`https://api.gumroad.com/v2/sales/${saleId}`, {
       headers: {
@@ -75,14 +103,14 @@ async function verifySaleWithGumroad(saleId: string, accessToken: string): Promi
     
     if (!response.ok) {
       console.error(`Gumroad API verification failed with status ${response.status}`);
-      return false;
+      return null;
     }
     
     const data = await response.json();
-    return data.success === true && data.sale != null;
+    return extractVerifiedSale(data);
   } catch (error) {
     console.error("Gumroad API verification error");
-    return false;
+    return null;
   }
 }
 
@@ -125,7 +153,7 @@ Deno.serve(async (req: Request) => {
       }
     }
 
-    const email = webhookData.email?.toLowerCase().trim();
+    const email = normalizeEmail(webhookData.email);
     const saleId = webhookData.sale_id;
     const productId = webhookData.product_id;
     const event = webhookData.event;
@@ -186,10 +214,34 @@ Deno.serve(async (req: Request) => {
       });
     }
 
-    // CRITICAL: Verify the sale is legitimate by checking with Gumroad API
-    const isValidSale = await verifySaleWithGumroad(saleId, gumroadAccessToken);
-    if (!isValidSale) {
+    if (!isValidEmail(email || '')) {
+      console.error("Invalid email format");
+      return new Response("Invalid request", {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "text/plain" }
+      });
+    }
+
+    // CRITICAL: Verify the sale is legitimate and belongs to the webhook buyer.
+    const verifiedSale = await verifySaleWithGumroad(saleId, gumroadAccessToken);
+    if (!verifiedSale) {
       console.error("Sale verification failed");
+      return new Response("Verification failed", {
+        status: 403,
+        headers: { ...corsHeaders, "Content-Type": "text/plain" }
+      });
+    }
+
+    if (verifiedSale.email !== email) {
+      console.error("Webhook email does not match verified Gumroad buyer email");
+      return new Response("Verification failed", {
+        status: 403,
+        headers: { ...corsHeaders, "Content-Type": "text/plain" }
+      });
+    }
+
+    if (verifiedSale.productId && verifiedSale.productId !== productId) {
+      console.error("Webhook product does not match verified Gumroad sale product");
       return new Response("Verification failed", {
         status: 403,
         headers: { ...corsHeaders, "Content-Type": "text/plain" }
@@ -200,15 +252,6 @@ Deno.serve(async (req: Request) => {
 
     // Handle sale event
     if (event === 'sale' || event === 'subscription_payment_succeeded') {
-      // Validate email format
-      if (!isValidEmail(email || '')) {
-        console.error("Invalid email format");
-        return new Response("Invalid request", {
-          status: 400,
-          headers: { ...corsHeaders, "Content-Type": "text/plain" }
-        });
-      }
-
       // Find user by email
       const { data: authUsers, error: authError } = await supabase.auth.admin.listUsers();
       
@@ -283,7 +326,9 @@ Deno.serve(async (req: Request) => {
             .update({
               status: 'canceled',
             })
-            .eq('user_id', user.id);
+            .eq('user_id', user.id)
+            .eq('gumroad_sale_id', saleId)
+            .eq('gumroad_email', email);
         }
       }
     }

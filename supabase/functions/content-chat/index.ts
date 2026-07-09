@@ -49,7 +49,7 @@ Deno.serve(async (req: Request) => {
 
     const apiKey = Deno.env.get("GEMINI_API_KEY") || Deno.env.get("LOVABLE_API_KEY");
     if (!apiKey) {
-      return new Response(JSON.stringify({ error: "API key not configured (GEMINI_API_KEY/LOVABLE_API_KEY)" }), {
+      return new Response(JSON.stringify({ error: "Service temporarily unavailable" }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" }
       });
@@ -138,13 +138,14 @@ ${historyContext}`;
     if (!response.ok) {
       const errorText = await response.text();
       if (response.status === 429) {
-        return new Response(JSON.stringify({ error: "Rate limits exceeded, please try again later.", details: errorText }), {
+        console.error(`Gemini content-chat rate limit (${selectedModel} @ ${selectedApiVersion}):`, errorText);
+        return new Response(JSON.stringify({ error: "Rate limits exceeded, please try again later." }), {
           status: 429,
           headers: { ...corsHeaders, "Content-Type": "application/json" }
         });
       }
       console.error(`Gemini API error (${selectedModel} @ ${selectedApiVersion}):`, response.status, errorText);
-      return new Response(JSON.stringify({ error: "Gemini API error", model: selectedModel, apiVersion: selectedApiVersion, details: errorText }), {
+      return new Response(JSON.stringify({ error: "AI response failed. Please try again." }), {
         status: 502,
         headers: { ...corsHeaders, "Content-Type": "application/json" }
       });
@@ -227,7 +228,7 @@ ${historyContext}`;
   } catch (err) {
     const error = err as Error;
     console.error("Content chat error:", error.message);
-    return new Response(JSON.stringify({ error: error.message }), {
+    return new Response(JSON.stringify({ error: "An unexpected error occurred. Please try again." }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" }
     });

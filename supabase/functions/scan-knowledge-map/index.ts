@@ -66,7 +66,7 @@ Deno.serve(async (req: Request) => {
     const apiKey = Deno.env.get("GEMINI_API_KEY") || Deno.env.get("LOVABLE_API_KEY");
 
     if (!supabaseUrl || !apiKey || !serviceRoleKey) {
-      return new Response(JSON.stringify({ error: "Missing environment variables (SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, GEMINI_API_KEY/LOVABLE_API_KEY)" }), {
+      return new Response(JSON.stringify({ error: "Service temporarily unavailable" }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" }
       });
@@ -137,7 +137,7 @@ Rules:
     if (!response.ok) {
       const providerError = await response.text();
       console.error(`Gemini API error (${selectedModel} @ ${selectedApiVersion}):`, response.status, providerError);
-      return new Response(JSON.stringify({ error: "Gemini API error", model: selectedModel, apiVersion: selectedApiVersion, details: providerError }), {
+      return new Response(JSON.stringify({ error: "Knowledge map scan failed. Please try again." }), {
         status: 502,
         headers: { ...corsHeaders, "Content-Type": "application/json" }
       });
@@ -146,14 +146,12 @@ Rules:
     const responseData = await response.json();
     const jsonText = extractGeminiText(responseData);
     if (!jsonText) {
+      console.error("Gemini returned an empty scan response:", {
+        promptFeedback: responseData?.promptFeedback ?? null,
+        finishReason: responseData?.candidates?.[0]?.finishReason ?? null
+      });
       return new Response(JSON.stringify({
-        error: "Gemini returned an empty response",
-        model: selectedModel,
-        apiVersion: selectedApiVersion,
-        details: JSON.stringify({
-          promptFeedback: responseData?.promptFeedback ?? null,
-          finishReason: responseData?.candidates?.[0]?.finishReason ?? null
-        })
+        error: "Knowledge map scan returned an empty response. Please try again."
       }), {
         status: 502,
         headers: { ...corsHeaders, "Content-Type": "application/json" }
@@ -168,7 +166,7 @@ Rules:
   } catch (err) {
     const error = err as Error;
     console.error("scan-knowledge-map error:", error.message);
-    return new Response(JSON.stringify({ error: error.message || "An unexpected error occurred" }), {
+    return new Response(JSON.stringify({ error: "An unexpected error occurred. Please try again." }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" }
     });

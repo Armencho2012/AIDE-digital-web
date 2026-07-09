@@ -137,7 +137,7 @@ Deno.serve(async (req: Request) => {
     const apiKey = Deno.env.get("GEMINI_API_KEY") || Deno.env.get("LOVABLE_API_KEY");
 
     if (!supabaseUrl || !supabaseKey || !apiKey || !serviceRoleKey) {
-      return new Response(JSON.stringify({ error: "Missing environment variables (SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY, GEMINI_API_KEY/LOVABLE_API_KEY)" }), {
+      return new Response(JSON.stringify({ error: "Service temporarily unavailable" }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" }
       });
@@ -309,10 +309,7 @@ ${knowledgeMapInstruction ?? ''}`.trim();
           continue;
         }
         return new Response(JSON.stringify({
-          error: isAbort ? "The model request timed out. Please try again." : "Model provider is temporarily unreachable.",
-          model,
-          apiVersion,
-          details: lastProviderError.message
+          error: isAbort ? "The model request timed out. Please try again." : "Model provider is temporarily unreachable."
         }), {
           status: 504,
           headers: { ...corsHeaders, "Content-Type": "application/json" }
@@ -342,10 +339,7 @@ ${knowledgeMapInstruction ?? ''}`.trim();
 
       if (response.status === 429) {
         return new Response(JSON.stringify({
-          error: "Rate limits exceeded, please try again later.",
-          model,
-          apiVersion,
-          details: lastProviderError.message
+          error: "Rate limits exceeded, please try again later."
         }), {
           status: 429,
           headers: { ...corsHeaders, "Content-Type": "application/json" }
@@ -358,10 +352,7 @@ ${knowledgeMapInstruction ?? ''}`.trim();
         lastProviderError.code === 503
       ) {
         return new Response(JSON.stringify({
-          error: "The model is currently experiencing high demand. Please try again shortly.",
-          model,
-          apiVersion,
-          details: lastProviderError.message
+          error: "The model is currently experiencing high demand. Please try again shortly."
         }), {
           status: 503,
           headers: { ...corsHeaders, "Content-Type": "application/json" }
@@ -369,10 +360,7 @@ ${knowledgeMapInstruction ?? ''}`.trim();
       }
 
       return new Response(JSON.stringify({
-        error: "Gemini API error",
-        model,
-        apiVersion,
-        details: lastProviderError.message
+        error: "AI analysis failed. Please try again."
       }), {
         status: 502,
         headers: { ...corsHeaders, "Content-Type": "application/json" }
@@ -381,10 +369,7 @@ ${knowledgeMapInstruction ?? ''}`.trim();
 
     if (!response || !response.ok) {
       return new Response(JSON.stringify({
-        error: "Model provider is temporarily unavailable.",
-        model,
-        apiVersion,
-        details: lastProviderError?.message || `Provider returned ${lastProviderStatus || "unknown status"}`
+        error: "Model provider is temporarily unavailable."
       }), {
         status: 503,
         headers: { ...corsHeaders, "Content-Type": "application/json" }
@@ -393,10 +378,9 @@ ${knowledgeMapInstruction ?? ''}`.trim();
 
     const responseData = await response.json().catch(() => null);
     if (!responseData) {
+      console.error("Gemini returned an invalid JSON payload");
       return new Response(JSON.stringify({
-        error: "Gemini returned an invalid JSON payload",
-        model,
-        apiVersion
+        error: "AI analysis returned an invalid response. Please try again."
       }), {
         status: 502,
         headers: { ...corsHeaders, "Content-Type": "application/json" }
@@ -404,14 +388,12 @@ ${knowledgeMapInstruction ?? ''}`.trim();
     }
     const jsonText = extractGeminiText(responseData);
     if (!jsonText) {
+      console.error("Gemini returned an empty analysis response:", {
+        promptFeedback: responseData?.promptFeedback ?? null,
+        finishReason: responseData?.candidates?.[0]?.finishReason ?? null
+      });
       return new Response(JSON.stringify({
-        error: "Gemini returned an empty response",
-        model,
-        apiVersion,
-        details: JSON.stringify({
-          promptFeedback: responseData?.promptFeedback ?? null,
-          finishReason: responseData?.candidates?.[0]?.finishReason ?? null
-        })
+        error: "AI analysis returned an empty response. Please try again."
       }), {
         status: 502,
         headers: { ...corsHeaders, "Content-Type": "application/json" }
@@ -422,11 +404,9 @@ ${knowledgeMapInstruction ?? ''}`.trim();
       ? analysis.three_bullet_summary.filter((item: unknown) => typeof item === "string" && item.trim().length > 0)
       : [];
     if (summaryItems.length === 0) {
+      console.error("Gemini returned invalid analysis JSON:", jsonText.slice(0, 1200));
       return new Response(JSON.stringify({
-        error: "Gemini returned invalid analysis JSON",
-        model,
-        apiVersion,
-        details: jsonText.slice(0, 1200)
+        error: "AI analysis returned invalid study data. Please try again."
       }), {
         status: 502,
         headers: { ...corsHeaders, "Content-Type": "application/json" }
@@ -489,7 +469,7 @@ ${knowledgeMapInstruction ?? ''}`.trim();
   } catch (err) {
     const error = err as Error;
     console.error("Critical Function Error:", error.message);
-    return new Response(JSON.stringify({ error: error.message || "An unexpected error occurred" }), {
+    return new Response(JSON.stringify({ error: "An unexpected error occurred. Please try again." }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" }
     });

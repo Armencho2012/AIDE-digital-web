@@ -22,6 +22,7 @@ import {
   Sparkles,
   Upload,
   WandSparkles,
+  Youtube,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import type { Language } from "@/lib/settings";
@@ -212,6 +213,12 @@ const copy: Record<Language, LandingCopy> = {
         chips: ["Listen & Learn", "TTS"]
       },
       {
+        icon: Youtube,
+        title: "YouTube Video Summarizer",
+        description: "Paste a YouTube link and turn lectures into study notes.",
+        chips: ["Video", "Summaries", "Lecture Notes"]
+      },
+      {
         icon: Library,
         title: "Easy Exports",
         description: "Move your notes to Notion or PDF instantly.",
@@ -324,6 +331,12 @@ const copy: Record<Language, LandingCopy> = {
         title: "학습 팟캐스트",
         description: "교재 내용을 듣기 편한 팟캐스트로 변환.",
         chips: ["듣는 공부", "TTS"]
+      },
+      {
+        icon: Youtube,
+        title: "YouTube Video Summarizer",
+        description: "유튜브 링크를 넣고 강의 내용을 학습 노트로 바꾸세요.",
+        chips: ["비디오", "요약", "강의 노트"]
       },
       {
         icon: Library,
@@ -440,6 +453,12 @@ const copy: Record<Language, LandingCopy> = {
         chips: ["Слушай", "TTS"]
       },
       {
+        icon: Youtube,
+        title: "Суммаризатор YouTube",
+        description: "Вставьте ссылку на видео и превратите лекции в конспект.",
+        chips: ["Видео", "Кратко", "Лекции"]
+      },
+      {
         icon: Library,
         title: "Экспорт",
         description: "Мгновенно переноси всё в Notion или PDF.",
@@ -552,6 +571,12 @@ const copy: Record<Language, LandingCopy> = {
         title: "Պոդկաստներ",
         description: "Քո նշումները՝ աուդիո ձևաչափով:",
         chips: ["Լսիր", "TTS"]
+      },
+      {
+        icon: Youtube,
+        title: "YouTube ամփոփիչ",
+        description: "Տեղադրիր YouTube հղումը և վերածիր դասախոսությունները նշումների:",
+        chips: ["Տեսանյութ", "Ամփոփում", "Դասախոսություն"]
       },
       {
         icon: Library,
@@ -965,7 +990,10 @@ const Landing = () => {
               {languageSwitch.map((item) => (
                 <button
                   key={item.code}
+                  type="button"
                   onClick={() => setLanguage(item.code)}
+                  aria-pressed={language === item.code}
+                  aria-label={`Switch language to ${item.label}`}
                   data-nav-muted={language !== item.code ? "true" : undefined}
                   data-nav-strong={language === item.code ? "true" : undefined}
                   className={`rounded-full px-2.5 py-1 text-xs transition-colors ${
@@ -1005,6 +1033,7 @@ const Landing = () => {
               variant="outline"
               size="icon"
               onClick={() => setSettingsOpen(true)}
+              aria-label="Open settings"
               className="rounded-full border-slate-300/90 bg-white/85 text-slate-700 hover:bg-slate-100 dark:border-white/18 dark:bg-white/[0.06] dark:text-zinc-200 dark:hover:bg-white/12"
             >
               <Settings className="h-4 w-4" />
@@ -1302,7 +1331,7 @@ const Landing = () => {
 
         <section id="faq" className="container mx-auto max-w-7xl px-4 pb-16">
           <div data-reveal className="mb-8">
-            <h2 className="text-2xl font-semibold tracking-tight text-slate-800 md:text-4xl dark:text-slate-50">FAQ&apos;s</h2>
+            <h2 className="text-2xl font-semibold tracking-tight text-slate-800 md:text-4xl dark:text-slate-50">FAQ</h2>
           </div>
           <div className="space-y-3">
             {faqItems.map((item) => (

@@ -138,7 +138,7 @@ const ContentDetail = () => {
         await supabase
           .from('user_content')
           .update({
-            podcast_url: data.podcast_url,
+            podcast_url: data.podcast_path || data.podcast_url,
             generation_status: {
               ...content.generation_status,
               podcast: true

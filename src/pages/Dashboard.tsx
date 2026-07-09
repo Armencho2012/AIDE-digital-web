@@ -360,19 +360,19 @@ const Dashboard = () => {
             <p className="text-sm sm:text-base text-muted-foreground mt-1">{labels.subtitle}</p>
           </div>
           <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
-            <Button variant="ghost" asChild size="sm" className="text-xs sm:text-sm">
+            <Button variant="ghost" asChild size="sm" className="text-xs sm:text-sm" aria-label="Open library">
               <Link to="/library">
                 <BookOpen className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
                 <span className="hidden sm:inline">{labels.library}</span>
               </Link>
             </Button>
-            <Button variant="ghost" asChild size="sm" className="text-xs sm:text-sm">
+            <Button variant="ghost" asChild size="sm" className="text-xs sm:text-sm" aria-label="View billing and upgrade plans">
               <Link to="/billing">
                 <CreditCard className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
                 <span className="hidden sm:inline">{labels.upgrade}</span>
               </Link>
             </Button>
-            <Button variant="ghost" asChild size="sm" className="text-xs sm:text-sm">
+            <Button variant="ghost" asChild size="sm" className="text-xs sm:text-sm" aria-label="Open profile settings">
               <Link to="/settings">
                 <UserIcon className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
                 <span className="hidden sm:inline">{labels.profile}</span>
@@ -388,6 +388,7 @@ const Dashboard = () => {
               variant="outline"
               size="icon"
               onClick={() => setSettingsOpen(true)}
+              aria-label="Open dashboard settings"
               className="shadow-sm"
             >
               <Settings className="h-5 w-5" />
@@ -400,6 +401,7 @@ const Dashboard = () => {
                 navigate("/auth");
               }}
               className="text-xs sm:text-sm"
+              aria-label="Sign out"
             >
               <LogOut className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
               <span className="hidden sm:inline">{labels.signOut}</span>
