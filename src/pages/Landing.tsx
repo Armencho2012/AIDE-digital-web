@@ -1089,7 +1089,7 @@ const Landing = () => {
                   data-mascot-glow
                   className="pointer-events-none absolute inset-x-12 top-10 h-44 rounded-full opacity-0 blur-3xl"
                 />
-                <Card className="relative overflow-hidden rounded-[1.85rem] bg-transparent p-0 shadow-none border-none">
+                <Card className="relative overflow-hidden rounded-[1.85rem] border border-slate-200/70 bg-white/80 p-5 shadow-[0_20px_60px_rgba(15,23,42,0.12)] backdrop-blur-xl dark:border-white/12 dark:bg-slate-950/60 dark:shadow-[0_20px_60px_rgba(2,6,23,0.55)]">
 
                   <div className="relative mb-4 flex items-center justify-between">
                     <div>
