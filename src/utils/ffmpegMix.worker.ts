@@ -53,16 +53,16 @@ self.onmessage = async (event: MessageEvent<MixRequest>) => {
       '2',
       'out.mp3'
     ])
-    const out = await ffmpeg!.readFile('out.mp3')
-    const buffer = out.buffer.slice(out.byteOffset, out.byteOffset + out.byteLength)
+    const out = (await ffmpeg!.readFile('out.mp3')) as Uint8Array
+    const buffer = out.buffer.slice(out.byteOffset, out.byteOffset + out.byteLength) as ArrayBuffer
     const message: MixResponse = { id, ok: true, data: buffer }
-    ;(self as DedicatedWorkerGlobalScope).postMessage(message, [buffer])
+    ;(self as any).postMessage(message, [buffer])
   } catch (err) {
     const message: MixResponse = {
       id,
       ok: false,
       error: err instanceof Error ? err.message : String(err)
     }
-    ;(self as DedicatedWorkerGlobalScope).postMessage(message)
+    ;(self as any).postMessage(message)
   }
 }
