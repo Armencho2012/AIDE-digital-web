@@ -189,13 +189,13 @@ const ContentDetail = () => {
           podcast: false // Handle podcast separately
         };
 
-        const data = await invokeAnalyzeText({
+        const data: any = await invokeAnalyzeText({
           text: content.original_text,
           language: content.language || 'en',
           generationOptions
         });
 
-        const existingAnalysis = content.analysis_data || {};
+        const existingAnalysis: any = content.analysis_data || {};
 
         const mergeQuizQuestions = (existing: any[] = [], incoming: any[] = []) => {
           const seen = new Set(
