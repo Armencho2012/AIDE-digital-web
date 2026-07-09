@@ -1092,13 +1092,13 @@ const Landing = () => {
                 <Card className="relative overflow-hidden rounded-[2.25rem] border border-slate-200/70 bg-white/80 p-7 shadow-[0_24px_80px_rgba(15,23,42,0.14)] backdrop-blur-xl dark:border-white/12 dark:bg-slate-950/60 dark:shadow-[0_24px_80px_rgba(2,6,23,0.6)]">
 
 
-                  <div className="relative mb-4 flex items-center justify-between">
+                  <div className="relative mb-5 flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">{t.previewTitle}</p>
-                      <p className="text-xs text-slate-500 dark:text-slate-300/86">{t.previewSubtitle}</p>
+                      <p className="text-base font-semibold text-slate-800 dark:text-slate-100">{t.previewTitle}</p>
+                      <p className="text-sm text-slate-500 dark:text-slate-300/86">{t.previewSubtitle}</p>
                     </div>
-                    <div className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/35 bg-emerald-500/10 px-2.5 py-1 text-[11px] font-medium text-emerald-700 dark:text-emerald-200">
-                      <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
+                    <div className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/35 bg-emerald-500/10 px-3 py-1.5 text-xs font-medium text-emerald-700 dark:text-emerald-200">
+                      <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" />
                       {t.previewStream}
                     </div>
                   </div>
@@ -1107,14 +1107,14 @@ const Landing = () => {
                     data-mascot-shell
                     src="/Aido.png"
                     alt="Aido mascot"
-                    className="relative mx-auto w-full max-w-[18rem] drop-shadow-[0_24px_40px_rgba(56,189,248,0.28)] dark:drop-shadow-[0_24px_44px_rgba(15,23,42,0.72)]"
+                    className="relative mx-auto w-full max-w-[22rem] drop-shadow-[0_28px_48px_rgba(56,189,248,0.3)] dark:drop-shadow-[0_28px_52px_rgba(15,23,42,0.74)]"
                   />
 
-                  <div className="mt-4 grid grid-cols-3 gap-2">
+                  <div className="mt-5 grid grid-cols-3 gap-3">
                     {[t.previewTab1, t.previewTab2, t.previewTab3].map((tab, idx) => (
                       <div
                         key={tab}
-                        className={`rounded-xl px-2 py-1.5 text-center text-[11px] font-medium ${
+                        className={`rounded-xl px-3 py-2 text-center text-xs font-medium ${
                           idx === 0
                             ? "bg-sky-600 text-white dark:bg-sky-500/35 dark:text-sky-50"
                             : "bg-white/82 text-slate-600 dark:bg-slate-900/78 dark:text-zinc-200"
@@ -1125,16 +1125,17 @@ const Landing = () => {
                     ))}
                   </div>
 
-                  <div className="mt-3 grid gap-2 sm:grid-cols-2">
-                    <div className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white/84 p-2 text-[11px] text-slate-700 dark:border-white/12 dark:bg-slate-900/74 dark:text-zinc-200">
-                      <FileText className="h-3.5 w-3.5 text-sky-500 dark:text-sky-300" />
+                  <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                    <div className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white/84 p-2.5 text-xs text-slate-700 dark:border-white/12 dark:bg-slate-900/74 dark:text-zinc-200">
+                      <FileText className="h-4 w-4 text-sky-500 dark:text-sky-300" />
                       {t.previewWidgetQuizNotes}
                     </div>
-                    <div className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white/84 p-2 text-[11px] text-slate-700 dark:border-white/12 dark:bg-slate-900/74 dark:text-zinc-200">
-                      <Mic className="h-3.5 w-3.5 text-indigo-500 dark:text-indigo-300" />
+                    <div className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white/84 p-2.5 text-xs text-slate-700 dark:border-white/12 dark:bg-slate-900/74 dark:text-zinc-200">
+                      <Mic className="h-4 w-4 text-indigo-500 dark:text-indigo-300" />
                       {t.previewWidgetPodcast}
                     </div>
                   </div>
+
                 </Card>
               </div>
             </div>
