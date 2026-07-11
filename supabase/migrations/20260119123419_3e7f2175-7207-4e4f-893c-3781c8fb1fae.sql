@@ -16,18 +16,21 @@ CREATE TABLE IF NOT EXISTS public.subscriptions (
 ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
 
 -- Users can view their own subscription
+DROP POLICY IF EXISTS "Users can view their own subscription" ON public.subscriptions;
 CREATE POLICY "Users can view their own subscription"
 ON public.subscriptions
 FOR SELECT
 USING (auth.uid() = user_id);
 
 -- Users can insert their own subscription (for initial free tier)
+DROP POLICY IF EXISTS "Users can insert their own subscription" ON public.subscriptions;
 CREATE POLICY "Users can insert their own subscription"
 ON public.subscriptions
 FOR INSERT
 WITH CHECK (auth.uid() = user_id);
 
 -- Service role can manage all subscriptions (for webhooks)
+DROP POLICY IF EXISTS "Service role can manage all subscriptions" ON public.subscriptions;
 CREATE POLICY "Service role can manage all subscriptions"
 ON public.subscriptions
 FOR ALL
@@ -53,6 +56,7 @@ END;
 $$;
 
 -- Create trigger for updated_at
+DROP TRIGGER IF EXISTS update_subscriptions_updated_at ON public.subscriptions;
 CREATE TRIGGER update_subscriptions_updated_at
 BEFORE UPDATE ON public.subscriptions
 FOR EACH ROW

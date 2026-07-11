@@ -16,11 +16,13 @@ CREATE TABLE IF NOT EXISTS public.subscriptions (
 ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
 
 -- Policies
+DROP POLICY IF EXISTS "Users can view their own subscription" ON public.subscriptions;
 CREATE POLICY "Users can view their own subscription"
   ON public.subscriptions
   FOR SELECT
   USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Service role can manage subscriptions" ON public.subscriptions;
 CREATE POLICY "Service role can manage subscriptions"
   ON public.subscriptions
   FOR ALL

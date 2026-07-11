@@ -1,5 +1,5 @@
 -- Create profiles table for user data
-CREATE TABLE public.profiles (
+CREATE TABLE IF NOT EXISTS public.profiles (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID NOT NULL UNIQUE REFERENCES auth.users(id) ON DELETE CASCADE,
   email TEXT,
@@ -12,16 +12,19 @@ CREATE TABLE public.profiles (
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 
 -- Profiles policies
+DROP POLICY IF EXISTS "Users can view their own profile" ON public.profiles;
 CREATE POLICY "Users can view their own profile"
   ON public.profiles
   FOR SELECT
   USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can update their own profile" ON public.profiles;
 CREATE POLICY "Users can update their own profile"
   ON public.profiles
   FOR UPDATE
   USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can insert their own profile" ON public.profiles;
 CREATE POLICY "Users can insert their own profile"
   ON public.profiles
   FOR INSERT
@@ -39,11 +42,13 @@ CREATE TABLE public.usage_logs (
 ALTER TABLE public.usage_logs ENABLE ROW LEVEL SECURITY;
 
 -- Usage logs policies
+DROP POLICY IF EXISTS "Users can view their own usage logs" ON public.usage_logs;
 CREATE POLICY "Users can view their own usage logs"
   ON public.usage_logs
   FOR SELECT
   USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can insert their own usage logs" ON public.usage_logs;
 CREATE POLICY "Users can insert their own usage logs"
   ON public.usage_logs
   FOR INSERT
@@ -78,6 +83,7 @@ END;
 $$;
 
 -- Add trigger to profiles
+DROP TRIGGER IF EXISTS set_updated_at ON public.profiles;
 CREATE TRIGGER set_updated_at
   BEFORE UPDATE ON public.profiles
   FOR EACH ROW

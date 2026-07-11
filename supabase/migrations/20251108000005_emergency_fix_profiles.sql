@@ -1,6 +1,5 @@
 -- EMERGENCY FIX: Create profiles for all existing users
 -- This fixes the issue where users exist but profiles don't
-
 -- Step 1: Create profiles for all existing users who don't have one
 INSERT INTO public.profiles (user_id, email, full_name)
 SELECT 
@@ -11,9 +10,8 @@ FROM auth.users u
 LEFT JOIN public.profiles p ON u.id = p.user_id
 WHERE p.user_id IS NULL
 ON CONFLICT (user_id) DO NOTHING;
-
 -- Step 2: Verify the trigger exists and is working
-DO $$
+DO $do1$
 BEGIN
   -- Check if trigger exists
   IF NOT EXISTS (
@@ -56,10 +54,9 @@ BEGIN
   ELSE
     RAISE NOTICE 'Trigger already exists.';
   END IF;
-END $$;
-
+END $do1$;
 -- Step 3: Verify RPC function exists
-DO $$
+DO $do2$
 BEGIN
   IF NOT EXISTS (
     SELECT 1 FROM pg_proc WHERE proname = 'ensure_user_profile'
@@ -96,8 +93,7 @@ BEGIN
   ELSE
     RAISE NOTICE 'RPC function already exists.';
   END IF;
-END $$;
-
+END $do2$;
 -- Step 4: Verify results
 SELECT 
   (SELECT COUNT(*) FROM auth.users) as total_users,
@@ -107,4 +103,3 @@ SELECT
     THEN '✅ All users now have profiles!'
     ELSE '⚠️ Still missing some profiles'
   END as status;
-

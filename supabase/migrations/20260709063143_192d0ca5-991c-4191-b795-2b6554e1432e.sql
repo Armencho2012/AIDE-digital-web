@@ -4,6 +4,7 @@ DROP POLICY IF EXISTS "Service role can manage all subscriptions" ON public.subs
 
 -- 2. Add restrictive policy: block UPDATE from regular authenticated users.
 --    Only service_role (which bypasses RLS) can update subscription rows.
+DROP POLICY IF EXISTS "Users cannot update their own subscription" ON public.subscriptions;
 CREATE POLICY "Users cannot update their own subscription"
 ON public.subscriptions
 AS RESTRICTIVE
@@ -13,6 +14,7 @@ USING (false)
 WITH CHECK (false);
 
 -- 3. Also block DELETE from regular authenticated users on subscriptions.
+DROP POLICY IF EXISTS "Users cannot delete their own subscription" ON public.subscriptions;
 CREATE POLICY "Users cannot delete their own subscription"
 ON public.subscriptions
 AS RESTRICTIVE

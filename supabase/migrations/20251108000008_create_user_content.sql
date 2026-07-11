@@ -14,27 +14,32 @@ CREATE TABLE IF NOT EXISTS public.user_content (
 ALTER TABLE public.user_content ENABLE ROW LEVEL SECURITY;
 
 -- RLS Policies
+DROP POLICY IF EXISTS "Users can view their own content" ON public.user_content;
 CREATE POLICY "Users can view their own content"
   ON public.user_content
   FOR SELECT
   USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can insert their own content" ON public.user_content;
 CREATE POLICY "Users can insert their own content"
   ON public.user_content
   FOR INSERT
   WITH CHECK (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can update their own content" ON public.user_content;
 CREATE POLICY "Users can update their own content"
   ON public.user_content
   FOR UPDATE
   USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can delete their own content" ON public.user_content;
 CREATE POLICY "Users can delete their own content"
   ON public.user_content
   FOR DELETE
   USING (auth.uid() = user_id);
 
 -- Add updated_at trigger
+DROP TRIGGER IF EXISTS set_user_content_updated_at ON public.user_content;
 CREATE TRIGGER set_user_content_updated_at
   BEFORE UPDATE ON public.user_content
   FOR EACH ROW

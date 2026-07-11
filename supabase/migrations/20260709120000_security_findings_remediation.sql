@@ -13,6 +13,7 @@ DROP POLICY IF EXISTS "Public read access for podcasts" ON storage.objects;
 DROP POLICY IF EXISTS "Users can view their own podcasts" ON storage.objects;
 DROP POLICY IF EXISTS "Users can upload podcasts to their own folder" ON storage.objects;
 
+DROP POLICY IF EXISTS "Users can view their own podcasts" ON storage.objects;
 CREATE POLICY "Users can view their own podcasts"
 ON storage.objects FOR SELECT
 TO authenticated
@@ -21,6 +22,7 @@ USING (
   AND (auth.uid())::text = (storage.foldername(name))[1]
 );
 
+DROP POLICY IF EXISTS "Users can upload podcasts to their own folder" ON storage.objects;
 CREATE POLICY "Users can upload podcasts to their own folder"
 ON storage.objects FOR INSERT
 TO authenticated
