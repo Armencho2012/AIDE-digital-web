@@ -18,7 +18,7 @@ import { invokeAnalyzeText } from "@/lib/analyzeText";
 
 const uiLabels = {
   en: {
-    title: 'Aide',
+    title: 'Aide — Your AI Study Dashboard',
     subtitle: 'Structured AI Study Engine',
     placeholder: 'Paste your text here to analyze...',
     analyze: 'Analyze Text',
@@ -42,7 +42,7 @@ const uiLabels = {
     of: 'of'
   },
   ru: {
-    title: 'Aide',
+    title: 'Aide — Ваш AI-помощник в учебе',
     subtitle: 'Структурированный ИИ-движок для обучения',
     placeholder: 'Вставьте текст для анализа...',
     analyze: 'Анализировать текст',
@@ -66,7 +66,7 @@ const uiLabels = {
     of: 'из'
   },
   hy: {
-    title: 'Aide',
+    title: 'Aide — Ձեր AI ուսումնական վահանակ',
     subtitle: 'Կառուցվածքային ԱԲ Ուսումնական Շարժիչ',
     placeholder: 'Տեքստը տեղադրեք այստեղ վերլուծության համար...',
     analyze: 'Վերլուծել տեքստը',
@@ -90,7 +90,7 @@ const uiLabels = {
     of: '/'
   },
   ko: {
-    title: 'Aide',
+    title: 'Aide — 나의 AI 학습 대시보드',
     subtitle: 'AI 기반 학습 엔진',
     placeholder: '분석할 텍스트를 여기에 붙여넣으세요...',
     analyze: '텍스트 분석',

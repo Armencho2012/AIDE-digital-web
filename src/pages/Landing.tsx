@@ -1130,7 +1130,11 @@ const Landing = () => {
                   <img
                     data-mascot-shell
                     src="/Aido.png"
-                    alt="Aido mascot"
+                    alt="Aido mascot — Aide AI study assistant"
+                    width={352}
+                    height={352}
+                    fetchPriority="high"
+                    decoding="async"
                     className="relative mx-auto w-full max-w-[22rem] drop-shadow-[0_28px_48px_rgba(56,189,248,0.3)] dark:drop-shadow-[0_28px_52px_rgba(15,23,42,0.74)]"
                   />
 

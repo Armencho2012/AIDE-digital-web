@@ -106,6 +106,12 @@ const pageSEO: Record<string, SEOProps> = {
     keywords: 'account settings, profile preferences',
     robots: 'noindex, nofollow',
   },
+  '/404': {
+    title: 'Page Not Found | Aide',
+    description: 'This page could not be found. Return to Aide to keep studying.',
+    keywords: 'page not found, 404',
+    robots: 'noindex, nofollow',
+  },
 };
 
 const appFeatureList = [
@@ -177,7 +183,7 @@ export const SEO = ({ title, description, keywords, image, robots }: SEOProps) =
         robots: 'noindex, nofollow',
       };
     }
-    return {};
+    return pageSEO['/404'] || {};
   };
 
   const isLanding = pathname === '/';
