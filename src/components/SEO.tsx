@@ -183,7 +183,7 @@ export const SEO = ({ title, description, keywords, image, robots }: SEOProps) =
         robots: 'noindex, nofollow',
       };
     }
-    return {};
+    return pageSEO['/404'] || {};
   };
 
   const isLanding = pathname === '/';
