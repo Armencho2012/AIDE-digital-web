@@ -36,3 +36,4 @@ npx supabase functions deploy analyze-text
 npx supabase functions deploy content-chat
 npx supabase functions deploy scan-knowledge-map
 npx supabase functions deploy generate-podcast
+
