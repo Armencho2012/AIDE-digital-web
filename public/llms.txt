@@ -1,0 +1,12 @@
+# Aide
+
+> Aide is an AI study assistant that turns notes, PDFs, images, and YouTube videos into summaries, quizzes, flashcards, knowledge maps, tutor chat, course plans, and podcasts. Available in English, Russian, Armenian, and Korean.
+
+## Pages
+
+- [Home](/): Overview of Aide, features, and how it works.
+- [Help](/help): Prompting guide and tips for stronger AI study results.
+
+## Optional
+
+- [Sign in](/auth): Account access for existing users.

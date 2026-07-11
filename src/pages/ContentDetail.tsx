@@ -556,7 +556,7 @@ const ContentDetail = () => {
               </Link>
             </Button>
             <h1 className="text-lg sm:text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent truncate max-w-[280px] sm:max-w-none">
-              {content.title || 'Untitled'}
+              {content.title || 'Study Material Analysis'}
             </h1>
           </div>
           <div className="flex items-center gap-2">
