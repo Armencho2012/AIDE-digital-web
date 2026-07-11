@@ -37,11 +37,11 @@ const NotFound = () => {
   }, [location.pathname]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-100">
+    <div className="flex min-h-screen items-center justify-center bg-background">
       <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">{labels.title}</h1>
-        <p className="mb-4 text-xl text-gray-600">{labels.message}</p>
-        <Link to="/" className="text-blue-500 underline hover:text-blue-700">
+        <h1 className="mb-4 text-4xl font-bold text-foreground">{labels.title}</h1>
+        <p className="mb-4 text-xl text-muted-foreground">{labels.message}</p>
+        <Link to="/" className="text-primary underline hover:opacity-80">
           {labels.returnHome}
         </Link>
       </div>

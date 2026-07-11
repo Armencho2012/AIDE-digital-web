@@ -39,23 +39,25 @@ const App = () => (
         <BrowserRouter>
           <SEO />
           <GlobalNav />
-          <Suspense fallback={<RouteFallback />}>
-            <Routes>
-              <Route path="/" element={<Landing />} />
-              <Route path="/auth" element={<Auth />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/library" element={<Library />} />
-              <Route path="/library/:id" element={<ContentDetail />} />
-              <Route path="/library/course/:id" element={<CourseDetail />} />
-              <Route path="/library/:id/quiz" element={<Quiz />} />
-              <Route path="/library/:id/flashcards" element={<FlashcardsPage />} />
-              <Route path="/library/:id/chat" element={<ChatPage />} />
-              <Route path="/billing" element={<Billing />} />
-              <Route path="/settings" element={<Settings />} />
-              <Route path="/help" element={<Help />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </Suspense>
+          <main id="main-content">
+            <Suspense fallback={<RouteFallback />}>
+              <Routes>
+                <Route path="/" element={<Landing />} />
+                <Route path="/auth" element={<Auth />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/library" element={<Library />} />
+                <Route path="/library/:id" element={<ContentDetail />} />
+                <Route path="/library/course/:id" element={<CourseDetail />} />
+                <Route path="/library/:id/quiz" element={<Quiz />} />
+                <Route path="/library/:id/flashcards" element={<FlashcardsPage />} />
+                <Route path="/library/:id/chat" element={<ChatPage />} />
+                <Route path="/billing" element={<Billing />} />
+                <Route path="/settings" element={<Settings />} />
+                <Route path="/help" element={<Help />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Suspense>
+          </main>
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>
