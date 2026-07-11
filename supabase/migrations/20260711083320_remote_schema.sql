@@ -6,20 +6,21 @@ drop trigger if exists "set_user_content_updated_at" on "public"."user_content";
 
 drop trigger if exists "update_subscriptions_updated_at" on "public"."subscriptions";
 
-drop policy "Service role can manage subscriptions" on "public"."subscriptions";
+drop policy if exists "Service role can manage subscriptions" on "public"."subscriptions";
 
-drop policy "Users can view their own content" on "public"."user_content";
+drop policy if exists "Users can view their own content" on "public"."user_content";
 
-alter table "public"."profiles" drop constraint "profiles_user_id_fkey";
+alter table "public"."profiles" drop constraint if exists "profiles_user_id_fkey";
 
-alter table "public"."profiles" drop constraint "profiles_user_id_key";
+alter table "public"."profiles" drop constraint if exists "profiles_user_id_key";
 
-alter table "public"."usage_logs" drop constraint "usage_logs_user_id_fkey";
+alter table "public"."usage_logs" drop constraint if exists "usage_logs_user_id_fkey";
 
-alter table "public"."user_content" drop constraint "user_content_user_id_fkey";
+alter table "public"."user_content" drop constraint if exists "user_content_user_id_fkey";
 
 drop function if exists "public"."ensure_user_profile"(p_user_id uuid, p_email text, p_full_name text);
 
+drop trigger if exists "on_auth_user_created" on "auth"."users";
 drop function if exists "public"."handle_new_user"();
 
 drop function if exists "public"."test_profile_access"();
@@ -235,14 +236,17 @@ grant select on table "public"."user_content" to "service_role";
 
 grant update on table "public"."user_content" to "service_role";
 
+DROP TRIGGER IF EXISTS on_profiles_updated ON public.profiles;
 CREATE TRIGGER on_profiles_updated BEFORE UPDATE ON public.profiles FOR EACH ROW EXECUTE FUNCTION public.handle_updated_at();
 
+DROP TRIGGER IF EXISTS update_subscriptions_updated_at ON public.subscriptions;
 CREATE TRIGGER update_subscriptions_updated_at BEFORE UPDATE ON public.subscriptions FOR EACH ROW EXECUTE FUNCTION public.handle_updated_at();
 
-drop trigger if exists "on_auth_user_created" on "auth"."users";
 
 
-  create policy "Users can delete their own podcasts"
+
+drop policy if exists "Users can delete their own podcasts" on "storage"."objects";
+create policy "Users can delete their own podcasts"
   on "storage"."objects"
   as permissive
   for delete
