@@ -119,8 +119,8 @@ const ContentDetail = () => {
   const navigate = useNavigate();
 
   const handleGeneratePodcast = async () => {
-    if (!content) return;
-    
+    if (!content) return false;
+
     setIsGeneratingPodcast(true);
     try {
       const { data, error } = await supabase.functions.invoke('generate-podcast', {
@@ -133,33 +133,41 @@ const ContentDetail = () => {
 
       if (error) throw error;
 
-      if (data?.podcast_url) {
-        // Update local content with podcast URL
-        await supabase
-          .from('user_content')
-          .update({
-            podcast_url: data.podcast_path || data.podcast_url,
-            generation_status: {
-              ...content.generation_status,
-              podcast: true
-            }
-          })
-          .eq('id', content.id);
-        
-        refetch();
-        
-        toast({
-          title: 'Podcast Generated',
-          description: 'Your AI podcast is ready to play!'
-        });
-      }
+      // New flow: browser-TTS script. Fallback: legacy audio URL still supported.
+      const scriptOrUrl: string | null =
+        (data as any)?.podcast_script ||
+        (data as any)?.podcast_path ||
+        (data as any)?.podcast_url ||
+        null;
+
+      if (!scriptOrUrl) throw new Error('No podcast content returned');
+
+      await supabase
+        .from('user_content')
+        .update({
+          podcast_url: scriptOrUrl,
+          generation_status: {
+            ...content.generation_status,
+            podcast: true
+          }
+        })
+        .eq('id', content.id);
+
+      refetch();
+
+      toast({
+        title: 'Podcast Generated',
+        description: 'Your AI podcast script is ready — press play to listen.'
+      });
+      return true;
     } catch (error) {
       console.error('Podcast generation error:', error);
       toast({
-        title: 'Error',
-        description: 'Failed to generate podcast.',
+        title: 'Podcast failed',
+        description: 'Podcast could not be generated. Other assets were unaffected.',
         variant: 'destructive'
       });
+      return false;
     } finally {
       setIsGeneratingPodcast(false);
     }
@@ -167,17 +175,29 @@ const ContentDetail = () => {
 
   const handleRegenerateMissing = async (missingAssets: string[]) => {
     if (!content) return;
-    
+
     setIsRegenerating(true);
+    // Track per-asset success so one failure doesn't block the others.
+    const failures: string[] = [];
+    let anySuccess = false;
+
+    // Handle podcast independently and in parallel with analyze-text.
+    const hasPodcast = missingAssets.includes('podcast');
+    const otherAssets = missingAssets.filter(a => a !== 'podcast');
+
+    const podcastPromise = hasPodcast
+      ? handleGeneratePodcast()
+          .then(ok => {
+            if (ok) anySuccess = true;
+            else failures.push('podcast');
+          })
+          .catch(err => {
+            console.error('Podcast generation failed:', err);
+            failures.push('podcast');
+          })
+      : Promise.resolve();
+
     try {
-      // Handle podcast separately since it uses a different endpoint
-      const hasPodcast = missingAssets.includes('podcast');
-      const otherAssets = missingAssets.filter(a => a !== 'podcast');
-      
-      // Generate podcast separately if needed
-      if (hasPodcast) {
-        handleGeneratePodcast();
-      }
       
       // Only call analyze-text if there are other assets to generate
       if (otherAssets.length > 0) {
@@ -321,29 +341,44 @@ const ContentDetail = () => {
           .eq('id', content.id);
 
         refetch();
-        
-        toast({
-          title: 'Assets Generated',
-          description: 'Missing content has been generated successfully.'
-        });
+        anySuccess = true;
       }
     } catch (error) {
-      console.error('Regeneration error:', error);
-      
-      // Handle authentication errors
+      console.error('Regeneration error (analyze-text):', error);
+
+      // Handle authentication errors globally
       if (error instanceof Error && (error.message.includes('Invalid') || error.message.includes('token') || error.message.includes('Refresh Token'))) {
         await supabase.auth.signOut().catch(() => {});
         window.location.href = '/auth';
         return;
       }
-      
+
+      // Mark every non-podcast asset as failed but keep going for the podcast.
+      otherAssets.forEach(a => failures.push(a));
+    }
+
+    // Wait for the podcast so we can report a single combined status.
+    await podcastPromise;
+
+    setIsRegenerating(false);
+
+    if (failures.length === 0) {
       toast({
-        title: 'Error',
-        description: error instanceof Error ? error.message : 'Failed to generate missing assets.',
+        title: 'Assets Generated',
+        description: 'Missing content has been generated successfully.'
+      });
+    } else if (anySuccess) {
+      toast({
+        title: 'Partially generated',
+        description: `Some assets failed: ${failures.join(', ')}. Others were saved.`,
         variant: 'destructive'
       });
-    } finally {
-      setIsRegenerating(false);
+    } else {
+      toast({
+        title: 'Generation failed',
+        description: `Could not generate: ${failures.join(', ')}. Please try again.`,
+        variant: 'destructive'
+      });
     }
   };
 
