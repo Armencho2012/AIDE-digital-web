@@ -119,8 +119,8 @@ const ContentDetail = () => {
   const navigate = useNavigate();
 
   const handleGeneratePodcast = async () => {
-    if (!content) return;
-    
+    if (!content) return false;
+
     setIsGeneratingPodcast(true);
     try {
       const { data, error } = await supabase.functions.invoke('generate-podcast', {
@@ -133,33 +133,41 @@ const ContentDetail = () => {
 
       if (error) throw error;
 
-      if (data?.podcast_url) {
-        // Update local content with podcast URL
-        await supabase
-          .from('user_content')
-          .update({
-            podcast_url: data.podcast_path || data.podcast_url,
-            generation_status: {
-              ...content.generation_status,
-              podcast: true
-            }
-          })
-          .eq('id', content.id);
-        
-        refetch();
-        
-        toast({
-          title: 'Podcast Generated',
-          description: 'Your AI podcast is ready to play!'
-        });
-      }
+      // New flow: browser-TTS script. Fallback: legacy audio URL still supported.
+      const scriptOrUrl: string | null =
+        (data as any)?.podcast_script ||
+        (data as any)?.podcast_path ||
+        (data as any)?.podcast_url ||
+        null;
+
+      if (!scriptOrUrl) throw new Error('No podcast content returned');
+
+      await supabase
+        .from('user_content')
+        .update({
+          podcast_url: scriptOrUrl,
+          generation_status: {
+            ...content.generation_status,
+            podcast: true
+          }
+        })
+        .eq('id', content.id);
+
+      refetch();
+
+      toast({
+        title: 'Podcast Generated',
+        description: 'Your AI podcast script is ready — press play to listen.'
+      });
+      return true;
     } catch (error) {
       console.error('Podcast generation error:', error);
       toast({
-        title: 'Error',
-        description: 'Failed to generate podcast.',
+        title: 'Podcast failed',
+        description: 'Podcast could not be generated. Other assets were unaffected.',
         variant: 'destructive'
       });
+      return false;
     } finally {
       setIsGeneratingPodcast(false);
     }
