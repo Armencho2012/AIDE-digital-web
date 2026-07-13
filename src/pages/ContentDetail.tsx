@@ -175,17 +175,29 @@ const ContentDetail = () => {
 
   const handleRegenerateMissing = async (missingAssets: string[]) => {
     if (!content) return;
-    
+
     setIsRegenerating(true);
+    // Track per-asset success so one failure doesn't block the others.
+    const failures: string[] = [];
+    let anySuccess = false;
+
+    // Handle podcast independently and in parallel with analyze-text.
+    const hasPodcast = missingAssets.includes('podcast');
+    const otherAssets = missingAssets.filter(a => a !== 'podcast');
+
+    const podcastPromise = hasPodcast
+      ? handleGeneratePodcast()
+          .then(ok => {
+            if (ok) anySuccess = true;
+            else failures.push('podcast');
+          })
+          .catch(err => {
+            console.error('Podcast generation failed:', err);
+            failures.push('podcast');
+          })
+      : Promise.resolve();
+
     try {
-      // Handle podcast separately since it uses a different endpoint
-      const hasPodcast = missingAssets.includes('podcast');
-      const otherAssets = missingAssets.filter(a => a !== 'podcast');
-      
-      // Generate podcast separately if needed
-      if (hasPodcast) {
-        handleGeneratePodcast();
-      }
       
       // Only call analyze-text if there are other assets to generate
       if (otherAssets.length > 0) {
