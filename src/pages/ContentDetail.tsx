@@ -341,29 +341,44 @@ const ContentDetail = () => {
           .eq('id', content.id);
 
         refetch();
-        
-        toast({
-          title: 'Assets Generated',
-          description: 'Missing content has been generated successfully.'
-        });
+        anySuccess = true;
       }
     } catch (error) {
-      console.error('Regeneration error:', error);
-      
-      // Handle authentication errors
+      console.error('Regeneration error (analyze-text):', error);
+
+      // Handle authentication errors globally
       if (error instanceof Error && (error.message.includes('Invalid') || error.message.includes('token') || error.message.includes('Refresh Token'))) {
         await supabase.auth.signOut().catch(() => {});
         window.location.href = '/auth';
         return;
       }
-      
+
+      // Mark every non-podcast asset as failed but keep going for the podcast.
+      otherAssets.forEach(a => failures.push(a));
+    }
+
+    // Wait for the podcast so we can report a single combined status.
+    await podcastPromise;
+
+    setIsRegenerating(false);
+
+    if (failures.length === 0) {
       toast({
-        title: 'Error',
-        description: error instanceof Error ? error.message : 'Failed to generate missing assets.',
+        title: 'Assets Generated',
+        description: 'Missing content has been generated successfully.'
+      });
+    } else if (anySuccess) {
+      toast({
+        title: 'Partially generated',
+        description: `Some assets failed: ${failures.join(', ')}. Others were saved.`,
         variant: 'destructive'
       });
-    } finally {
-      setIsRegenerating(false);
+    } else {
+      toast({
+        title: 'Generation failed',
+        description: `Could not generate: ${failures.join(', ')}. Please try again.`,
+        variant: 'destructive'
+      });
     }
   };
 
