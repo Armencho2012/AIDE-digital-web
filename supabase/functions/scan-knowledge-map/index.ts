@@ -93,6 +93,37 @@ Deno.serve(async (req: Request) => {
       });
     }
 
+    // Plan & daily usage enforcement (per-action to prevent AI cost abuse)
+    const SCAN_LIMITS: Record<string, number> = { free: 3, pro: 30 };
+    const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey);
+    const { data: subscription } = await supabaseAdmin
+      .from('subscriptions')
+      .select('plan_type, status')
+      .eq('user_id', user.id)
+      .maybeSingle();
+    const userPlan = subscription?.status === 'active' ? (subscription.plan_type || 'free') : 'free';
+
+    if (userPlan !== 'class') {
+      const startOfDay = new Date();
+      startOfDay.setUTCHours(0, 0, 0, 0);
+      const { count } = await supabaseAdmin
+        .from('usage_logs')
+        .select('id', { count: 'exact', head: true })
+        .eq('user_id', user.id)
+        .eq('action_type', 'map_scan')
+        .gte('created_at', startOfDay.toISOString());
+      const limit = SCAN_LIMITS[userPlan] ?? SCAN_LIMITS.free;
+      if ((count || 0) >= limit) {
+        return new Response(JSON.stringify({ error: "Daily knowledge map scan limit reached. Upgrade for more." }), {
+          status: 429,
+          headers: { ...corsHeaders, "Content-Type": "application/json" }
+        });
+      }
+    }
+
+    // Log usage (best-effort)
+    await supabaseAdmin.from('usage_logs').insert({ user_id: user.id, action_type: 'map_scan' });
+
     const systemPrompt = `You are an expert study assistant.
 Compare the knowledge map to the original text and identify 3 missing key concepts.
 Return a SINGLE JSON object exactly like this:

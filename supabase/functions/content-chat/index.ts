@@ -24,6 +24,7 @@ Deno.serve(async (req: Request) => {
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+    const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 
     const supabase = createClient(supabaseUrl, supabaseKey, {
       global: { headers: { Authorization: authHeader } }
@@ -45,6 +46,39 @@ Deno.serve(async (req: Request) => {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" }
       });
+    }
+
+    // Plan & daily usage enforcement (per-action to prevent AI cost abuse)
+    const CHAT_LIMITS: Record<string, number> = { free: 30, pro: 300 };
+    const supabaseAdmin = serviceRoleKey ? createClient(supabaseUrl, serviceRoleKey) : null;
+    if (supabaseAdmin) {
+      const { data: subscription } = await supabaseAdmin
+        .from('subscriptions')
+        .select('plan_type, status')
+        .eq('user_id', user.id)
+        .maybeSingle();
+      const userPlan = subscription?.status === 'active' ? (subscription.plan_type || 'free') : 'free';
+
+      if (userPlan !== 'class') {
+        const startOfDay = new Date();
+        startOfDay.setUTCHours(0, 0, 0, 0);
+        const { count } = await supabaseAdmin
+          .from('usage_logs')
+          .select('id', { count: 'exact', head: true })
+          .eq('user_id', user.id)
+          .eq('action_type', 'chat_message')
+          .gte('created_at', startOfDay.toISOString());
+        const limit = CHAT_LIMITS[userPlan] ?? CHAT_LIMITS.free;
+        if ((count || 0) >= limit) {
+          return new Response(JSON.stringify({ error: "Daily chat limit reached. Upgrade for more." }), {
+            status: 429,
+            headers: { ...corsHeaders, "Content-Type": "application/json" }
+          });
+        }
+      }
+
+      // Log usage (best-effort)
+      await supabaseAdmin.from('usage_logs').insert({ user_id: user.id, action_type: 'chat_message' });
     }
 
     const apiKey = Deno.env.get("GEMINI_API_KEY") || Deno.env.get("LOVABLE_API_KEY");
