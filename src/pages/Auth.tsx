@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
@@ -172,27 +172,34 @@ const Auth = () => {
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("signin");
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { language } = useSettings();
   const labels = uiLabels[language as Language] || uiLabels.en;
   const { toast } = useToast();
+
+  // Preserve `next` (e.g. /.lovable/oauth/consent?...) so we return there after auth.
+  const rawNext = searchParams.get("next") ?? "";
+  const nextPath = rawNext.startsWith("/") && !rawNext.startsWith("//") ? rawNext : "/dashboard";
+  const redirectOrigin = typeof window !== "undefined" ? window.location.origin : "";
+  const redirectAfterAuth = `${redirectOrigin}${nextPath}`;
 
   useEffect(() => {
     // Check if user is already logged in
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
-        navigate("/dashboard");
+        navigate(nextPath);
       }
     });
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_IN' && session) {
-        navigate("/dashboard");
+        navigate(nextPath);
       }
     });
 
     return () => subscription.unsubscribe();
-  }, [navigate]);
+  }, [navigate, nextPath]);
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -207,7 +214,7 @@ const Auth = () => {
     if (!validation.success) {
       toast({
         title: "Validation Error",
-        description: validation.error.errors[0].message,
+        description: validation.error.issues[0].message,
         variant: "destructive"
       });
       return;
@@ -220,7 +227,7 @@ const Auth = () => {
         email: validation.data.email,
         password: validation.data.password,
         options: {
-          emailRedirectTo: `${window.location.origin}/dashboard`,
+          emailRedirectTo: redirectAfterAuth,
           data: { full_name: validation.data.fullName }
         }
       });
@@ -239,7 +246,7 @@ const Auth = () => {
           title: labels.success,
           description: labels.accountCreated
         });
-        navigate("/dashboard");
+        navigate(nextPath);
       } else if (data.user) {
         toast({
           title: labels.checkEmail,
@@ -272,7 +279,7 @@ const Auth = () => {
     if (!validation.success) {
       toast({
         title: "Validation Error",
-        description: validation.error.errors[0].message,
+        description: validation.error.issues[0].message,
         variant: "destructive"
       });
       return;
@@ -292,7 +299,7 @@ const Auth = () => {
         title: labels.welcomeBack,
         description: labels.signedIn
       });
-      navigate("/dashboard");
+      navigate(nextPath);
     } catch (error: unknown) {
       let errorMessage = "Invalid email or password";
       if (error instanceof Error && error.message.includes("Email not confirmed")) {
