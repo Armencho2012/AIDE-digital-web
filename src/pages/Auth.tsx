@@ -246,7 +246,7 @@ const Auth = () => {
           title: labels.success,
           description: labels.accountCreated
         });
-        navigate("/dashboard");
+        navigate(nextPath);
       } else if (data.user) {
         toast({
           title: labels.checkEmail,
