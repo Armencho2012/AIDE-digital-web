@@ -299,7 +299,7 @@ const Auth = () => {
         title: labels.welcomeBack,
         description: labels.signedIn
       });
-      navigate("/dashboard");
+      navigate(nextPath);
     } catch (error: unknown) {
       let errorMessage = "Invalid email or password";
       if (error instanceof Error && error.message.includes("Email not confirmed")) {
