@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
@@ -172,27 +172,34 @@ const Auth = () => {
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("signin");
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { language } = useSettings();
   const labels = uiLabels[language as Language] || uiLabels.en;
   const { toast } = useToast();
+
+  // Preserve `next` (e.g. /.lovable/oauth/consent?...) so we return there after auth.
+  const rawNext = searchParams.get("next") ?? "";
+  const nextPath = rawNext.startsWith("/") && !rawNext.startsWith("//") ? rawNext : "/dashboard";
+  const redirectOrigin = typeof window !== "undefined" ? window.location.origin : "";
+  const redirectAfterAuth = `${redirectOrigin}${nextPath}`;
 
   useEffect(() => {
     // Check if user is already logged in
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
-        navigate("/dashboard");
+        navigate(nextPath);
       }
     });
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_IN' && session) {
-        navigate("/dashboard");
+        navigate(nextPath);
       }
     });
 
     return () => subscription.unsubscribe();
-  }, [navigate]);
+  }, [navigate, nextPath]);
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -220,7 +227,7 @@ const Auth = () => {
         email: validation.data.email,
         password: validation.data.password,
         options: {
-          emailRedirectTo: `${window.location.origin}/dashboard`,
+          emailRedirectTo: redirectAfterAuth,
           data: { full_name: validation.data.fullName }
         }
       });
