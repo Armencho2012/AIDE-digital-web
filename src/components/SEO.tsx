@@ -76,6 +76,13 @@ const pageSEO: Record<string, SEOProps> = {
     keywords: 'Aide help, prompting guide, study prompts, AI study tips',
     robots: 'index, follow',
   },
+  '/homework-helper': {
+    title: 'AI Homework Helper | Aide',
+    description:
+      'Get instant help with explanations, step-by-step problem solving, and smarter study support from Aide.',
+    keywords: 'AI homework helper, homework help, study assistant, step-by-step explanations',
+    robots: 'index, follow',
+  },
   '/auth': {
     title: 'Sign In | Aide',
     description: 'Sign in to Aide to start generating quizzes, flashcards, maps, and podcasts from your study material.',
