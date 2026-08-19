@@ -23,3 +23,9 @@ verify_jwt = false
 
 [functions.mcp]
 verify_jwt = false
+# Excluded from automated (CI / Supabase branch) deploys: the @lovable.dev/mcp-js
+# dependency tree pulls in every esbuild platform binary, so the bundle exceeds the
+# Functions upload limit and the deploy fails with HTTP 413 "request entity too large".
+# The function is already deployed. To redeploy it manually, flip this to true
+# temporarily, run `supabase functions deploy mcp --no-verify-jwt`, then flip it back.
+enabled = false
