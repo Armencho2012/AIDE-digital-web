@@ -157,7 +157,7 @@ const ContentDetail = () => {
 
       toast({
         title: 'Podcast Generated',
-        description: 'Your AI podcast script is ready — press play to listen.'
+        description: 'Your two-host AI podcast is ready — press play to listen.'
       });
       return true;
     } catch (error) {

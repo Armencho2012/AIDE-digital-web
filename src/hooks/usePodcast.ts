@@ -73,19 +73,13 @@ export const usePodcast = (): UsePodcastReturn => {
           throw new Error(podcastError.message || 'Failed to generate podcast');
         }
 
-        if (!data?.podcast_url) {
-          throw new Error('No podcast URL returned');
+        const podcastScript = data?.podcast_script || data?.podcast_url;
+        if (!podcastScript || typeof podcastScript !== 'string') {
+          throw new Error('No podcast dialogue returned');
         }
 
-        // Validate URL
-        try {
-          new URL(data.podcast_url);
-        } catch {
-          throw new Error('Invalid podcast URL received');
-        }
-
-        setPodcastAudio(data.podcast_url);
-        return data.podcast_url;
+        setPodcastAudio(podcastScript);
+        return podcastScript;
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : 'Unknown error';
         setError(errorMessage);

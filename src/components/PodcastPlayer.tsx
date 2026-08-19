@@ -84,6 +84,22 @@ const isRemoteUrl = (value: string) => /^https?:\/\//i.test(value);
 const looksLikeStoragePath = (value: string) =>
   !isRemoteUrl(value) && /\.(mp3|wav|ogg|m4a)$/i.test(value);
 
+interface PodcastDialogue {
+  title: string;
+  speakers: Array<{ name: string; voice: string }>;
+  turns: Array<{ speaker: string; text: string; pacing: string }>;
+}
+
+const parseDialogue = (value: string): PodcastDialogue | null => {
+  try {
+    const parsed = JSON.parse(value);
+    if (!parsed?.title || !Array.isArray(parsed?.speakers) || !Array.isArray(parsed?.turns)) return null;
+    return parsed as PodcastDialogue;
+  } catch {
+    return null;
+  }
+};
+
 export const PodcastPlayer = ({ podcastUrl, language, onGenerate, isGenerating }: PodcastPlayerProps) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
@@ -93,6 +109,7 @@ export const PodcastPlayer = ({ podcastUrl, language, onGenerate, isGenerating }
   const { toast } = useToast();
 
   const l = labels[language] || labels.en;
+  const dialogue = useMemo(() => (podcastUrl ? parseDialogue(podcastUrl) : null), [podcastUrl]);
 
   // Detect mode: script (plain text) vs audio (URL or storage path)
   const mode: 'script' | 'audio' | 'empty' = useMemo(() => {
@@ -170,20 +187,35 @@ export const PodcastPlayer = ({ podcastUrl, language, onGenerate, isGenerating }
     }
 
     synth.cancel();
-    const utterance = new SpeechSynthesisUtterance(podcastUrl);
-    utterance.lang = LANG_TO_BCP47[language] || 'en-US';
-    utterance.rate = 1.0;
-    utterance.pitch = 1.0;
-    utterance.onend = () => {
-      setIsPlaying(false);
-      setIsPaused(false);
-    };
-    utterance.onerror = () => {
-      setIsPlaying(false);
-      setIsPaused(false);
-    };
-    utteranceRef.current = utterance;
-    synth.speak(utterance);
+    const voices = synth.getVoices();
+    const locale = LANG_TO_BCP47[language] || 'en-US';
+    const speakerVoices = new Map(
+      (dialogue?.speakers || []).map((speaker) => [
+        speaker.name,
+        voices.find((voice) => voice.name.toLowerCase().includes(speaker.voice.toLowerCase())) ||
+          voices.find((voice) => voice.lang.toLowerCase().startsWith(language))
+      ])
+    );
+    const lines = dialogue?.turns || [{ speaker: '', text: podcastUrl, pacing: '' }];
+    lines.forEach((turn, index) => {
+      const utterance = new SpeechSynthesisUtterance(turn.text);
+      utterance.lang = locale;
+      utterance.voice = speakerVoices.get(turn.speaker) || null;
+      utterance.rate = turn.pacing.toLowerCase().includes('slow') ? 0.88 : 1;
+      utterance.pitch = index % 2 === 0 ? 1.02 : 0.94;
+      if (index === lines.length - 1) {
+        utterance.onend = () => {
+          setIsPlaying(false);
+          setIsPaused(false);
+        };
+      }
+      utterance.onerror = () => {
+        setIsPlaying(false);
+        setIsPaused(false);
+      };
+      if (index === 0) utteranceRef.current = utterance;
+      synth.speak(utterance);
+    });
     setIsPlaying(true);
     setIsPaused(false);
   };
@@ -306,7 +338,16 @@ export const PodcastPlayer = ({ podcastUrl, language, onGenerate, isGenerating }
             </div>
           )}
           <div className="max-h-64 overflow-auto rounded-md border border-primary/20 bg-background/50 p-4 text-sm leading-relaxed whitespace-pre-wrap">
-            {podcastUrl}
+            {dialogue ? (
+              <>
+                <p className="font-semibold text-foreground mb-3">{dialogue.title}</p>
+                {dialogue.turns.map((turn, index) => (
+                  <p key={`${turn.speaker}-${index}`} className="mb-2 last:mb-0">
+                    <span className="font-semibold text-primary">{turn.speaker}:</span> {turn.text}
+                  </p>
+                ))}
+              </>
+            ) : podcastUrl}
           </div>
         </CardContent>
       </Card>

@@ -2,6 +2,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 const DAILY_LIMIT_FREE = 1
 const DAILY_LIMIT_PRO = 50
+const GEMINI_PODCAST_MODEL = Deno.env.get('GEMINI_PODCAST_MODEL')?.trim() || 'gemini-3.1-flash-tts-preview'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -20,6 +21,23 @@ const extractText = (data: any) => {
   if (!Array.isArray(parts)) return ''
   return parts.map((part: any) => part?.text).filter(Boolean).join('')
 }
+
+const parseJson = (raw: string) => {
+  const cleaned = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim()
+  return JSON.parse(cleaned)
+}
+
+const isDialogue = (value: any) =>
+  value &&
+  typeof value.title === 'string' &&
+  Array.isArray(value.speakers) &&
+  value.speakers.length === 2 &&
+  value.speakers.every((speaker: any) => typeof speaker.name === 'string' && typeof speaker.voice === 'string') &&
+  Array.isArray(value.turns) &&
+  value.turns.length > 0 &&
+  value.turns.every((turn: any) =>
+    typeof turn.speaker === 'string' && typeof turn.text === 'string' && typeof turn.pacing === 'string'
+  )
 
 const getUserPlan = async (supabaseAdmin: any, userId: string) => {
   const { data: subscription } = await supabaseAdmin
@@ -99,10 +117,19 @@ Deno.serve(async (req: Request) => {
     }
     const langName = languageNames[language] || 'English'
 
-    const prompt = `Write an engaging ~1-minute podcast-style monologue in ${langName} about the following content. Be conversational, energetic, and clear. Start with a hook, cover the 2-3 most important insights, and end with a memorable one-sentence takeaway. Return ONLY the spoken script text — no stage directions, no speaker labels, no markdown.\n\nContent:\n${topic.slice(0, 8000)}`
+    const prompt = `Create a short, engaging two-host educational podcast in ${langName} about the content below. Return ONLY valid JSON matching this exact schema, with no markdown or extra text:
+{
+  "title": "short episode title",
+  "speakers": [{"name": "Joe", "voice": "Kore"}, {"name": "Jane", "voice": "Puck"}],
+  "turns": [{"speaker": "Joe", "text": "exact spoken line", "pacing": "brief pause"}]
+}
+Use exactly two speakers named Joe and Jane and alternate them naturally for 8-12 turns. The voice values must be Kore and Puck. Include pacing cues such as "brief pause", "emphasis", or "warmly" but never put cues inside text. The text must be the exact words to speak, conversational and clear, with a hook, 2-3 key insights, and a memorable takeaway. Do not include stage directions in text.
+
+Content:
+${topic.slice(0, 8000)}`
 
     const geminiRes = await fetch(
-      'https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent',
+      `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_PODCAST_MODEL}:generateContent`,
       {
         method: 'POST',
         headers: {
@@ -111,7 +138,11 @@ Deno.serve(async (req: Request) => {
         },
         body: JSON.stringify({
           contents: [{ role: 'user', parts: [{ text: prompt }] }],
-          generationConfig: { temperature: 0.7, maxOutputTokens: 600 }
+          generationConfig: {
+            temperature: 0.7,
+            maxOutputTokens: 1200,
+            responseMimeType: 'application/json'
+          }
         })
       }
     )
@@ -126,16 +157,23 @@ Deno.serve(async (req: Request) => {
     }
 
     const geminiJson = await geminiRes.json().catch(() => null)
-    const script = extractText(geminiJson).trim()
+    const rawScript = extractText(geminiJson).trim()
+    let script: any
+    try {
+      script = parseJson(rawScript)
+    } catch {
+      console.error('Gemini returned invalid podcast dialogue JSON:', rawScript.slice(0, 1200))
+      return jsonResponse({ error: 'Podcast generation returned invalid dialogue. Please try again.' }, 502)
+    }
 
-    if (!script) {
+    if (!isDialogue(script)) {
       return jsonResponse({ error: 'Podcast generation returned an empty response. Please try again.' }, 502)
     }
 
     await supabaseAdmin.from('usage_logs').insert({ user_id: user.id, action_type: 'podcast' })
 
     // Return the script — client plays via browser SpeechSynthesis (no external TTS).
-    return jsonResponse({ podcast_script: script, language }, 200)
+    return jsonResponse({ podcast_script: JSON.stringify(script), dialogue: script, language }, 200)
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unknown error'
     console.error('generate-podcast error:', message)
