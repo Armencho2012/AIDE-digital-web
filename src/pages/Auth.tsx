@@ -371,7 +371,7 @@ const Auth = () => {
               <div className="mt-8 flex justify-center lg:mt-10">
                 <img
                   src="/Aido.png"
-                  alt="Aido mascot"
+                  alt="Aido the Aide study mascot robot"
                   className="w-full max-w-[18rem] drop-shadow-[0_22px_36px_rgba(15,23,42,0.22)] dark:drop-shadow-[0_24px_44px_rgba(2,6,23,0.7)] sm:max-w-[30rem]"
                 />
               </div>

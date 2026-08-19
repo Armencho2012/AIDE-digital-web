@@ -413,9 +413,9 @@ const Dashboard = () => {
         <Card className="p-4 sm:p-6 mb-4 sm:mb-6 bg-gradient-to-r from-primary/10 to-accent/10 border-2 border-primary/20">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
             <div>
-              <h3 className="text-base sm:text-lg font-semibold mb-1">
+              <h2 className="text-base sm:text-lg font-semibold mb-1">
                 {userPlan === 'free' ? labels.freeTierUsage : userPlan === 'pro' ? 'Pro Plan' : 'Class Plan'}
-              </h3>
+              </h2>
               <p className="text-xs sm:text-sm text-muted-foreground">
                 {userPlan === 'class'
                   ? 'Unlimited analyses'
