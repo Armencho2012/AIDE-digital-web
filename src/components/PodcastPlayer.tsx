@@ -94,6 +94,9 @@ const parseDialogue = (value: string): PodcastDialogue | null => {
   try {
     const parsed = JSON.parse(value);
     if (!parsed?.title || !Array.isArray(parsed?.speakers) || !Array.isArray(parsed?.turns)) return null;
+    if (!parsed.turns.every((turn: PodcastDialogue['turns'][number]) =>
+      typeof turn.speaker === 'string' && typeof turn.text === 'string' && !turn.text.trim().startsWith('{')
+    )) return null;
     return parsed as PodcastDialogue;
   } catch {
     return null;
@@ -172,6 +175,10 @@ export const PodcastPlayer = ({ podcastUrl, language, onGenerate, isGenerating }
 
   const handleSpeak = () => {
     if (!speechSupported || !podcastUrl) return;
+    if (podcastUrl.trimStart().startsWith('{')) {
+      toast({ title: 'Podcast needs regeneration', description: 'This episode contains invalid dialogue data.', variant: 'destructive' });
+      return;
+    }
     const synth = window.speechSynthesis;
 
     if (isPlaying && !isPaused) {

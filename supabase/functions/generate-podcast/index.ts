@@ -2,7 +2,8 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 const DAILY_LIMIT_FREE = 1
 const DAILY_LIMIT_PRO = 50
-const GEMINI_PODCAST_MODEL = Deno.env.get('GEMINI_PODCAST_MODEL')?.trim() || 'gemini-3.1-flash-tts-preview'
+// Generate dialogue with a text model; browser speech handles playback afterward.
+const GEMINI_PODCAST_MODEL = Deno.env.get('GEMINI_PODCAST_MODEL')?.trim() || 'gemini-2.5-flash'
 const GEMINI_DIALOGUE_FALLBACK_MODEL = 'gemini-2.5-flash'
 
 const corsHeaders = {
@@ -124,7 +125,7 @@ Deno.serve(async (req: Request) => {
   "speakers": [{"name": "Joe", "voice": "Kore"}, {"name": "Jane", "voice": "Puck"}],
   "turns": [{"speaker": "Joe", "text": "exact spoken line", "pacing": "brief pause"}]
 }
-Use exactly two speakers named Joe and Jane and alternate them naturally for 8-12 turns. The voice values must be Kore and Puck. Include pacing cues such as "brief pause", "emphasis", or "warmly" but never put cues inside text. The text must be the exact words to speak, conversational and clear, with a hook, 2-3 key insights, and a memorable takeaway. Do not include stage directions in text.
+Use exactly two speakers named Joe and Jane and alternate them naturally for 6 turns. The voice values must be Kore and Puck. Include pacing cues such as "brief pause", "emphasis", or "warmly" but never put cues inside text. The text must be the exact words to speak, conversational and clear, with a hook, 2-3 key insights, and a memorable takeaway. Do not include stage directions in text.
 
 Content:
 ${topic.slice(0, 8000)}`
@@ -141,14 +142,14 @@ ${topic.slice(0, 8000)}`
           contents: [{ role: 'user', parts: [{ text: prompt }] }],
           generationConfig: {
             temperature: 0.7,
-            maxOutputTokens: 1200,
+            maxOutputTokens: 2200,
             ...(structured ? { responseMimeType: 'application/json' } : {})
           }
         })
       }
     )
 
-    let geminiRes = await requestGemini(GEMINI_PODCAST_MODEL)
+    let geminiRes = await requestGemini(GEMINI_PODCAST_MODEL, true)
     if (!geminiRes.ok && GEMINI_PODCAST_MODEL !== GEMINI_DIALOGUE_FALLBACK_MODEL) {
       console.warn(`Podcast model ${GEMINI_PODCAST_MODEL} failed; retrying with ${GEMINI_DIALOGUE_FALLBACK_MODEL}`)
       geminiRes = await requestGemini(GEMINI_DIALOGUE_FALLBACK_MODEL, true)
@@ -169,6 +170,10 @@ ${topic.slice(0, 8000)}`
     try {
       script = parseJson(rawScript)
     } catch {
+      if (rawScript.trimStart().startsWith('{') || rawScript.trimStart().startsWith('[')) {
+        console.error('Gemini returned truncated podcast JSON:', rawScript.slice(0, 1200))
+        return jsonResponse({ error: 'Podcast dialogue was incomplete. Please generate it again.' }, 502)
+      }
       // Some model versions ignore responseMimeType. Preserve the generated text
       // as a valid dialogue rather than making the entire podcast request fail.
       script = {
