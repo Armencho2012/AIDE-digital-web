@@ -255,7 +255,7 @@ const Help = () => {
   const labels = uiLabels[language];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/20">
+    <div className="min-h-screen bg-[radial-gradient(ellipse_120%_80%_at_50%_-10%,rgba(56,189,248,0.16),rgba(255,255,255,0.95)_45%,rgba(240,247,255,1)_82%)] text-slate-950 dark:bg-[radial-gradient(ellipse_120%_80%_at_50%_-10%,rgba(59,130,246,0.16),rgba(17,24,39,0.95)_55%,rgba(3,7,18,1)_90%)] dark:text-slate-50">
       <div className="container max-w-4xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="flex flex-col gap-4 mb-8">
@@ -274,7 +274,7 @@ const Help = () => {
             </Button>
           </div>
           <div>
-            <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+            <h1 className="bg-gradient-to-r from-sky-600 via-cyan-500 to-orange-500 bg-clip-text text-3xl font-bold text-transparent md:text-4xl">
               {labels.title}
             </h1>
             <p className="text-muted-foreground mt-2">{labels.subtitle}</p>
@@ -336,6 +336,10 @@ const Help = () => {
               ))}
           </CardContent>
         </Card>
+
+        <section id="privacy-policy" className="sr-only" aria-hidden="true" />
+        <section id="terms-of-service" className="sr-only" aria-hidden="true" />
+        <section id="community-guidelines" className="sr-only" aria-hidden="true" />
 
         {/* Contact Section */}
         <Card>

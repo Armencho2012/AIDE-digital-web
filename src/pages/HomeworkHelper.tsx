@@ -58,11 +58,11 @@ const faqs = [
 
 const HomeworkHelper = () => {
   return (
-    <div className="min-h-screen overflow-hidden bg-[radial-gradient(ellipse_120%_80%_at_50%_-10%,rgba(250,204,21,0.22),rgba(255,244,204,0.65)_30%,rgba(255,255,255,1)_80%)] text-slate-950 dark:bg-[radial-gradient(ellipse_120%_80%_at_50%_-10%,rgba(250,204,21,0.18),rgba(17,24,39,0.95)_55%,rgba(3,7,18,1)_90%)] dark:text-slate-50">
+    <div className="min-h-screen overflow-hidden bg-[radial-gradient(ellipse_120%_80%_at_50%_-10%,rgba(56,189,248,0.18),rgba(224,242,254,0.8)_30%,rgba(255,255,255,1)_80%)] text-slate-950 dark:bg-[radial-gradient(ellipse_120%_80%_at_50%_-10%,rgba(59,130,246,0.18),rgba(17,24,39,0.95)_55%,rgba(3,7,18,1)_90%)] dark:text-slate-50">
       <section className="container mx-auto max-w-7xl px-4 pb-16 pt-16 md:pt-20">
         <div className="grid items-center gap-10 lg:grid-cols-12">
           <div className="lg:col-span-7">
-            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-amber-200/90 bg-white/80 px-3.5 py-1.5 text-xs font-semibold text-amber-700 shadow-sm backdrop-blur dark:border-amber-400/20 dark:bg-white/5 dark:text-amber-200">
+            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-sky-200/90 bg-white/80 px-3.5 py-1.5 text-xs font-semibold text-sky-700 shadow-sm backdrop-blur dark:border-sky-400/20 dark:bg-white/5 dark:text-sky-200">
               <Sparkles className="h-3.5 w-3.5" />
               AI Homework Helper
             </div>
@@ -77,13 +77,13 @@ const HomeworkHelper = () => {
             </p>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Button asChild size="lg" className="h-12 rounded-full bg-amber-500 px-7 text-base text-white hover:bg-amber-400">
+              <Button asChild size="lg" className="h-12 rounded-full bg-sky-600 px-7 text-base text-white hover:bg-sky-500">
                 <Link to="/auth">
                   Start with Aide
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
               </Button>
-              <Button asChild size="lg" variant="outline" className="h-12 rounded-full border-amber-300 bg-white/70 px-7 text-base text-amber-700 hover:bg-white">
+              <Button asChild size="lg" variant="outline" className="h-12 rounded-full border-sky-300 bg-white/70 px-7 text-base text-sky-700 hover:bg-white dark:border-sky-200/30 dark:text-sky-100">
                 <a href="#how-it-works">See how it works</a>
               </Button>
             </div>
@@ -107,7 +107,7 @@ const HomeworkHelper = () => {
                   <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">Homework Help Preview</p>
                   <p className="text-sm text-slate-500 dark:text-slate-400">A calm workspace for hard questions</p>
                 </div>
-                <div className="rounded-full bg-amber-500/10 px-3 py-1 text-xs font-medium text-amber-700 dark:text-amber-200">
+                <div className="rounded-full bg-sky-500/10 px-3 py-1 text-xs font-medium text-sky-700 dark:text-sky-200">
                   Live guidance
                 </div>
               </div>
@@ -134,7 +134,7 @@ const HomeworkHelper = () => {
                 ))}
               </div>
 
-              <div className="mt-5 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 p-4 text-white">
+              <div className="mt-5 rounded-2xl bg-[linear-gradient(135deg,hsl(210,90%,48%),hsl(195,85%,55%),hsl(35,95%,55%))] p-4 text-white">
                 <div className="flex items-center gap-2 text-sm font-semibold">
                   <Bot className="h-4 w-4" />
                   Built for better understanding
@@ -150,7 +150,7 @@ const HomeworkHelper = () => {
 
       <section id="how-it-works" className="container mx-auto max-w-7xl px-4 pb-16">
         <div className="mb-8 max-w-3xl">
-          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-amber-600 dark:text-amber-300">
+          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-sky-600 dark:text-sky-300">
             How it works
           </p>
           <h2 className="mt-2 text-2xl font-semibold tracking-tight md:text-4xl">Three steps from stuck to solved</h2>
@@ -166,10 +166,10 @@ const HomeworkHelper = () => {
               className="rounded-2xl border border-slate-200/80 bg-white/88 p-5 shadow-[0_16px_36px_rgba(15,23,42,0.08)] backdrop-blur-xl dark:border-white/10 dark:bg-slate-950/50"
             >
               <div className="mb-4 flex items-center justify-between">
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-200">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-sky-100 text-sky-700 dark:bg-sky-500/15 dark:text-sky-200">
                   <WandSparkles className="h-4.5 w-4.5" />
                 </div>
-                <span className="rounded-full border border-amber-200 bg-white px-2.5 py-1 text-[11px] font-semibold text-amber-700 dark:border-white/10 dark:bg-white/5 dark:text-amber-200">
+                <span className="rounded-full border border-sky-200 bg-white px-2.5 py-1 text-[11px] font-semibold text-sky-700 dark:border-white/10 dark:bg-white/5 dark:text-sky-200">
                   Step {index + 1}
                 </span>
               </div>
@@ -189,8 +189,8 @@ const HomeworkHelper = () => {
                 key={item.title}
                 className="rounded-2xl border border-slate-200/80 bg-white/88 p-5 shadow-[0_16px_36px_rgba(15,23,42,0.08)] backdrop-blur-xl transition-transform duration-300 hover:-translate-y-1 dark:border-white/10 dark:bg-slate-950/50"
               >
-                <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-amber-100/90 dark:bg-amber-500/15">
-                  <Icon className="h-5 w-5 text-amber-700 dark:text-amber-200" />
+                <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-sky-100/90 dark:bg-sky-500/15">
+                  <Icon className="h-5 w-5 text-sky-700 dark:text-sky-200" />
                 </div>
                 <h3 className="mb-2 text-base font-semibold text-slate-900 dark:text-white">{item.title}</h3>
                 <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-300">{item.description}</p>
@@ -204,7 +204,7 @@ const HomeworkHelper = () => {
         <div className="rounded-[2rem] border border-slate-200/70 bg-white/85 p-6 backdrop-blur-xl md:p-10 dark:border-white/10 dark:bg-slate-950/55">
           <div className="grid gap-8 lg:grid-cols-12">
             <div className="lg:col-span-5">
-              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-amber-600 dark:text-amber-300">
+              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-sky-600 dark:text-sky-300">
                 FAQ
               </p>
               <h2 className="mt-2 text-2xl font-semibold tracking-tight md:text-4xl">Common homework questions</h2>
@@ -220,7 +220,7 @@ const HomeworkHelper = () => {
           </div>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <Button asChild size="lg" className="rounded-full bg-amber-500 text-white hover:bg-amber-400">
+            <Button asChild size="lg" className="rounded-full bg-sky-600 text-white hover:bg-sky-500">
               <Link to="/auth">
                 Try Aide now
                 <ArrowRight className="ml-2 h-5 w-5" />

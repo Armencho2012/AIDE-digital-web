@@ -1360,6 +1360,9 @@ const Landing = () => {
               <div>
                 <h4 className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-950/90 dark:text-white/90">Product</h4>
                 <div className="mt-4 flex flex-col gap-2.5 text-sm font-medium">
+                  <Link to="/homework-helper" className="text-slate-700 transition-colors duration-300 hover:text-slate-950 dark:text-slate-300 dark:hover:text-white">
+                    AI Homework Helper
+                  </Link>
                   <Link to="/help" className="text-slate-700 transition-colors duration-300 hover:text-slate-950 dark:text-slate-300 dark:hover:text-white">
                     About Page
                   </Link>
