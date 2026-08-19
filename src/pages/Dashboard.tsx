@@ -12,6 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useSettings } from "@/hooks/useSettings";
 import { useAuth } from "@/hooks/useAuth";
 import { usePodcast } from "@/hooks/usePodcast";
+import { PodcastPlayer } from "@/components/PodcastPlayer";
 import { useUsageLimit } from "@/hooks/useUsageLimit";
 import { supabase } from "@/integrations/supabase/client";
 import { invokeAnalyzeText } from "@/lib/analyzeText";
@@ -124,7 +125,7 @@ const Dashboard = () => {
   const { user, isAuthChecked } = useAuth();
   const { language, theme, setLanguage, setTheme, isLoaded: settingsLoaded } = useSettings();
   const { usageCount, dailyLimit, userPlan, isLocked, refreshUsage } = useUsageLimit();
-  const { podcastAudio, isPlaying, isGenerating: podcastGenerating, error: podcastError, audioRef, generatePodcast, togglePlayback, clearError: clearPodcastError, clearAudio } = usePodcast();
+  const { podcastAudio, isGenerating: podcastGenerating, error: podcastError, generatePodcast, clearError: clearPodcastError, clearAudio } = usePodcast();
 
   // Local UI state
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -490,29 +491,13 @@ const Dashboard = () => {
           </Card>
         )}
 
-        {/* Podcast Audio Player */}
+        {/* Podcast player understands both new dialogue JSON and legacy audio. */}
         {podcastAudio && (
-          <Card className="p-6 mb-6 bg-gradient-to-r from-primary/10 to-accent/10 border-2 border-primary/20 animate-in fade-in-50">
-            <div className="flex items-center gap-4">
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={togglePlayback}
-                className="h-14 w-14 rounded-full transition-transform hover:scale-110"
-              >
-                {isPlaying ? <Pause className="h-6 w-6" /> : <Play className="h-6 w-6" />}
-              </Button>
-              <div className="flex-1">
-                <h3 className="font-semibold">Generated Podcast</h3>
-                <p className="text-sm text-muted-foreground">Click play to listen</p>
-              </div>
-              <audio
-                ref={audioRef}
-                src={podcastAudio}
-                className="hidden"
-              />
-            </div>
-          </Card>
+          <PodcastPlayer
+            podcastUrl={podcastAudio}
+            language={language}
+            isGenerating={podcastGenerating}
+          />
         )}
 
         {/* Output Area */}

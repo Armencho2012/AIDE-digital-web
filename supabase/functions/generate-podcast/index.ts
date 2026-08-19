@@ -3,6 +3,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 const DAILY_LIMIT_FREE = 1
 const DAILY_LIMIT_PRO = 50
 const GEMINI_PODCAST_MODEL = Deno.env.get('GEMINI_PODCAST_MODEL')?.trim() || 'gemini-3.1-flash-tts-preview'
+const GEMINI_DIALOGUE_FALLBACK_MODEL = 'gemini-flash-latest'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -128,8 +129,8 @@ Use exactly two speakers named Joe and Jane and alternate them naturally for 8-1
 Content:
 ${topic.slice(0, 8000)}`
 
-    const geminiRes = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_PODCAST_MODEL}:generateContent`,
+    const requestGemini = (model: string) => fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
       {
         method: 'POST',
         headers: {
@@ -146,6 +147,12 @@ ${topic.slice(0, 8000)}`
         })
       }
     )
+
+    let geminiRes = await requestGemini(GEMINI_PODCAST_MODEL)
+    if (!geminiRes.ok && GEMINI_PODCAST_MODEL !== GEMINI_DIALOGUE_FALLBACK_MODEL) {
+      console.warn(`Podcast model ${GEMINI_PODCAST_MODEL} failed; retrying with ${GEMINI_DIALOGUE_FALLBACK_MODEL}`)
+      geminiRes = await requestGemini(GEMINI_DIALOGUE_FALLBACK_MODEL)
+    }
 
     if (!geminiRes.ok) {
       const errorText = await geminiRes.text().catch(() => '')
