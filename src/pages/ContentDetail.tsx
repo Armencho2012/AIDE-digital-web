@@ -135,6 +135,7 @@ const ContentDetail = () => {
 
       // New flow: browser-TTS script. Fallback: legacy audio URL still supported.
       const scriptOrUrl: string | null =
+        (data as any)?.podcast_url ||
         (data as any)?.podcast_script ||
         (data as any)?.podcast_path ||
         (data as any)?.podcast_url ||

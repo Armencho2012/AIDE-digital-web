@@ -5,6 +5,7 @@ const DAILY_LIMIT_PRO = 50
 // Generate dialogue with a text model; browser speech handles playback afterward.
 const GEMINI_PODCAST_MODEL = Deno.env.get('GEMINI_PODCAST_MODEL')?.trim() || 'gemini-2.5-flash'
 const GEMINI_DIALOGUE_FALLBACK_MODEL = 'gemini-2.5-flash'
+const GEMINI_TTS_MODEL = Deno.env.get('GEMINI_TTS_MODEL')?.trim() || 'gemini-3.1-flash-tts-preview'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -193,10 +194,41 @@ ${topic.slice(0, 8000)}`
       return jsonResponse({ error: 'Podcast generation returned an empty response. Please try again.' }, 502)
     }
 
+    const dialogueText = script.turns
+      .map((turn: { speaker: string; text: string }) => `${turn.speaker}: ${turn.text}`)
+      .join('\n')
+    const ttsRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_TTS_MODEL}:generateContent`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-goog-api-key': geminiKey },
+      body: JSON.stringify({
+        contents: [{ role: 'user', parts: [{ text: dialogueText }] }],
+        generationConfig: { responseModalities: ['AUDIO'] },
+        speechConfig: {
+          multiSpeakerVoiceConfig: {
+            speakerVoiceConfigs: script.speakers.map((speaker: { name: string; voice: string }) => ({
+              speaker: speaker.name,
+              voiceConfig: { prebuiltVoiceConfig: { voiceName: speaker.voice } }
+            }))
+          }
+        }
+      })
+    })
+
+    if (!ttsRes.ok) {
+      console.error('Gemini TTS failed:', ttsRes.status, await ttsRes.text().catch(() => ''))
+      return jsonResponse({ error: 'Podcast voice generation failed. Please try again.' }, 502)
+    }
+
+    const ttsJson = await ttsRes.json().catch(() => null)
+    const audioPart = ttsJson?.candidates?.[0]?.content?.parts?.find((part: any) => part?.inlineData?.data)
+    if (!audioPart?.inlineData?.data) {
+      return jsonResponse({ error: 'Podcast voice generation returned no audio. Please try again.' }, 502)
+    }
+
     await supabaseAdmin.from('usage_logs').insert({ user_id: user.id, action_type: 'podcast' })
 
     // Return the script — client plays via browser SpeechSynthesis (no external TTS).
-    return jsonResponse({ podcast_script: JSON.stringify(script), dialogue: script, language }, 200)
+    return jsonResponse({ podcast_script: JSON.stringify(script), dialogue: script, podcast_url: `data:${audioPart.inlineData.mimeType || 'audio/wav'};base64,${audioPart.inlineData.data}`, language }, 200)
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unknown error'
     console.error('generate-podcast error:', message)

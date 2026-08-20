@@ -73,13 +73,13 @@ export const usePodcast = (): UsePodcastReturn => {
           throw new Error(podcastError.message || 'Failed to generate podcast');
         }
 
-        const podcastScript = data?.podcast_script || data?.podcast_url;
-        if (!podcastScript || typeof podcastScript !== 'string') {
-          throw new Error('No podcast dialogue returned');
+        const podcastAudio = data?.podcast_url;
+        if (!podcastAudio || typeof podcastAudio !== 'string') {
+          throw new Error('No podcast audio returned');
         }
 
-        setPodcastAudio(podcastScript);
-        return podcastScript;
+        setPodcastAudio(podcastAudio);
+        return podcastAudio;
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : 'Unknown error';
         setError(errorMessage);

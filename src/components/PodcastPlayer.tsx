@@ -81,6 +81,7 @@ const LANG_TO_BCP47: Record<Language, string> = {
 };
 
 const isRemoteUrl = (value: string) => /^https?:\/\//i.test(value);
+const isDataAudioUrl = (value: string) => /^data:audio\//i.test(value);
 const looksLikeStoragePath = (value: string) =>
   !isRemoteUrl(value) && /\.(mp3|wav|ogg|m4a)$/i.test(value);
 
@@ -117,7 +118,7 @@ export const PodcastPlayer = ({ podcastUrl, language, onGenerate, isGenerating }
   // Detect mode: script (plain text) vs audio (URL or storage path)
   const mode: 'script' | 'audio' | 'empty' = useMemo(() => {
     if (!podcastUrl) return 'empty';
-    if (isRemoteUrl(podcastUrl) || looksLikeStoragePath(podcastUrl)) return 'audio';
+    if (isRemoteUrl(podcastUrl) || isDataAudioUrl(podcastUrl) || looksLikeStoragePath(podcastUrl)) return 'audio';
     return 'script';
   }, [podcastUrl]);
 
@@ -132,7 +133,7 @@ export const PodcastPlayer = ({ podcastUrl, language, onGenerate, isGenerating }
 
     if (mode !== 'audio' || !podcastUrl) return;
 
-    if (isRemoteUrl(podcastUrl)) {
+    if (isRemoteUrl(podcastUrl) || isDataAudioUrl(podcastUrl)) {
       setPlaybackUrl(podcastUrl);
       return;
     }
