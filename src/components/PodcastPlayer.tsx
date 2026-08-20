@@ -175,7 +175,7 @@ export const PodcastPlayer = ({ podcastUrl, language, onGenerate, isGenerating }
 
   const handleSpeak = () => {
     if (!speechSupported || !podcastUrl) return;
-    if (podcastUrl.trimStart().startsWith('{')) {
+    if (!dialogue && podcastUrl.trimStart().startsWith('{')) {
       toast({ title: 'Podcast needs regeneration', description: 'This episode contains invalid dialogue data.', variant: 'destructive' });
       return;
     }
