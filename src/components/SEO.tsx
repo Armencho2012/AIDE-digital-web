@@ -83,6 +83,13 @@ const pageSEO: Record<string, SEOProps> = {
     keywords: 'AI homework helper, homework help, study assistant, step-by-step explanations',
     robots: 'index, follow',
   },
+  '/study-guide-maker': {
+    title: 'Study Guide Maker | AI Study Guides from PDFs & Notes',
+    description:
+      'Turn PDFs, class notes, and voice recordings into structured study guides with key terms, quizzes, flashcards, and a 7-day study plan. Free to start.',
+    keywords: 'study guide maker, AI study guide generator, PDF to study guide, notes to study guide, 7-day study plan',
+    robots: 'index, follow',
+  },
   '/auth': {
     title: 'Sign In | Aide',
     description: 'Sign in to Aide to start generating quizzes, flashcards, maps, and podcasts from your study material.',
@@ -360,6 +367,45 @@ export const SEO = ({ title, description, keywords, image, robots }: SEOProps) =
             acceptedAnswer: {
               '@type': 'Answer',
               text: 'Yes. Aide supports English, Russian, Armenian, and Korean with browser-language detection and manual switching.',
+            },
+          },
+        ],
+      });
+    } else if (pathname === '/study-guide-maker') {
+      updateJsonLd('faq-schema', {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: [
+          {
+            '@type': 'Question',
+            name: 'What is a study guide maker?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'It is a tool that turns raw material such as notes, PDFs, and recordings into an organized study guide with summaries, key terms, and practice questions.',
+            },
+          },
+          {
+            '@type': 'Question',
+            name: 'Can I make a study guide from a PDF?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'Yes. Upload the PDF and Aide extracts the content, then generates a structured guide plus optional quizzes, flashcards, and a knowledge map.',
+            },
+          },
+          {
+            '@type': 'Question',
+            name: 'Is the study guide maker free to try?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'Yes. The free plan includes a daily generation so you can create a study guide before upgrading.',
+            },
+          },
+          {
+            '@type': 'Question',
+            name: 'Which languages are supported?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'Aide supports English, Russian, Armenian, and Korean.',
             },
           },
         ],
