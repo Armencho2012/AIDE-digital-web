@@ -12,6 +12,7 @@ import Landing from "./pages/Landing";
 const Auth = lazy(() => import("./pages/Auth"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const HomeworkHelper = lazy(() => import("./pages/HomeworkHelper"));
+const StudyGuideMaker = lazy(() => import("./pages/StudyGuideMaker"));
 const Library = lazy(() => import("./pages/Library"));
 const ContentDetail = lazy(() => import("./pages/ContentDetail"));
 const CourseDetail = lazy(() => import("./pages/CourseDetail"));
@@ -48,6 +49,7 @@ const App = () => (
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/homework-helper" element={<HomeworkHelper />} />
+                <Route path="/study-guide-maker" element={<StudyGuideMaker />} />
                 <Route path="/library" element={<Library />} />
                 <Route path="/library/:id" element={<ContentDetail />} />
                 <Route path="/library/course/:id" element={<CourseDetail />} />
