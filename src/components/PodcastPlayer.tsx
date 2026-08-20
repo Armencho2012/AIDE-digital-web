@@ -317,6 +317,17 @@ export const PodcastPlayer = ({ podcastUrl, language, onGenerate, isGenerating }
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
+          {!dialogue && (
+            <div className="rounded-md border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">
+              This episode contains invalid dialogue data. Generate it again to replace the broken episode.
+              {onGenerate && (
+                <Button onClick={onGenerate} disabled={isGenerating} size="sm" className="mt-3">
+                  {isGenerating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Mic className="mr-2 h-4 w-4" />}
+                  {isGenerating ? l.generating : 'Regenerate Podcast'}
+                </Button>
+              )}
+            </div>
+          )}
           {!speechSupported ? (
             <p className="text-sm text-destructive">{l.unsupported}</p>
           ) : (
