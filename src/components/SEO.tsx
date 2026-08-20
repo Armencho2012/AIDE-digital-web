@@ -371,6 +371,45 @@ export const SEO = ({ title, description, keywords, image, robots }: SEOProps) =
           },
         ],
       });
+    } else if (pathname === '/study-guide-maker') {
+      updateJsonLd('faq-schema', {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: [
+          {
+            '@type': 'Question',
+            name: 'What is a study guide maker?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'It is a tool that turns raw material such as notes, PDFs, and recordings into an organized study guide with summaries, key terms, and practice questions.',
+            },
+          },
+          {
+            '@type': 'Question',
+            name: 'Can I make a study guide from a PDF?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'Yes. Upload the PDF and Aide extracts the content, then generates a structured guide plus optional quizzes, flashcards, and a knowledge map.',
+            },
+          },
+          {
+            '@type': 'Question',
+            name: 'Is the study guide maker free to try?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'Yes. The free plan includes a daily generation so you can create a study guide before upgrading.',
+            },
+          },
+          {
+            '@type': 'Question',
+            name: 'Which languages are supported?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'Aide supports English, Russian, Armenian, and Korean.',
+            },
+          },
+        ],
+      });
     } else {
       removeJsonLd('faq-schema');
     }
