@@ -420,6 +420,30 @@ export const SEO = ({ title, description, keywords, image, robots }: SEOProps) =
     } else {
       removeJsonLd('faq-schema');
     }
+
+    if (pathname === '/blog/how-to-do-active-recall-with-notes') {
+      updateJsonLd('article-schema', {
+        '@context': 'https://schema.org',
+        '@type': 'Article',
+        headline: 'How to do active recall with notes',
+        description: finalDescription,
+        inLanguage: 'en',
+        mainEntityOfPage: canonicalUrl,
+        author: { '@type': 'Organization', name: 'Aide' },
+        publisher: { '@type': 'Organization', name: 'Aide' },
+      });
+      updateJsonLd('breadcrumb-schema', {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: `${canonicalBase}/` },
+          { '@type': 'ListItem', position: 2, name: 'How to do active recall with notes', item: canonicalUrl },
+        ],
+      });
+    } else {
+      removeJsonLd('article-schema');
+      removeJsonLd('breadcrumb-schema');
+    }
   }, [finalTitle, finalDescription, finalKeywords, finalImage, finalRobots, pathname, language, isLanding]);
 
   return null;
