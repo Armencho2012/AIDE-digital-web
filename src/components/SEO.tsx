@@ -90,6 +90,13 @@ const pageSEO: Record<string, SEOProps> = {
     keywords: 'study guide maker, AI study guide generator, PDF to study guide, notes to study guide, 7-day study plan',
     robots: 'index, follow',
   },
+  '/blog/how-to-do-active-recall-with-notes': {
+    title: 'How to Do Active Recall with Notes | Step-by-Step Guide',
+    description:
+      'Learn how to do active recall with your notes: turn facts into questions, answer from memory, space the repeats, and auto-generate quizzes and maps with Aide.',
+    keywords: 'how to do active recall with notes, active recall, retrieval practice, spaced repetition, study method',
+    robots: 'index, follow',
+  },
   '/auth': {
     title: 'Sign In | Aide',
     description: 'Sign in to Aide to start generating quizzes, flashcards, maps, and podcasts from your study material.',
