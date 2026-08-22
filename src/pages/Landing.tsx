@@ -1363,6 +1363,12 @@ const Landing = () => {
                   <Link to="/homework-helper" className="text-slate-700 transition-colors duration-300 hover:text-slate-950 dark:text-slate-300 dark:hover:text-white">
                     AI Homework Helper
                   </Link>
+                  <Link to="/study-guide-maker" className="text-slate-700 transition-colors duration-300 hover:text-slate-950 dark:text-slate-300 dark:hover:text-white">
+                    Study Guide Maker
+                  </Link>
+                  <Link to="/blog/how-to-do-active-recall-with-notes" className="text-slate-700 transition-colors duration-300 hover:text-slate-950 dark:text-slate-300 dark:hover:text-white">
+                    How to Do Active Recall with Notes
+                  </Link>
                   <Link to="/help" className="text-slate-700 transition-colors duration-300 hover:text-slate-950 dark:text-slate-300 dark:hover:text-white">
                     About Page
                   </Link>
