@@ -51,6 +51,8 @@ const App = () => (
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/homework-helper" element={<HomeworkHelper />} />
                 <Route path="/study-guide-maker" element={<StudyGuideMaker />} />
+                <Route path="/blog/how-to-do-active-recall-with-notes" element={<ActiveRecallGuide />} />
+
                 <Route path="/library" element={<Library />} />
                 <Route path="/library/:id" element={<ContentDetail />} />
                 <Route path="/library/course/:id" element={<CourseDetail />} />
