@@ -13,6 +13,7 @@ const Auth = lazy(() => import("./pages/Auth"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const HomeworkHelper = lazy(() => import("./pages/HomeworkHelper"));
 const StudyGuideMaker = lazy(() => import("./pages/StudyGuideMaker"));
+const ActiveRecallGuide = lazy(() => import("./pages/ActiveRecallGuide"));
 const Library = lazy(() => import("./pages/Library"));
 const ContentDetail = lazy(() => import("./pages/ContentDetail"));
 const CourseDetail = lazy(() => import("./pages/CourseDetail"));
