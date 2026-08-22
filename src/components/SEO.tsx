@@ -90,6 +90,13 @@ const pageSEO: Record<string, SEOProps> = {
     keywords: 'study guide maker, AI study guide generator, PDF to study guide, notes to study guide, 7-day study plan',
     robots: 'index, follow',
   },
+  '/blog/how-to-do-active-recall-with-notes': {
+    title: 'How to Do Active Recall with Notes | Step-by-Step Guide',
+    description:
+      'Learn how to do active recall with your notes: turn facts into questions, answer from memory, space the repeats, and auto-generate quizzes and maps with Aide.',
+    keywords: 'how to do active recall with notes, active recall, retrieval practice, spaced repetition, study method',
+    robots: 'index, follow',
+  },
   '/auth': {
     title: 'Sign In | Aide',
     description: 'Sign in to Aide to start generating quizzes, flashcards, maps, and podcasts from your study material.',
@@ -412,6 +419,30 @@ export const SEO = ({ title, description, keywords, image, robots }: SEOProps) =
       });
     } else {
       removeJsonLd('faq-schema');
+    }
+
+    if (pathname === '/blog/how-to-do-active-recall-with-notes') {
+      updateJsonLd('article-schema', {
+        '@context': 'https://schema.org',
+        '@type': 'Article',
+        headline: 'How to do active recall with notes',
+        description: finalDescription,
+        inLanguage: 'en',
+        mainEntityOfPage: canonicalUrl,
+        author: { '@type': 'Organization', name: 'Aide' },
+        publisher: { '@type': 'Organization', name: 'Aide' },
+      });
+      updateJsonLd('breadcrumb-schema', {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: `${canonicalBase}/` },
+          { '@type': 'ListItem', position: 2, name: 'How to do active recall with notes', item: canonicalUrl },
+        ],
+      });
+    } else {
+      removeJsonLd('article-schema');
+      removeJsonLd('breadcrumb-schema');
     }
   }, [finalTitle, finalDescription, finalKeywords, finalImage, finalRobots, pathname, language, isLanding]);
 

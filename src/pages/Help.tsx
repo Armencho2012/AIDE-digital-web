@@ -337,6 +337,26 @@ const Help = () => {
           </CardContent>
         </Card>
 
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <BookOpen className="h-5 w-5 text-accent" />
+              Study method guides
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground mb-3">
+              Deeper walkthroughs of study techniques you can run inside Aide.
+            </p>
+            <Link
+              to="/blog/how-to-do-active-recall-with-notes"
+              className="text-primary hover:underline font-medium"
+            >
+              How to do active recall with notes
+            </Link>
+          </CardContent>
+        </Card>
+
         <section id="privacy-policy" className="sr-only" aria-hidden="true" />
         <section id="terms-of-service" className="sr-only" aria-hidden="true" />
         <section id="community-guidelines" className="sr-only" aria-hidden="true" />
