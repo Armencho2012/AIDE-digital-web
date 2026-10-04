@@ -26,9 +26,9 @@ const localeMap: Record<Language, string> = {
 
 const landingSeoByLanguage: Record<Language, LocalizedSEO> = {
   en: {
-    title: 'Aide | AI Study Assistant',
+    title: 'Aide — AI Study Assistant for Notes, PDFs & YouTube',
     description:
-      'Aide transforms notes, PDFs, and images into AI study workflows: summaries, quizzes, flashcards, neural maps, tutor chat, course plans, and podcasts.',
+      'Turn notes, PDFs, images, and YouTube videos into AI summaries, quizzes, flashcards, knowledge maps, and tutor chat. Study smarter with Aide — free to start.',
     keywords:
       'AI study assistant, quiz generator, flashcards generator, neural map, tutor chat, podcast generator, PDF study tool, multilingual learning',
   },
@@ -56,9 +56,9 @@ const landingSeoByLanguage: Record<Language, LocalizedSEO> = {
 };
 
 const defaultSEO = {
-  title: 'Aide | AI Study Assistant',
+  title: 'Aide — AI Study Assistant for Notes, PDFs & YouTube',
   description:
-    'Aide transforms notes, PDFs, and images into AI study materials: summaries, quizzes, flashcards, knowledge maps, tutor chat, course plans, and podcasts.',
+    'Turn notes, PDFs, images, and YouTube videos into AI summaries, quizzes, flashcards, knowledge maps, and tutor chat. Study smarter with Aide — free to start.',
   keywords:
     'AI study assistant, quiz generator, flashcards generator, knowledge map, AI tutor chat, study podcast generator, PDF study tool, multilingual learning',
   image: 'https://myaide.vercel.app/placeholder.svg',
