@@ -61,7 +61,7 @@ const defaultSEO = {
     'Turn notes, PDFs, images, and YouTube videos into AI summaries, quizzes, flashcards, knowledge maps, and tutor chat. Study smarter with Aide — free to start.',
   keywords:
     'AI study assistant, quiz generator, flashcards generator, knowledge map, AI tutor chat, study podcast generator, PDF study tool, multilingual learning',
-  image: 'https://myaide.vercel.app/placeholder.svg',
+  image: 'https://myaide.vercel.app/og-image.jpg',
   robots: 'index, follow',
 };
 
@@ -279,7 +279,7 @@ export const SEO = ({ title, description, keywords, image, robots }: SEOProps) =
     updateMetaTag('og:title', finalTitle, true);
     updateMetaTag('og:description', finalDescription, true);
     updateMetaTag('og:image', finalImage, true);
-    updateMetaTag('og:type', 'website', true);
+    updateMetaTag('og:type', pathname.startsWith('/blog/') ? 'article' : 'website', true);
     updateMetaTag('og:url', canonicalUrl, true);
     updateMetaTag('og:site_name', 'Aide', true);
     updateMetaTag('og:locale', localeMap[language], true);
@@ -429,6 +429,9 @@ export const SEO = ({ title, description, keywords, image, robots }: SEOProps) =
         description: finalDescription,
         inLanguage: 'en',
         mainEntityOfPage: canonicalUrl,
+        image: finalImage,
+        datePublished: '2026-08-22',
+        dateModified: '2026-10-05',
         author: { '@type': 'Organization', name: 'Aide' },
         publisher: { '@type': 'Organization', name: 'Aide' },
       });
