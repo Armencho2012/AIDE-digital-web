@@ -169,11 +169,11 @@ Deno.serve(async (req: Request) => {
 
     const { data: subscription } = await supabaseAdmin
       .from('subscriptions')
-      .select('plan_type, status')
+      .select('plan_type, status, expires_at')
       .eq('user_id', user.id)
       .single();
 
-    const userPlan = subscription?.status === 'active' ? (subscription.plan_type || 'free') : 'free';
+    const userPlan = subscription?.status === 'active' && (!subscription.expires_at || new Date(subscription.expires_at) > new Date()) ? (subscription.plan_type || 'free') : 'free';
     const isProOrClass = ['pro', 'class'].includes(userPlan);
 
     // Daily usage check via RPC
