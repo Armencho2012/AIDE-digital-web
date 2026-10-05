@@ -16,6 +16,8 @@ const ALLOWED_FIELDS = ['email', 'sale_id', 'product_id', 'event', 'seller_id', 
 type VerifiedGumroadSale = {
   email: string;
   productId: string | null;
+  refunded: boolean;
+  cancelled: boolean;
 };
 
 function isRateLimited(identifier: string): boolean {
@@ -89,10 +91,27 @@ function extractVerifiedSale(data: any): VerifiedGumroadSale | null {
   return {
     email,
     productId: rawProductId ? String(rawProductId) : null,
+    refunded: sale.refunded === true || sale.partially_refunded === true || sale.chargebacked === true,
+    cancelled: Boolean(sale.cancelled === true || sale.subscription_cancelled_at || sale.subscription_ended_at || sale.subscription_failed_at),
   };
 }
 
 // Verify sale with Gumroad API
+// Per-instance throttle on outbound Gumroad lookups to limit abuse
+const lookupLog: number[] = [];
+const recentSaleLookups = new Map<string, number>();
+function allowLookup(saleId: string): boolean {
+  const now = Date.now();
+  while (lookupLog.length && now - lookupLog[0] > 60_000) lookupLog.shift();
+  if (lookupLog.length >= 30) return false;
+  const last = recentSaleLookups.get(saleId);
+  if (last && now - last < 10_000) return false;
+  lookupLog.push(now);
+  recentSaleLookups.set(saleId, now);
+  if (recentSaleLookups.size > 1000) recentSaleLookups.clear();
+  return true;
+}
+
 async function verifySaleWithGumroad(saleId: string, accessToken: string): Promise<VerifiedGumroadSale | null> {
   try {
     const response = await fetch(`https://api.gumroad.com/v2/sales/${saleId}`, {
@@ -223,6 +242,12 @@ Deno.serve(async (req: Request) => {
     }
 
     // CRITICAL: Verify the sale is legitimate and belongs to the webhook buyer.
+    if (!allowLookup(saleId)) {
+      return new Response("Too many requests", {
+        status: 429,
+        headers: { ...corsHeaders, "Content-Type": "text/plain" }
+      });
+    }
     const verifiedSale = await verifySaleWithGumroad(saleId, gumroadAccessToken);
     if (!verifiedSale) {
       console.error("Sale verification failed");
@@ -316,7 +341,9 @@ Deno.serve(async (req: Request) => {
 
     // Handle refund/cancellation
     if (event === 'refund' || event === 'subscription_cancelled') {
-      if (isValidEmail(email || '')) {
+      // Only cancel when Gumroad itself confirms the sale was refunded/cancelled
+      const confirmed = event === 'refund' ? verifiedSale.refunded : (verifiedSale.cancelled || verifiedSale.refunded);
+      if (confirmed && isValidEmail(email || '')) {
         const { data: authUsers } = await supabase.auth.admin.listUsers();
         const user = authUsers?.users.find(u => u.email?.toLowerCase() === email);
 
