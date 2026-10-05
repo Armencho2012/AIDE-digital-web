@@ -54,10 +54,10 @@ Deno.serve(async (req: Request) => {
     if (supabaseAdmin) {
       const { data: subscription } = await supabaseAdmin
         .from('subscriptions')
-        .select('plan_type, status')
+        .select('plan_type, status, expires_at')
         .eq('user_id', user.id)
         .maybeSingle();
-      const userPlan = subscription?.status === 'active' ? (subscription.plan_type || 'free') : 'free';
+      const userPlan = subscription?.status === 'active' && (!subscription.expires_at || new Date(subscription.expires_at) > new Date()) ? (subscription.plan_type || 'free') : 'free';
 
       if (userPlan !== 'class') {
         const startOfDay = new Date();

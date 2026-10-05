@@ -25,7 +25,9 @@ export default defineTool({
     }
     const cap = Math.min(Math.max(limit ?? 20, 1), 100);
     const escaped = query.replace(/[%_]/g, (m) => `\\${m}`);
-    const pattern = `%${escaped}%`;
+    // Quote the value so PostgREST filter delimiters (, . ( ) :) are treated literally
+    const quoted = `"%${escaped.replace(/\\/g, "\\\\").replace(/"/g, '\\"')}%"`;
+    const pattern = quoted;
     const { data, error } = await supabaseForUser(ctx)
       .from("user_content")
       .select("id, title, content_type, language, created_at")

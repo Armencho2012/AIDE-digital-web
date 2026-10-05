@@ -164,7 +164,13 @@ Deno.serve(async (req: Request) => {
     }
 
     const origin = req.headers.get("origin");
-    if (origin && /^https?:\/\/[a-zA-Z0-9.-]+(?::\d+)?$/i.test(origin)) {
+    const allowedOrigins = new Set([
+      "https://myaide.vercel.app",
+      "https://myaide-study.lovable.app",
+      "https://id-preview--7b3188b9-1868-4361-8371-abba739278cf.lovable.app",
+      "http://localhost:8080",
+    ]);
+    if (origin && allowedOrigins.has(origin)) {
       productUrl.searchParams.set("success_url", `${origin}/billing?status=success`);
     }
 
