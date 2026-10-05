@@ -104,7 +104,7 @@ export async function POST(req: Request) {
 
     // --- Server-side daily usage limit ---
     const planRes = await supabaseRest(
-      `/rest/v1/subscriptions?user_id=eq.${userId}&status=eq.active&select=plan_type`,
+      `/rest/v1/subscriptions?user_id=eq.${userId}&status=eq.active&or=(expires_at.is.null,expires_at.gt.${encodeURIComponent(new Date().toISOString())})&select=plan_type`,
       supabaseUrl,
       serviceKey
     )
