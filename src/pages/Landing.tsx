@@ -52,46 +52,16 @@ interface LandingCopy {
   previewStream: string;
   previewWidgetQuizNotes: string;
   previewWidgetPodcast: string;
-  previewNodeCore: string;
-  previewNodeQuiz: string;
-  previewNodeChat: string;
   flowTitle: string;
   flowSubtitle: string;
-  transitionTitle: string;
-  transitionSubtitle: string;
   step1Title: string;
   step1Desc: string;
   step2Title: string;
   step2Desc: string;
   step3Title: string;
   step3Desc: string;
-  featuresTitle: string;
   featuresSubtitle: string;
-  capabilitiesTitle: string;
-  capabilitiesSubtitle: string;
-  capabilityIngestionTitle: string;
-  capabilityIngestionDesc: string;
-  capabilityControlsTitle: string;
-  capabilityControlsDesc: string;
-  capabilityTutorTitle: string;
-  capabilityTutorDesc: string;
-  capabilityMapTitle: string;
-  capabilityMapDesc: string;
-  capabilityPodcastTitle: string;
-  capabilityPodcastDesc: string;
-  capabilityLibraryExportTitle: string;
-  capabilityLibraryExportDesc: string;
-  capabilityLanguagesTitle: string;
-  capabilityLanguagesDesc: string;
-  capabilityOneClickTitle: string;
-  capabilityOneClickDesc: string;
-  capabilityItems: string[];
-  ctaTitle: string;
-  ctaSubtitle: string;
   readGuide: string;
-  footer: string;
-  plans: string;
-  shipped: string;
   featureCards: FeatureCard[];
 }
 
@@ -107,7 +77,7 @@ const copy: Record<Language, LandingCopy> = {
     contact: "Contact",
     help: "Help",
     signIn: "Log In",
-        heroEyebrow: "AI-Powered Study Assistant",
+    heroEyebrow: "AI-Powered Study Assistant",
     heroTitle: "Stop Rewriting. Start Remembering.",
     heroSubtitle: "Aide turns your messy notes into neural maps, practice tests, and AI podcasts. Spend 10 minutes studying, not 2 hours preparing.",
     startNow: "Start Speedrunning",
@@ -123,61 +93,16 @@ const copy: Record<Language, LandingCopy> = {
     previewStream: "Analyzing...",
     previewWidgetQuizNotes: "Quiz & Notes",
     previewWidgetPodcast: "Podcast",
-    previewNodeCore: "Main Idea",
-    previewNodeQuiz: "Quiz Point",
-    previewNodeChat: "Tutor Tip",
     flowTitle: "Study Smarter",
     flowSubtitle: "Three steps to total control.",
-    transitionTitle: "Focus Mode",
-    transitionSubtitle: "Watch Aide transition from light to deep study mode as you scroll.",
     step1Title: "Upload",
     step1Desc: "Drop a PDF, paste text, or just talk. Aide handles the rest.",
     step2Title: "Customize",
     step2Desc: "Pick what you need: Maps, flashcards, or a podcast episode.",
     step3Title: "Master",
     step3Desc: "Ace your exams with active recall and your own personal AI tutor.",
-    featuresTitle: "Power Tools",
     featuresSubtitle: "Everything you need to dominate your syllabus.",
-    capabilitiesTitle: "Live Capability Stack",
-    capabilitiesSubtitle: "The technology inside your study assistant.",
-    capabilityIngestionTitle: "Multimodal Ingestion",
-    capabilityIngestionDesc: "Talk, upload, or paste to start.",
-    capabilityControlsTitle: "Adaptive Quiz Engine",
-    capabilityControlsDesc: "Custom question counts, flashcards, and active recall loops.",
-    capabilityTutorTitle: "24/7 AI Tutor",
-    capabilityTutorDesc: "Context-aware help that knows your materials and explains mistakes in real time.",
-    capabilityMapTitle: "Interactive Knowledge Maps",
-    capabilityMapDesc: "Visualize concept links, scan for gaps, and reorganize understanding as you study.",
-    capabilityPodcastTitle: "AI Podcasts",
-    capabilityPodcastDesc: "Turn your notes into focused audio sessions for commute-time revision.",
-    capabilityLibraryExportTitle: "Library & Pro Exports",
-    capabilityLibraryExportDesc: "Notion, PDF, and Markdown from one searchable study archive.",
-    capabilityLanguagesTitle: "4 Languages",
-    capabilityLanguagesDesc: "English, Russian, Armenian, Korean",
-    capabilityOneClickTitle: "One-click Export",
-    capabilityOneClickDesc: "Ship final notes instantly",
-    capabilityItems: [
-      "Drag-and-drop PDF, text, and photo uploads (OCR).",
-      "Talk to your notes: Instant voice-to-study conversion.",
-      "Customizable quizzes, flashcards, and neural maps.",
-      "You control the difficulty: Adjustable question counts.",
-      "Done-for-you: 7-day structured study plans.",
-      "Smart quizzes that explain why you got it wrong.",
-      "Flashcards that track what you actually know.",
-      "24/7 AI Tutor that knows your material inside out.",
-      "Interactive knowledge maps to visualize how ideas connect.",
-      "Gap Scan: Aide finds what you missed in your notes.",
-      "Export to PDF, Notion, or Markdown in one click.",
-      "Searchable library to keep all your subjects organized.",
-      "AI Podcasts: Listen to your notes on the go.",
-      "Available in English, Russian, Armenian, and Korean."
-    ],
-    ctaTitle: "Ready to Ace Your Exams?",
-    ctaSubtitle: "Join the students using Aide to study smarter and remember more.",
     readGuide: "How to Prompt",
-    footer: "© 2026 Aide. Built for students, by AI.",
-    plans: "Plans",
-    shipped: "Live Now",
     featureCards: [
       {
         icon: Sparkles,
@@ -227,7 +152,7 @@ const copy: Record<Language, LandingCopy> = {
     contact: "문의",
     help: "도움말",
     signIn: "로그인",
-        heroEyebrow: "AI 기반 학습 비서",
+    heroEyebrow: "AI 기반 학습 비서",
     heroTitle: "받아쓰기는 끝. 이제는 기억할 시간.",
     heroSubtitle: "Aide는 복잡한 노트를 신경망 맵, 모의고사, AI 팟캐스트로 바꿔줍니다. 2시간 준비할 내용을 10분 만에 끝내세요.",
     startNow: "지금 바로 시작",
@@ -243,61 +168,16 @@ const copy: Record<Language, LandingCopy> = {
     previewStream: "분석 중...",
     previewWidgetQuizNotes: "퀴즈 및 노트",
     previewWidgetPodcast: "팟캐스트",
-    previewNodeCore: "핵심 개념",
-    previewNodeQuiz: "퀴즈 포인트",
-    previewNodeChat: "튜터 팁",
     flowTitle: "더 스마트한 학습",
     flowSubtitle: "완벽한 이해를 위한 3단계.",
-    transitionTitle: "집중 모드",
-    transitionSubtitle: "스크롤하면 Aide가 라이트 모드에서 딥 스터디 모드로 전환됩니다.",
     step1Title: "업로드",
     step1Desc: "PDF를 올리거나 텍스트를 붙여넣으세요. 음성 입력도 가능합니다.",
     step2Title: "맞춤 설정",
     step2Desc: "맵, 플래시카드, 팟캐스트 중 필요한 것을 선택하세요.",
     step3Title: "마스터",
     step3Desc: "나만의 AI 튜터와 함께 시험을 완벽하게 대비하세요.",
-    featuresTitle: "강력한 도구",
     featuresSubtitle: "모든 과목을 정복하기 위한 필수 기능.",
-    capabilitiesTitle: "Aide 핵심 기능",
-    capabilitiesSubtitle: "당신의 학습을 돕는 강력한 기술들.",
-    capabilityIngestionTitle: "멀티모달 입력",
-    capabilityIngestionDesc: "말하기, 업로드, 붙여넣기로 바로 시작하세요.",
-    capabilityControlsTitle: "적응형 퀴즈 엔진",
-    capabilityControlsDesc: "문항 수와 플래시카드를 조정하며 능동 회상 학습을 진행합니다.",
-    capabilityTutorTitle: "24/7 AI 튜터",
-    capabilityTutorDesc: "내 자료를 이해하고 오답 이유를 실시간으로 설명하는 맞춤형 튜터.",
-    capabilityMapTitle: "인터랙티브 지식 맵",
-    capabilityMapDesc: "개념 연결을 시각화하고 학습 공백을 빠르게 찾아 정리합니다.",
-    capabilityPodcastTitle: "AI 팟캐스트",
-    capabilityPodcastDesc: "노트를 이동 중에도 들을 수 있는 오디오 학습 세션으로 변환.",
-    capabilityLibraryExportTitle: "라이브러리 & Pro 내보내기",
-    capabilityLibraryExportDesc: "Notion, PDF, Markdown을 검색 가능한 학습 아카이브에서 즉시 생성.",
-    capabilityLanguagesTitle: "4개 언어",
-    capabilityLanguagesDesc: "한국어, 영어, 러시아어, 아르메니아어",
-    capabilityOneClickTitle: "원클릭 내보내기",
-    capabilityOneClickDesc: "최종 노트를 즉시 공유",
-    capabilityItems: [
-      "PDF, 텍스트, 사진 업로드 및 텍스트 추출(OCR).",
-      "노트와 대화하기: 실시간 음성-학습 변환.",
-      "맞춤형 퀴즈, 플래시카드, 인터랙티브 지식 맵.",
-      "난이도 조절 가능: 문항 수 직접 선택.",
-      "7일 맞춤형 구조화 학습 플랜 제공.",
-      "오답 이유까지 설명해주는 스마트 퀴즈.",
-      "학습 진도를 추적하는 지능형 플래시카드.",
-      "내 공부 내용을 전부 꿰고 있는 24/7 AI 튜터.",
-      "개념 간의 연결고리를 보여주는 시각적 신경망 맵.",
-      "갭 스캔: 노트에서 놓친 부분을 AI가 직접 찾아줍니다.",
-      "한 번의 클릭으로 PDF, Notion, Markdown 내보내기.",
-      "과목별로 깔끔하게 정리되는 라이브러리.",
-      "AI 팟캐스트: 이동 중에도 공부 내용을 귀로 들으세요.",
-      "지원 언어: 한국어, 영어, 러시아어, 아르메니아어."
-    ],
-    ctaTitle: "시험 점수를 올릴 준비가 되셨나요?",
-    ctaSubtitle: "더 스마트하게 공부하고 더 많이 기억하는 학생이 되어보세요.",
     readGuide: "사용 가이드",
-    footer: "© 2026 Aide. 학생들을 위해 AI가 만들었습니다.",
-    plans: "요금제",
-    shipped: "지금 사용 가능",
     featureCards: [
       {
         icon: Sparkles,
@@ -347,7 +227,7 @@ const copy: Record<Language, LandingCopy> = {
     contact: "Контакт",
     help: "Помощь",
     signIn: "Войти",
-        heroEyebrow: "Ваш AI-помощник в учебе",
+    heroEyebrow: "Ваш AI-помощник в учебе",
     heroTitle: "Хватит переписывать. Пора запоминать.",
     heroSubtitle: "Aide превращает гору заметок в тесты, карты знаний и подкасты. Учись за 10 минут, а не за 2 часа.",
     startNow: "Начать учиться",
@@ -363,61 +243,16 @@ const copy: Record<Language, LandingCopy> = {
     previewStream: "Анализирую...",
     previewWidgetQuizNotes: "Тесты и заметки",
     previewWidgetPodcast: "Подкаст",
-    previewNodeCore: "Главное",
-    previewNodeQuiz: "Вопрос",
-    previewNodeChat: "Совет тьютора",
     flowTitle: "Учись проще",
     flowSubtitle: "Три шага к успеху.",
-    transitionTitle: "Режим фокуса",
-    transitionSubtitle: "Смотри, как Aide подстраивается под твой ритм при скролле.",
     step1Title: "Загрузи",
     step1Desc: "PDF, текст или просто наговори голосом. Остальное за Aide.",
     step2Title: "Настрой",
     step2Desc: "Выбери: карта, карточки или аудио-подкаст.",
     step3Title: "Выучи",
     step3Desc: "Сдавай экзамены на отлично с личным AI-наставником.",
-    featuresTitle: "Твои суперсилы",
     featuresSubtitle: "Инструменты для победы над любым предметом.",
-    capabilitiesTitle: "Функции Aide",
-    capabilitiesSubtitle: "Что умеет твой помощник.",
-    capabilityIngestionTitle: "Мультимодальный старт",
-    capabilityIngestionDesc: "Говори, загружай или вставляй материал и начинай сразу.",
-    capabilityControlsTitle: "Адаптивный движок тестов",
-    capabilityControlsDesc: "Настраивай количество вопросов, карточки и цикл активного повторения.",
-    capabilityTutorTitle: "AI-тьютор 24/7",
-    capabilityTutorDesc: "Контекстный помощник, который знает твои материалы и объясняет ошибки сразу.",
-    capabilityMapTitle: "Интерактивные карты знаний",
-    capabilityMapDesc: "Визуализируй связи между темами, находи пробелы и строй целостную картину.",
-    capabilityPodcastTitle: "AI-подкасты",
-    capabilityPodcastDesc: "Преобразуй конспекты в удобный аудиоформат для повторения в дороге.",
-    capabilityLibraryExportTitle: "Библиотека и Pro-экспорт",
-    capabilityLibraryExportDesc: "Notion, PDF и Markdown из единого структурированного архива.",
-    capabilityLanguagesTitle: "4 языка",
-    capabilityLanguagesDesc: "RU, EN, HY, KO",
-    capabilityOneClickTitle: "Экспорт в один клик",
-    capabilityOneClickDesc: "Мгновенно делись готовыми материалами",
-    capabilityItems: [
-      "Загрузка PDF, текста и фото (через OCR).",
-      "Голосовой ввод: превращай слова в учебные материалы.",
-      "Тесты, карточки и интерактивные карты знаний.",
-      "Ты сам выбираешь сложность и количество вопросов.",
-      "Готовые планы подготовки на 7 дней.",
-      "Умные тесты с объяснением каждой ошибки.",
-      "Карточки, которые следят за твоим прогрессом.",
-      "AI-Тьютор 24/7, который знает твой материал.",
-      "Карты связей для визуального обучения.",
-      "Поиск пробелов: Aide найдет, что ты упустил.",
-      "Экспорт в PDF, Notion или Markdown одним кликом.",
-      "Удобная библиотека для всех предметов.",
-      "AI-подкасты: слушай лекции в дороге.",
-      "Поддержка: RU, EN, HY, KO."
-    ],
-    ctaTitle: "Готов сдать всё на отлично?",
-    ctaSubtitle: "Учись умнее и запоминай больше с Aide.",
     readGuide: "Как пользоваться",
-    footer: "© 2026 Aide. Создано для студентов.",
-    plans: "Тарифы",
-    shipped: "Уже работает",
     featureCards: [
       {
         icon: Sparkles,
@@ -467,7 +302,7 @@ const copy: Record<Language, LandingCopy> = {
     contact: "Կապ",
     help: "Օգնություն",
     signIn: "Մուտք",
-        heroEyebrow: "AI ուսումնական օգնական",
+    heroEyebrow: "AI ուսումնական օգնական",
     heroTitle: "Մի՛ արտագրիր: Սկսի՛ հիշել:",
     heroSubtitle: "Aide-ը քո նշումները վերածում է թեստերի, քարտեզների և պոդկաստների: Սովորիր 10 րոպեում, ոչ թե 2 ժամում:",
     startNow: "Սկսել հիմա",
@@ -483,61 +318,16 @@ const copy: Record<Language, LandingCopy> = {
     previewStream: "Վերլուծում եմ...",
     previewWidgetQuizNotes: "Թեստեր և նշումներ",
     previewWidgetPodcast: "Պոդկաստ",
-    previewNodeCore: "Գլխավոր միտք",
-    previewNodeQuiz: "Թեստի հարց",
-    previewNodeChat: "Օգնություն",
     flowTitle: "Սովորիր ավելի հեշտ",
     flowSubtitle: "3 քայլ դեպի հաջողություն:",
-    transitionTitle: "Կենտրոնացման ռեժիմ",
-    transitionSubtitle: "Տես, թե ինչպես է Aide-ին փոխում մտածելակերպդ դպրոցի մասին այն օգտագործելիս:",
     step1Title: "Վերբեռնիր",
     step1Desc: "PDF, տեքստ կամ պարզապես ձայնագրիր քո խոսքը: Aide-ին կանի մնացածը:",
     step2Title: "Ընտրիր",
     step2Desc: "Ի՞նչ է պետք՝ թեստե՞ր, քարտեզնե՞ր, թե՞ աուդիո պոդկաստ:",
     step3Title: "Յուրացրու",
     step3Desc: "Պատրաստվիր քննություններին քո անձնական AI ուսուցչի հետ:",
-    featuresTitle: "Հզոր գործիքներ",
     featuresSubtitle: "Այն ամենը, ինչ պետք է ցանկացած առարկա հաղթահարելու համար:",
-    capabilitiesTitle: "Aide-ի հնարավորությունները",
-    capabilitiesSubtitle: "Տեխնոլոգիաներ, որոնք կօգնեն քեզ սովորել:",
-    capabilityIngestionTitle: "Բազմամոդալ մեկնարկ",
-    capabilityIngestionDesc: "Խոսիր, վերբեռնիր կամ տեղադրիր տեքստը և անմիջապես սկսիր:",
-    capabilityControlsTitle: "Հարմարվող թեստային շարժիչ",
-    capabilityControlsDesc: "Կառավարիր հարցերի քանակը, քարտերը և ակտիվ հիշողության ցիկլը:",
-    capabilityTutorTitle: "24/7 AI ուսուցիչ",
-    capabilityTutorDesc: "Քո նյութը հասկանում է և սխալները բացատրում է իրական ժամանակում:",
-    capabilityMapTitle: "Ինտերակտիվ գիտելիքի քարտեզներ",
-    capabilityMapDesc: "Տես գաղափարների կապերը, գտիր բացթողումները և կառուցիր ամբողջական պատկեր:",
-    capabilityPodcastTitle: "AI պոդկաստներ",
-    capabilityPodcastDesc: "Նշումները փոխակերպիր աուդիո դասերի՝ ճանապարհին կրկնելու համար:",
-    capabilityLibraryExportTitle: "Գրադարան և Pro արտահանում",
-    capabilityLibraryExportDesc: "Notion, PDF և Markdown՝ մեկ որոնելի ուսումնական արխիվից:",
-    capabilityLanguagesTitle: "4 լեզու",
-    capabilityLanguagesDesc: "Հայերեն, անգլերեն, ռուսերեն, կորեերեն",
-    capabilityOneClickTitle: "Արտահանում մեկ քլիքով",
-    capabilityOneClickDesc: "Կիսվիր պատրաստ նյութերով ակնթարթորեն",
-    capabilityItems: [
-      "PDF-ի, տեքստի և նկարների վերբեռնում:",
-      "Ձայնային մուտք. խոսիր նշումներիդ հետ և ստացիր նյութեր:",
-      "Ինտերակտիվ թեստեր, քարտեր և գիտելիքի քարտեզներ:",
-      "Դու ես որոշում բարդությունը և հարցերի քանակը:",
-      "7-օրյա պատրաստի ուսումնական պլաններ:",
-      "Խելացի թեստեր, որոնք բացատրում են սխալները:",
-      "Ֆլեշքարտեր, որոնք հետևում են քո առաջընթացին:",
-      "AI ուսուցիչ 24/7, որը գիտի քո նյութը ամբողջությամբ:",
-      "Գիտելիքի նեյրոնային քարտեզներ՝ տեսողական սովորելու համար:",
-      "Բացթողումների որոնում. Aide-ին կգտնի այն, ինչ բաց ես թողել:",
-      "Արտահանում դեպի PDF, Notion կամ Markdown մեկ հպումով:",
-      "Հարմար գրադարան բոլոր առարկաները կազմակերպելու համար:",
-      "AI պոդկաստներ. լսիր դասերդ ճանապարհին:",
-      "Հասանելի է հայերենով, անգլերենով, ռուսերենով և կորեերենով:"
-    ],
-    ctaTitle: "Պատրա՞ստ ես փայլել քննություններին:",
-    ctaSubtitle: "Սովորիր ավելի խելամտորեն և հիշողությունդ բարելավիր Aide-ի հետ:",
     readGuide: "Ինչպես օգտվել",
-    footer: "© 2026 Aide. Ստեղծված է ուսանողների համար:",
-    plans: "Պլաններ",
-    shipped: "Արդեն աշխատում է",
     featureCards: [
       {
         icon: Sparkles,
