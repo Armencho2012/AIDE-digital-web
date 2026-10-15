@@ -658,9 +658,10 @@ const Landing = () => {
       window.addEventListener("scroll", onScroll);
       gsap.ticker.lagSmoothing(500, 33);
       const media = gsap.matchMedia();
+      const blueSection = root.querySelector<HTMLElement>("#blue-section");
       const ctx = gsap.context(() => {
         if (prefersReducedMotion) {
-          gsap.set("[data-hero-word], [data-hero-subtitle], [data-hero-cta], [data-hero-badges], [data-preview-panel], [data-reveal], [data-capability-tile], [data-bento-card], [data-mascot-shell]", {
+          gsap.set("[data-hero-word], [data-hero-subtitle], [data-hero-cta], [data-hero-badges], [data-preview-panel], [data-reveal], [data-bento-card]", {
             autoAlpha: 1,
             y: 0,
             scale: 1,
@@ -790,7 +791,7 @@ const Landing = () => {
     >
       <nav
         data-nav
-        className="sticky top-0 z-50 border-b border-border bg-transparent backdrop-blur-xl"
+        className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur-xl"
       >
         <div className="container mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-3">
           <div className="flex items-center gap-2">
