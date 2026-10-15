@@ -9,10 +9,8 @@ import {
   Bot,
   Brain,
   Check,
-  Download,
   FileText,
   HelpCircle,
-  Languages,
   Library,
   Mail,
   Map,
@@ -26,7 +24,6 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import type { Language } from "@/lib/settings";
-
 
 interface FeatureCard {
   icon: LucideIcon;
@@ -588,7 +585,6 @@ const copy: Record<Language, LandingCopy> = {
   },
 };
 
-
 const accessCards: Array<{ icon: LucideIcon; title: string; description: string }> = [
   {
     icon: Library,
@@ -662,22 +658,6 @@ const Landing = () => {
       window.addEventListener("scroll", onScroll);
       gsap.ticker.lagSmoothing(500, 33);
       const media = gsap.matchMedia();
-      const isDarkTheme = theme === "dark";
-      const baseBodyBackground = isDarkTheme ? "#050816" : "#f9fafb";
-      const baseBodyColor = isDarkTheme ? "#f8fafc" : "#111827";
-      const targetBodyBackground = isDarkTheme ? "#1e1b4b" : "#eef2ff";
-      const targetBodyColor = isDarkTheme ? "#eef2ff" : "#0f172a";
-      const body = document.body;
-      if (!body) return;
-      const previousBodyBackground = body.style.backgroundColor;
-      const previousBodyColor = body.style.color;
-      const previousRootColor = root.style.color;
-
-      gsap.set(body, { backgroundColor: baseBodyBackground, color: baseBodyColor });
-      gsap.set(root, { color: baseBodyColor });
-      const blueSection = root.querySelector<HTMLElement>("#blue-section");
-      const transitionTarget = blueSection || root;
-
       const ctx = gsap.context(() => {
         if (prefersReducedMotion) {
           gsap.set("[data-hero-word], [data-hero-subtitle], [data-hero-cta], [data-hero-badges], [data-preview-panel], [data-reveal], [data-capability-tile], [data-bento-card], [data-mascot-shell]", {
@@ -686,7 +666,6 @@ const Landing = () => {
             scale: 1,
             clearProps: "all",
           });
-          gsap.set("[data-mascot-glow]", { autoAlpha: 0 });
           return;
         }
 
@@ -736,127 +715,6 @@ const Landing = () => {
           );
         });
 
-        // remove the rectangular preview panel parallax motion on initial scroll
-        // gsap.to("[data-depth='panel']", {
-        //   yPercent: -9,
-        //   ease: "none",
-        //   scrollTrigger: {
-        //     trigger: root,
-        //     start: "top top",
-        //     end: "bottom top",
-        //     scrub: 0.5,
-        //   },
-        // });
-
-        // disable the halo parallax motion to keep the hero section static
-        // gsap.to("[data-depth='halo']", {
-        //   yPercent: -14,
-        //   ease: "none",
-        //   scrollTrigger: {
-        //     trigger: root,
-        //     start: "top top",
-        //     end: "bottom top",
-        //     scrub: 0.6,
-        //   },
-        // });
-
-        if (blueSection) {
-          gsap.to(body, {
-            backgroundColor: targetBodyBackground,
-            color: targetBodyColor,
-            ease: "none",
-            scrollTrigger: {
-              trigger: blueSection,
-              start: "top 92%",
-              end: "top 22%",
-              scrub: true,
-            },
-          });
-
-          const transitionTextColor = isDarkTheme ? "#e2e8f0" : "#334155";
-
-          gsap.to("#transition-zone [data-invert]", {
-            color: transitionTextColor,
-            ease: "none",
-            scrollTrigger: {
-              trigger: transitionTarget,
-              start: "top 92%",
-              end: "top 22%",
-              scrub: true,
-            },
-          });
-
-          gsap.to("#transition-zone [data-reveal]", {
-            backgroundColor: isDarkTheme ? "rgba(15,23,42,0.72)" : "rgba(248,250,252,0.92)",
-            borderColor: isDarkTheme ? "rgba(255,255,255,0.16)" : "rgba(203,213,225,0.7)",
-            ease: "none",
-            scrollTrigger: {
-              trigger: transitionTarget,
-              start: "top 92%",
-              end: "top 22%",
-              scrub: true,
-            },
-          });
-
-          gsap.to("[data-nav]", {
-            backgroundColor: isDarkTheme ? "rgba(22, 27, 63, 0.78)" : "rgba(255, 255, 255, 0.92)",
-            borderColor: isDarkTheme ? "rgba(255,255,255,0.22)" : "rgba(148,163,184,0.35)",
-            ease: "none",
-            scrollTrigger: {
-              trigger: blueSection,
-              start: "top 90%",
-              end: "top 15%",
-              scrub: true,
-            },
-          });
-
-          gsap.to("[data-nav-muted]", {
-            color: isDarkTheme ? "#dfe5ff" : "#475569",
-            ease: "none",
-            scrollTrigger: {
-              trigger: blueSection,
-              start: "top 90%",
-              end: "top 15%",
-              scrub: true,
-            },
-          });
-
-          gsap.to("[data-nav-strong]", {
-            color: isDarkTheme ? "#ffffff" : "#0f172a",
-            ease: "none",
-            scrollTrigger: {
-              trigger: blueSection,
-              start: "top 90%",
-              end: "top 15%",
-              scrub: true,
-            },
-          });
-
-          gsap.to("[data-mascot-glow]", {
-            autoAlpha: 1,
-            scale: 1.08,
-            ease: "none",
-            scrollTrigger: {
-              trigger: blueSection,
-              start: "top 86%",
-              end: "top 24%",
-              scrub: true,
-            },
-          });
-
-          gsap.to("[data-mascot-shell]", {
-            filter: "drop-shadow(0 0 42px rgba(139,92,246,0.66)) saturate(1.22)",
-            scale: 1.035,
-            ease: "none",
-            scrollTrigger: {
-              trigger: blueSection,
-              start: "top 86%",
-              end: "top 24%",
-              scrub: true,
-            },
-          });
-        }
-
         media.add("(max-width: 1023px)", () => {
           gsap.utils.toArray<HTMLElement>("[data-bento-card]").forEach((card, index) => {
             gsap.fromTo(
@@ -903,57 +761,15 @@ const Landing = () => {
             );
           }
 
-          gsap.utils.toArray<HTMLElement>("[data-speed]").forEach((el) => {
-            const speed = Number(el.dataset.speed || "1");
-            const amplitude = (speed - 1) * 420;
-            gsap.to(el, {
-              y: amplitude,
-              ease: "none",
-              scrollTrigger: {
-                trigger: root,
-                start: "top top",
-                end: "bottom bottom",
-                scrub: true,
-              },
-            });
-          });
         });
-
-        const capabilityTiles = gsap.utils.toArray<HTMLElement>("[data-capability-tile]");
-        if (capabilityTiles.length > 0) {
-          gsap.fromTo(
-            capabilityTiles,
-            { autoAlpha: 0, y: 38, scale: 0.985 },
-            {
-              autoAlpha: 1,
-              y: 0,
-              scale: 1,
-              duration: 0.82,
-              stagger: 0.1,
-              ease: "power3.out",
-              scrollTrigger: {
-                trigger: "#capability-bento",
-                start: "top 82%",
-                end: "top 42%",
-                toggleActions: "play none none reverse",
-              },
-            }
-          );
-        }
       }, root);
 
-      const handleResize = () => ScrollTrigger.refresh();
-      window.addEventListener("resize", handleResize);
       ScrollTrigger.refresh();
 
       cleanup = () => {
-        window.removeEventListener("resize", handleResize);
         window.removeEventListener("scroll", onScroll);
         ctx.revert();
         media.kill();
-        body.style.backgroundColor = previousBodyBackground;
-        body.style.color = previousBodyColor;
-        root.style.color = previousRootColor;
       };
     };
 
@@ -965,30 +781,32 @@ const Landing = () => {
       cancelled = true;
       cleanup?.();
     };
-  }, [language, theme]);
+  }, [language]);
 
   return (
     <div
       ref={rootRef}
-      className="min-h-screen overflow-x-hidden bg-[radial-gradient(ellipse_120%_80%_at_50%_-10%,rgba(56,189,248,0.42),rgba(199,220,255,0.5)_28%,rgba(240,247,255,0.85)_55%,rgba(255,255,255,1)_85%)] text-[#111827] dark:bg-[radial-gradient(ellipse_120%_80%_at_50%_-10%,rgba(129,140,248,0.38),rgba(59,89,152,0.32)_26%,rgba(20,30,58,0.98)_60%,rgba(10,15,32,1)_88%)] dark:text-slate-100"
+      className="landing-page min-h-screen overflow-x-hidden bg-background text-foreground"
     >
       <nav
         data-nav
-        className="sticky top-0 z-50 border-b border-slate-200/90 bg-transparent backdrop-blur-xl dark:border-white/10 dark:bg-transparent"
+        className="sticky top-0 z-50 border-b border-border bg-transparent backdrop-blur-xl"
       >
-        <div className="container mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
+        <div className="container mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-3">
           <div className="flex items-center gap-2">
             <img src="/logo.png" alt="Aide AI study assistant logo" className="h-8 w-8 rounded-full object-contain" />
 
-            <span data-nav-strong className="text-lg font-semibold tracking-tight text-slate-950 dark:text-zinc-50">
+            <span data-nav-strong className="text-lg font-semibold text-foreground">
               Aide
             </span>
           </div>
 
-          <div className="flex items-center gap-2">
-            <div className="flex items-center rounded-full border border-slate-300/90 bg-white/88 p-1 dark:border-white/15 dark:bg-white/[0.06]">
+          <div className="flex flex-wrap items-center justify-end gap-2">
+            <div className="flex items-center rounded-full border border-border bg-card p-1">
               {languageSwitch.map((item) => (
-                <button
+                <Button
+                  variant="ghost"
+                  size="sm"
                   key={item.code}
                   type="button"
                   onClick={() => setLanguage(item.code)}
@@ -996,14 +814,14 @@ const Landing = () => {
                   aria-label={`Switch language to ${item.label}`}
                   data-nav-muted={language !== item.code ? "true" : undefined}
                   data-nav-strong={language === item.code ? "true" : undefined}
-                  className={`rounded-full px-2.5 py-1 text-xs transition-colors ${
+                  className={`h-8 rounded-full px-2.5 py-1 text-xs hover:scale-100 ${
                     language === item.code
-                      ? "bg-sky-600 text-white dark:bg-sky-400/35 dark:text-sky-50"
-                      : "text-slate-600 hover:text-slate-900 dark:text-zinc-300 dark:hover:text-white"
+                      ? "bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground"
+                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
                   }`}
                 >
                   {item.label}
-                </button>
+                </Button>
               ))}
             </div>
 
@@ -1011,7 +829,7 @@ const Landing = () => {
               variant="ghost"
               size="sm"
               asChild
-              className="hidden text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-zinc-300 dark:hover:bg-white/12 dark:hover:text-white sm:flex"
+              className="hidden text-muted-foreground hover:bg-secondary hover:text-foreground sm:flex"
             >
               <a data-nav-muted href="mailto:myaide.study@gmail.com">
                 <Mail className="h-4 w-4" />
@@ -1022,7 +840,7 @@ const Landing = () => {
               variant="ghost"
               size="sm"
               asChild
-              className="hidden text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-zinc-300 dark:hover:bg-white/12 dark:hover:text-white sm:flex"
+              className="hidden text-muted-foreground hover:bg-secondary hover:text-foreground sm:flex"
             >
               <Link data-nav-muted to="/help">
                 <HelpCircle className="h-4 w-4" />
@@ -1034,11 +852,11 @@ const Landing = () => {
               size="icon"
               onClick={() => setSettingsOpen(true)}
               aria-label="Open settings"
-              className="rounded-full border-slate-300/90 bg-white/85 text-slate-700 hover:bg-slate-100 dark:border-white/18 dark:bg-white/[0.06] dark:text-zinc-200 dark:hover:bg-white/12"
+              className="rounded-full border-border bg-card text-muted-foreground hover:bg-secondary"
             >
               <Settings className="h-4 w-4" />
             </Button>
-            <Button asChild size="sm" className="rounded-full bg-sky-600 text-white hover:bg-sky-500 dark:bg-sky-500 dark:text-white dark:hover:bg-sky-400">
+            <Button asChild size="sm" className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90">
               <Link data-nav-strong to="/auth">{t.signIn}</Link>
             </Button>
           </div>
@@ -1046,16 +864,16 @@ const Landing = () => {
       </nav>
 
       <section className="container mx-auto max-w-7xl px-4 pb-14 pt-16 md:pt-20">
-        <div className="relative p-0 md:p-0 bg-transparent shadow-none border-none rounded-none">
+        <div className="relative">
 
           <div className="relative grid items-center gap-8 lg:grid-cols-12 xl:gap-10">
             <div className="lg:col-span-6 xl:col-span-7">
-              <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-sky-200/90 bg-white/62 px-3.5 py-1.5 text-xs font-medium text-slate-700 shadow-sm shadow-sky-100/75 backdrop-blur-xl dark:border-white/18 dark:bg-slate-900/58 dark:text-slate-100 dark:shadow-black/35">
-                <Brain className="h-3.5 w-3.5 text-sky-600 dark:text-sky-200" />
+              <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-border bg-card px-3.5 py-1.5 text-xs font-medium text-muted-foreground shadow-sm backdrop-blur-xl">
+                <Brain className="h-3.5 w-3.5 text-primary" />
                 {t.heroEyebrow}
               </div>
 
-              <h1 className="max-w-[14ch] text-[clamp(2.4rem,7vw,5.5rem)] font-black leading-[0.93] tracking-[-0.042em] text-[#111827] dark:text-white">
+              <h1 className="max-w-[16ch] text-[40px] font-black leading-[1.05] text-foreground sm:text-5xl lg:text-7xl">
                 {heroWords.map((word, index) => (
                   <span
                     key={`${word}-${index}`}
@@ -1069,7 +887,7 @@ const Landing = () => {
 
               <p
                 data-hero-subtitle
-                className="mt-5 max-w-2xl text-base leading-relaxed text-slate-600 md:text-lg dark:text-slate-300/92"
+                className="mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground md:text-lg"
               >
                 {t.heroSubtitle}
               </p>
@@ -1078,7 +896,7 @@ const Landing = () => {
                 <Button
                   asChild
                   size="lg"
-                  className="h-12 rounded-full bg-sky-600 px-7 text-base text-white shadow-lg shadow-sky-500/35 transition-all hover:bg-sky-500 hover:shadow-sky-400/35 dark:bg-indigo-500 dark:text-white dark:shadow-indigo-500/40 dark:hover:bg-indigo-400"
+                  className="h-12 rounded-full bg-primary px-7 text-base text-primary-foreground shadow-sm transition-all hover:bg-primary/90 hover:shadow-sm"
                 >
                   <Link to="/auth">
                     {t.startNow}
@@ -1089,7 +907,7 @@ const Landing = () => {
                   asChild
                   size="lg"
                   variant="outline"
-                  className="h-12 rounded-full border-sky-300/80 bg-white/60 px-7 text-base text-sky-700 transition-colors hover:bg-white/88 dark:border-sky-200/40 dark:bg-slate-900/58 dark:text-sky-100 dark:hover:bg-slate-900/86"
+                  className="h-12 rounded-full border-border bg-card px-7 text-base text-primary transition-colors hover:bg-muted"
                 >
                   <a href="#how-it-works">{t.seeFlow}</a>
                 </Button>
@@ -1099,7 +917,7 @@ const Landing = () => {
                 {[t.freeBadge, t.langBadge, t.uploadBadge].map((badge) => (
                   <span
                     key={badge}
-                    className="rounded-full border border-slate-300/85 bg-white/74 px-3 py-1.5 text-xs font-medium text-slate-700 shadow-sm shadow-slate-200/75 backdrop-blur-xl dark:border-white/16 dark:bg-slate-900/54 dark:text-slate-100"
+                    className="rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground shadow-sm backdrop-blur-xl"
                   >
                     {badge}
                   </span>
@@ -1109,20 +927,15 @@ const Landing = () => {
 
             <div data-preview-panel className="lg:col-span-6 xl:col-span-5">
               <div className="relative mx-auto w-full max-w-[34rem]">
-                <div
-                  data-mascot-glow
-                  className="pointer-events-none absolute inset-x-12 top-10 h-56 rounded-full opacity-0 blur-3xl"
-                />
-                <Card className="relative overflow-hidden rounded-[2.25rem] border border-slate-200/70 bg-white/80 p-7 shadow-[0_24px_80px_rgba(15,23,42,0.14)] backdrop-blur-xl dark:border-white/12 dark:bg-slate-950/60 dark:shadow-[0_24px_80px_rgba(2,6,23,0.6)]">
+                <Card className="relative overflow-hidden rounded-lg border border-border bg-card p-5 sm:p-7 shadow-sm backdrop-blur-xl">
 
-
-                  <div className="relative mb-5 flex items-center justify-between">
+                  <div className="relative mb-5 flex flex-wrap items-center justify-between gap-3">
                     <div>
-                      <p className="text-base font-semibold text-slate-800 dark:text-slate-100">{t.previewTitle}</p>
-                      <p className="text-sm text-slate-500 dark:text-slate-300/86">{t.previewSubtitle}</p>
+                      <p className="text-base font-semibold text-foreground">{t.previewTitle}</p>
+                      <p className="text-sm text-muted-foreground">{t.previewSubtitle}</p>
                     </div>
-                    <div className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/35 bg-emerald-500/10 px-3 py-1.5 text-xs font-medium text-emerald-700 dark:text-emerald-200">
-                      <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" />
+                    <div className="inline-flex items-center gap-1.5 rounded-full border border-border bg-primary px-3 py-1.5 text-xs font-medium text-foreground">
+                      <span className="h-2 w-2 animate-pulse rounded-full bg-primary" />
                       {t.previewStream}
                     </div>
                   </div>
@@ -1135,17 +948,17 @@ const Landing = () => {
                     height={352}
                     fetchPriority="high"
                     decoding="async"
-                    className="relative mx-auto w-full max-w-[22rem] drop-shadow-[0_28px_48px_rgba(56,189,248,0.3)] dark:drop-shadow-[0_28px_52px_rgba(15,23,42,0.74)]"
+                    className="relative mx-auto w-full max-w-[22rem] landing-mascot"
                   />
 
-                  <div className="mt-5 grid grid-cols-3 gap-3">
+                  <div className="mt-5 grid grid-cols-3 gap-2">
                     {[t.previewTab1, t.previewTab2, t.previewTab3].map((tab, idx) => (
                       <div
                         key={tab}
-                        className={`rounded-xl px-3 py-2 text-center text-xs font-medium ${
+                        className={`rounded-lg px-2 py-2 text-center text-xs font-medium ${
                           idx === 0
-                            ? "bg-sky-600 text-white dark:bg-sky-500/35 dark:text-sky-50"
-                            : "bg-white/82 text-slate-600 dark:bg-slate-900/78 dark:text-zinc-200"
+                            ? "bg-primary text-primary-foreground"
+                            : "bg-muted text-muted-foreground"
                         }`}
                       >
                         {tab}
@@ -1154,12 +967,12 @@ const Landing = () => {
                   </div>
 
                   <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                    <div className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white/84 p-2.5 text-xs text-slate-700 dark:border-white/12 dark:bg-slate-900/74 dark:text-zinc-200">
-                      <FileText className="h-4 w-4 text-sky-500 dark:text-sky-300" />
+                    <div className="flex items-center gap-2 rounded-lg border border-border bg-card p-2.5 text-xs text-muted-foreground">
+                      <FileText className="h-4 w-4 text-primary" />
                       {t.previewWidgetQuizNotes}
                     </div>
-                    <div className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white/84 p-2.5 text-xs text-slate-700 dark:border-white/12 dark:bg-slate-900/74 dark:text-zinc-200">
-                      <Mic className="h-4 w-4 text-indigo-500 dark:text-indigo-300" />
+                    <div className="flex items-center gap-2 rounded-lg border border-border bg-card p-2.5 text-xs text-muted-foreground">
+                      <Mic className="h-4 w-4 text-primary" />
                       {t.previewWidgetPodcast}
                     </div>
                   </div>
@@ -1171,17 +984,15 @@ const Landing = () => {
         </div>
       </section>
 
-
-
       <section id="how-it-works" className="container mx-auto max-w-7xl px-4 pb-16">
         <div data-reveal className="mb-8">
-          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-sky-600 dark:text-sky-300">
+          <p className="text-xs font-semibold uppercase text-primary">
             How it works
           </p>
-          <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-950 md:text-4xl dark:text-zinc-50">
+          <h2 className="mt-2 text-2xl font-semibold text-foreground md:text-4xl">
             {t.flowTitle}
           </h2>
-          <p className="mt-3 max-w-2xl text-slate-600 dark:text-zinc-300">{t.flowSubtitle}</p>
+          <p className="mt-3 max-w-2xl text-muted-foreground">{t.flowSubtitle}</p>
         </div>
         <div className="grid gap-4 md:grid-cols-3">
           {[
@@ -1194,18 +1005,18 @@ const Landing = () => {
               <Card
                 key={item.title}
                 data-reveal
-                className="h-full rounded-2xl border border-slate-200/85 bg-white/88 p-5 shadow-[0_16px_36px_rgba(15,23,42,0.08)] backdrop-blur-xl transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_24px_42px_rgba(79,70,229,0.14)] dark:border-white/14 dark:bg-slate-950/52 dark:shadow-[0_16px_36px_rgba(2,6,23,0.5)]"
+                className="h-full rounded-lg border border-border bg-card p-5 shadow-sm backdrop-blur-xl transition-all duration-500 hover:-translate-y-1 hover:shadow-sm"
               >
                 <div className="mb-4 flex items-center justify-between">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-sky-100 text-sky-700 dark:bg-sky-500/15 dark:text-sky-200">
-                    <Icon className="h-4.5 w-4.5 text-sky-700 dark:text-sky-200" />
+                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-secondary text-primary">
+                    <Icon className="h-4.5 w-4.5 text-primary" />
                   </div>
-                  <span className="rounded-full border border-sky-200/85 bg-white px-2.5 py-1 text-[11px] font-semibold text-sky-600 dark:border-white/18 dark:bg-white/[0.05] dark:text-sky-100">
+                  <span className="rounded-full border border-border bg-card px-2.5 py-1 text-[11px] font-semibold text-primary">
                     Step {index + 1}
                   </span>
                 </div>
-                <p className="mb-2 text-sm font-semibold text-slate-900 dark:text-zinc-100">{item.title}</p>
-                <p className="text-sm leading-relaxed text-slate-600 dark:text-zinc-300">{item.desc}</p>
+                <p className="mb-2 text-sm font-semibold text-foreground">{item.title}</p>
+                <p className="text-sm leading-relaxed text-muted-foreground">{item.desc}</p>
               </Card>
             );
           })}
@@ -1214,12 +1025,12 @@ const Landing = () => {
 
       {/* TODO: INSERT REAL TESTIMONIALS HERE — requires verified student data */}
 
-<section id="blue-section" className="relative pb-16 pt-6 text-slate-900 dark:text-slate-100">
+<section id="blue-section" className="relative pb-16 pt-6 text-foreground">
 
         <section id="what-you-can-do" className="container mx-auto max-w-7xl px-4 pb-16">
           <div data-reveal className="mb-8 max-w-3xl">
-            <h2 className="text-2xl font-semibold tracking-tight text-slate-800 md:text-4xl dark:text-zinc-50">What you can do with Aide</h2>
-            <p className="mt-3 text-slate-600 dark:text-zinc-300">{t.featuresSubtitle}</p>
+            <h2 className="text-2xl font-semibold text-foreground md:text-4xl">What you can do with Aide</h2>
+            <p className="mt-3 text-muted-foreground">{t.featuresSubtitle}</p>
           </div>
 
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
@@ -1229,16 +1040,16 @@ const Landing = () => {
                 <Card
                   key={card.title}
                   data-bento-card
-                  className="h-full rounded-2xl border border-slate-200/50 bg-white/90 p-5 backdrop-blur-xl transition-all duration-500 hover:-translate-y-1 hover:border-sky-300/60 hover:bg-sky-50 dark:border-white/10 dark:bg-slate-950/50"
+                  className="h-full rounded-lg border border-border bg-card p-5 backdrop-blur-xl transition-all duration-500 hover:-translate-y-1 hover:border-border hover:bg-secondary"
                 >
-                  <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-sky-100/80 dark:bg-sky-500/20">
-                    <Icon className="h-5 w-5 text-sky-600 dark:text-sky-300" />
+                  <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-secondary">
+                    <Icon className="h-5 w-5 text-primary" />
                   </div>
-                  <h3 className="mb-2 text-base font-semibold text-slate-800 dark:text-white">{card.title}</h3>
-                  <p className="mb-4 text-sm leading-relaxed text-slate-600 dark:text-slate-300">{card.description}</p>
+                  <h3 className="mb-2 text-base font-semibold text-foreground">{card.title}</h3>
+                  <p className="mb-4 text-sm leading-relaxed text-muted-foreground">{card.description}</p>
                   <div className="flex flex-wrap gap-2">
                     {card.chips.map((chip) => (
-                      <span key={chip} className="rounded-full border border-slate-200/60 bg-slate-100/85 px-2.5 py-1 text-[11px] text-slate-700 dark:border-white/20 dark:bg-slate-900/50 dark:text-slate-100">
+                      <span key={chip} className="rounded-full border border-border bg-secondary px-2.5 py-1 text-[11px] text-muted-foreground">
                         {chip}
                       </span>
                     ))}
@@ -1252,12 +1063,12 @@ const Landing = () => {
         <section id="access-anywhere" className="container mx-auto max-w-7xl px-4 pb-16">
           <div
             data-reveal
-            className="relative overflow-hidden rounded-[2rem] border border-white/18 bg-transparent p-6 backdrop-blur-xl md:p-10"
+            className="relative py-6 md:py-10"
           >
-            <h2 className="text-2xl font-semibold tracking-tight text-slate-800 md:text-4xl dark:text-slate-50">
+            <h2 className="text-2xl font-semibold text-foreground md:text-4xl">
               Access the Aide AI Study Tool Anywhere, Anytime
             </h2>
-            <p className="mt-3 max-w-3xl text-slate-600 dark:text-blue-100/84">
+            <p className="mt-3 max-w-3xl text-muted-foreground">
               Start on desktop, continue on mobile, and keep your progress synced across every study session.
             </p>
 
@@ -1265,19 +1076,19 @@ const Landing = () => {
               {accessCards.map((item) => {
                 const Icon = item.icon;
                 return (
-                  <Card key={item.title} className="h-full rounded-2xl border border-slate-200/60 bg-white/90 p-4 backdrop-blur-xl dark:border-white/15 dark:bg-slate-950/60">
-                    <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-sky-500 text-white">
+                  <Card key={item.title} className="h-full rounded-lg border border-border bg-card p-4 backdrop-blur-xl">
+                    <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground">
                       <Icon className="h-4.5 w-4.5" />
                     </div>
-                    <p className="mb-1.5 text-sm font-semibold text-slate-950 dark:text-white">{item.title}</p>
-                    <p className="text-sm text-slate-700 dark:text-slate-300">{item.description}</p>
+                    <p className="mb-1.5 text-sm font-semibold text-foreground">{item.title}</p>
+                    <p className="text-sm text-muted-foreground">{item.description}</p>
                   </Card>
                 );
               })}
             </div>
 
             <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-              <Button asChild size="lg" className="bg-white text-blue-700 hover:bg-blue-50">
+              <Button asChild size="lg" className="bg-card text-primary hover:bg-muted">
                 <Link to="/auth">
                   {t.startNow}
                   <ArrowRight className="ml-2 h-5 w-5" />
@@ -1287,7 +1098,7 @@ const Landing = () => {
                 asChild
                 size="lg"
                 variant="outline"
-                className="border-blue-300 bg-white/70 text-blue-700 hover:bg-white/90 dark:border-white/28 dark:bg-white/5 dark:text-slate-50 dark:hover:bg-white/16"
+                className="border-border bg-card text-primary hover:bg-muted"
               >
                 <Link to="/help">
                   <HelpCircle className="mr-2 h-5 w-5" />
@@ -1301,32 +1112,32 @@ const Landing = () => {
         <section id="transition-zone" className="container mx-auto max-w-7xl px-4 pb-16">
           <div
             data-reveal
-            className="rounded-[2rem] border border-slate-200/70 bg-transparent p-6 backdrop-blur-xl md:p-10 dark:border-white/15 dark:bg-transparent"
+            className="py-6 md:py-10"
           >
-            <h2 data-invert className="text-2xl font-bold tracking-tight text-slate-950 md:text-4xl dark:text-white">
+            <h2 data-invert className="text-2xl font-bold text-foreground md:text-4xl">
               Why Our AI Study Tool Outperforms Traditional Methods
             </h2>
-            <p data-invert className="mt-3 max-w-4xl text-sm leading-relaxed text-slate-700 md:text-base dark:text-slate-300">
+            <p data-invert className="mt-3 max-w-4xl text-sm leading-relaxed text-muted-foreground md:text-base">
               Experience the advantages of AI-powered studying compared to conventional methods. Our approach is
               designed to save you time, boost retention, and make learning more effective.
             </p>
 
-            <div className="mt-7 overflow-hidden rounded-2xl border border-white/16">
-              <div className="hidden grid-cols-3 bg-slate-100/80 text-xs font-semibold uppercase tracking-[0.14em] text-slate-700 md:grid dark:bg-slate-900/40 dark:text-blue-100/85">
+            <div className="mt-7 overflow-hidden rounded-lg border border-border">
+              <div className="hidden grid-cols-3 bg-secondary text-xs font-semibold uppercase text-muted-foreground md:grid">
                 <div className="px-4 py-3">Category</div>
                 <div className="px-4 py-3">Aide AI</div>
                 <div className="px-4 py-3">Traditional Methods</div>
               </div>
               {comparisonRows.map((row) => (
-                <div key={row.metric} className="grid border-t border-slate-200/40 md:grid-cols-3 md:items-center dark:border-white/10">
-                  <div className="px-4 pt-4 text-sm font-semibold text-slate-950 md:py-4 dark:text-white">{row.metric}</div>
-                  <div className="px-4 py-2 text-sm text-slate-700 md:py-4 dark:text-emerald-200">
+                <div key={row.metric} className="grid border-t border-border md:grid-cols-3 md:items-center">
+                  <div className="px-4 pt-4 text-sm font-semibold text-foreground md:py-4">{row.metric}</div>
+                  <div className="px-4 py-2 text-sm text-muted-foreground md:py-4">
                     <span className="inline-flex items-center gap-1.5">
-                      <Check className="h-4 w-4 text-slate-700 dark:text-emerald-200" />
+                      <Check className="h-4 w-4 text-muted-foreground" />
                       {row.aide}
                     </span>
                   </div>
-                  <div className="px-4 pb-4 text-sm text-slate-700 md:py-4 dark:text-slate-100">{row.traditional}</div>
+                  <div className="px-4 pb-4 text-sm text-muted-foreground md:py-4">{row.traditional}</div>
                 </div>
               ))}
             </div>
@@ -1335,67 +1146,67 @@ const Landing = () => {
 
         <section id="faq" className="container mx-auto max-w-7xl px-4 pb-16">
           <div data-reveal className="mb-8">
-            <h2 className="text-2xl font-semibold tracking-tight text-slate-800 md:text-4xl dark:text-slate-50">FAQ</h2>
+            <h2 className="text-2xl font-semibold text-foreground md:text-4xl">FAQ</h2>
           </div>
           <div className="space-y-3">
             {faqItems.map((item) => (
               <details
                 key={item.q}
                 data-reveal
-                className="group rounded-3xl border border-slate-200/60 bg-white/90 dark:border-white/10 dark:bg-slate-950/50"
+                className="group rounded-lg border border-border bg-card"
               >
-                <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-5 py-4 text-sm font-medium text-slate-950 transition-colors duration-300 hover:text-slate-900 dark:text-white dark:hover:text-slate-100">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-5 py-4 text-sm font-medium text-foreground transition-colors duration-300 hover:text-foreground">
                   <span>{item.q}</span>
-                  <span className="text-lg leading-none text-slate-950 transition-transform duration-300 group-open:rotate-45 dark:text-white">+</span>
+                  <span className="text-lg leading-none text-foreground transition-transform duration-300 group-open:rotate-45">+</span>
                 </summary>
-                <p className="px-5 pb-5 text-sm leading-relaxed text-slate-700 dark:text-slate-300">{item.a}</p>
+                <p className="px-5 pb-5 text-sm leading-relaxed text-muted-foreground">{item.a}</p>
               </details>
             ))}
           </div>
         </section>
 
         <footer className="container mx-auto max-w-7xl px-4 pb-10">
-          <div className="rounded-3xl border-t border-slate-200/60 bg-slate-100/90 px-6 py-8 shadow-sm shadow-slate-400/10 transition-colors duration-300 dark:border-white/10 dark:bg-slate-950/95 dark:shadow-none md:px-8 md:py-10">
+          <div className="border-t border-border py-8 md:py-10">
             <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
               <div>
-                <h4 className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-950/90 dark:text-white/90">Product</h4>
+                <h4 className="text-xs font-semibold uppercase text-foreground">Product</h4>
                 <div className="mt-4 flex flex-col gap-2.5 text-sm font-medium">
-                  <Link to="/homework-helper" className="text-slate-700 transition-colors duration-300 hover:text-slate-950 dark:text-slate-300 dark:hover:text-white">
+                  <Link to="/homework-helper" className="text-muted-foreground transition-colors duration-300 hover:text-foreground">
                     AI Homework Helper
                   </Link>
-                  <Link to="/study-guide-maker" className="text-slate-700 transition-colors duration-300 hover:text-slate-950 dark:text-slate-300 dark:hover:text-white">
+                  <Link to="/study-guide-maker" className="text-muted-foreground transition-colors duration-300 hover:text-foreground">
                     Study Guide Maker
                   </Link>
-                  <Link to="/blog/how-to-do-active-recall-with-notes" className="text-slate-700 transition-colors duration-300 hover:text-slate-950 dark:text-slate-300 dark:hover:text-white">
+                  <Link to="/blog/how-to-do-active-recall-with-notes" className="text-muted-foreground transition-colors duration-300 hover:text-foreground">
                     How to Do Active Recall with Notes
                   </Link>
-                  <Link to="/help" className="text-slate-700 transition-colors duration-300 hover:text-slate-950 dark:text-slate-300 dark:hover:text-white">
+                  <Link to="/help" className="text-muted-foreground transition-colors duration-300 hover:text-foreground">
                     About Page
                   </Link>
-                  <a href="#how-it-works" className="text-slate-700 transition-colors duration-300 hover:text-slate-950 dark:text-slate-300 dark:hover:text-white">
+                  <a href="#how-it-works" className="text-muted-foreground transition-colors duration-300 hover:text-foreground">
                     How it Works
                   </a>
-                  <a href="#what-you-can-do" className="text-slate-700 transition-colors duration-300 hover:text-slate-950 dark:text-slate-300 dark:hover:text-white">
+                  <a href="#what-you-can-do" className="text-muted-foreground transition-colors duration-300 hover:text-foreground">
                     What You Can Do
                   </a>
                 </div>
               </div>
 
               <div>
-                <h4 className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-950/90 dark:text-white/90">Support</h4>
+                <h4 className="text-xs font-semibold uppercase text-foreground">Support</h4>
                 <div className="mt-4 flex flex-col gap-2.5 text-sm font-medium">
-                  <Link to="/help" className="text-slate-700 transition-colors duration-300 hover:text-slate-950 dark:text-slate-300 dark:hover:text-white">
+                  <Link to="/help" className="text-muted-foreground transition-colors duration-300 hover:text-foreground">
                     Help Center
                   </Link>
                   <a
                     href="mailto:myaide.study@gmail.com?subject=Aide%20Support"
-                    className="text-slate-700 transition-colors duration-300 hover:text-slate-950 dark:text-slate-300 dark:hover:text-white"
+                    className="text-muted-foreground transition-colors duration-300 hover:text-foreground"
                   >
                     Support
                   </a>
                   <a
                     href="mailto:myaide.study@gmail.com"
-                    className="text-slate-700 transition-colors duration-300 hover:text-slate-950 dark:text-slate-300 dark:hover:text-white"
+                    className="text-muted-foreground transition-colors duration-300 hover:text-foreground"
                   >
                     Contact Us
                   </a>
@@ -1403,28 +1214,28 @@ const Landing = () => {
               </div>
 
               <div>
-                <h4 className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-950/90 dark:text-white/90">Legal</h4>
+                <h4 className="text-xs font-semibold uppercase text-foreground">Legal</h4>
                 <div className="mt-4 flex flex-col gap-2.5 text-sm font-medium">
-                  <Link to="/help#privacy-policy" className="text-slate-700 transition-colors duration-300 hover:text-slate-950 dark:text-slate-300 dark:hover:text-white">
+                  <Link to="/help#privacy-policy" className="text-muted-foreground transition-colors duration-300 hover:text-foreground">
                     Privacy Policy
                   </Link>
-                  <Link to="/help#terms-of-service" className="text-slate-700 transition-colors duration-300 hover:text-slate-950 dark:text-slate-300 dark:hover:text-white">
+                  <Link to="/help#terms-of-service" className="text-muted-foreground transition-colors duration-300 hover:text-foreground">
                     Terms of Service
                   </Link>
-                  <Link to="/help#community-guidelines" className="text-slate-700 transition-colors duration-300 hover:text-slate-950 dark:text-slate-300 dark:hover:text-white">
+                  <Link to="/help#community-guidelines" className="text-muted-foreground transition-colors duration-300 hover:text-foreground">
                     Community Guidelines
                   </Link>
                 </div>
               </div>
 
               <div>
-                <h4 className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-950/90 dark:text-white/90">Social</h4>
+                <h4 className="text-xs font-semibold uppercase text-foreground">Social</h4>
                 <div className="mt-4 flex flex-col gap-2.5 text-sm font-medium">
                   <a
                     href="https://www.instagram.com/myaide.study/"
                     target="_blank"
                     rel="noreferrer"
-                    className="text-slate-700 transition-colors duration-300 hover:text-slate-950 dark:text-slate-300 dark:hover:text-white"
+                    className="text-muted-foreground transition-colors duration-300 hover:text-foreground"
                   >
                     Instagram
                   </a>
@@ -1432,7 +1243,7 @@ const Landing = () => {
                     href="https://www.facebook.com/profile.php?id=61587146428880"
                     target="_blank"
                     rel="noreferrer"
-                    className="text-slate-700 transition-colors duration-300 hover:text-slate-950 dark:text-slate-300 dark:hover:text-white"
+                    className="text-muted-foreground transition-colors duration-300 hover:text-foreground"
                   >
                     Facebook
                   </a>
@@ -1440,7 +1251,7 @@ const Landing = () => {
               </div>
             </div>
 
-            <div className="mt-8 border-t border-slate-200/60 pt-4 text-xs tracking-wide text-slate-700/80 dark:border-white/10 dark:text-slate-300">
+            <div className="mt-8 border-t border-border pt-4 text-xs text-muted-foreground">
               © 2026 Aide. All rights reserved.
             </div>
           </div>

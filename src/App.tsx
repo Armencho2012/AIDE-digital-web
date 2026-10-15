@@ -6,7 +6,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { SEO } from "@/components/SEO";
-import { GlobalNav } from "@/components/GlobalNav";
 import Landing from "./pages/Landing";
 
 const Auth = lazy(() => import("./pages/Auth"));
@@ -42,7 +41,6 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <SEO />
-          <GlobalNav />
           <main id="main-content">
             <Suspense fallback={<RouteFallback />}>
               <Routes>
