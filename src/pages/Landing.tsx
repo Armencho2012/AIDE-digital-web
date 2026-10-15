@@ -9,10 +9,8 @@ import {
   Bot,
   Brain,
   Check,
-  Download,
   FileText,
   HelpCircle,
-  Languages,
   Library,
   Mail,
   Map,
@@ -26,7 +24,6 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import type { Language } from "@/lib/settings";
-
 
 interface FeatureCard {
   icon: LucideIcon;
@@ -55,46 +52,16 @@ interface LandingCopy {
   previewStream: string;
   previewWidgetQuizNotes: string;
   previewWidgetPodcast: string;
-  previewNodeCore: string;
-  previewNodeQuiz: string;
-  previewNodeChat: string;
   flowTitle: string;
   flowSubtitle: string;
-  transitionTitle: string;
-  transitionSubtitle: string;
   step1Title: string;
   step1Desc: string;
   step2Title: string;
   step2Desc: string;
   step3Title: string;
   step3Desc: string;
-  featuresTitle: string;
   featuresSubtitle: string;
-  capabilitiesTitle: string;
-  capabilitiesSubtitle: string;
-  capabilityIngestionTitle: string;
-  capabilityIngestionDesc: string;
-  capabilityControlsTitle: string;
-  capabilityControlsDesc: string;
-  capabilityTutorTitle: string;
-  capabilityTutorDesc: string;
-  capabilityMapTitle: string;
-  capabilityMapDesc: string;
-  capabilityPodcastTitle: string;
-  capabilityPodcastDesc: string;
-  capabilityLibraryExportTitle: string;
-  capabilityLibraryExportDesc: string;
-  capabilityLanguagesTitle: string;
-  capabilityLanguagesDesc: string;
-  capabilityOneClickTitle: string;
-  capabilityOneClickDesc: string;
-  capabilityItems: string[];
-  ctaTitle: string;
-  ctaSubtitle: string;
   readGuide: string;
-  footer: string;
-  plans: string;
-  shipped: string;
   featureCards: FeatureCard[];
 }
 
@@ -110,7 +77,7 @@ const copy: Record<Language, LandingCopy> = {
     contact: "Contact",
     help: "Help",
     signIn: "Log In",
-        heroEyebrow: "AI-Powered Study Assistant",
+    heroEyebrow: "AI-Powered Study Assistant",
     heroTitle: "Stop Rewriting. Start Remembering.",
     heroSubtitle: "Aide turns your messy notes into neural maps, practice tests, and AI podcasts. Spend 10 minutes studying, not 2 hours preparing.",
     startNow: "Start Speedrunning",
@@ -126,61 +93,16 @@ const copy: Record<Language, LandingCopy> = {
     previewStream: "Analyzing...",
     previewWidgetQuizNotes: "Quiz & Notes",
     previewWidgetPodcast: "Podcast",
-    previewNodeCore: "Main Idea",
-    previewNodeQuiz: "Quiz Point",
-    previewNodeChat: "Tutor Tip",
     flowTitle: "Study Smarter",
     flowSubtitle: "Three steps to total control.",
-    transitionTitle: "Focus Mode",
-    transitionSubtitle: "Watch Aide transition from light to deep study mode as you scroll.",
     step1Title: "Upload",
     step1Desc: "Drop a PDF, paste text, or just talk. Aide handles the rest.",
     step2Title: "Customize",
     step2Desc: "Pick what you need: Maps, flashcards, or a podcast episode.",
     step3Title: "Master",
     step3Desc: "Ace your exams with active recall and your own personal AI tutor.",
-    featuresTitle: "Power Tools",
     featuresSubtitle: "Everything you need to dominate your syllabus.",
-    capabilitiesTitle: "Live Capability Stack",
-    capabilitiesSubtitle: "The technology inside your study assistant.",
-    capabilityIngestionTitle: "Multimodal Ingestion",
-    capabilityIngestionDesc: "Talk, upload, or paste to start.",
-    capabilityControlsTitle: "Adaptive Quiz Engine",
-    capabilityControlsDesc: "Custom question counts, flashcards, and active recall loops.",
-    capabilityTutorTitle: "24/7 AI Tutor",
-    capabilityTutorDesc: "Context-aware help that knows your materials and explains mistakes in real time.",
-    capabilityMapTitle: "Interactive Knowledge Maps",
-    capabilityMapDesc: "Visualize concept links, scan for gaps, and reorganize understanding as you study.",
-    capabilityPodcastTitle: "AI Podcasts",
-    capabilityPodcastDesc: "Turn your notes into focused audio sessions for commute-time revision.",
-    capabilityLibraryExportTitle: "Library & Pro Exports",
-    capabilityLibraryExportDesc: "Notion, PDF, and Markdown from one searchable study archive.",
-    capabilityLanguagesTitle: "4 Languages",
-    capabilityLanguagesDesc: "English, Russian, Armenian, Korean",
-    capabilityOneClickTitle: "One-click Export",
-    capabilityOneClickDesc: "Ship final notes instantly",
-    capabilityItems: [
-      "Drag-and-drop PDF, text, and photo uploads (OCR).",
-      "Talk to your notes: Instant voice-to-study conversion.",
-      "Customizable quizzes, flashcards, and neural maps.",
-      "You control the difficulty: Adjustable question counts.",
-      "Done-for-you: 7-day structured study plans.",
-      "Smart quizzes that explain why you got it wrong.",
-      "Flashcards that track what you actually know.",
-      "24/7 AI Tutor that knows your material inside out.",
-      "Interactive knowledge maps to visualize how ideas connect.",
-      "Gap Scan: Aide finds what you missed in your notes.",
-      "Export to PDF, Notion, or Markdown in one click.",
-      "Searchable library to keep all your subjects organized.",
-      "AI Podcasts: Listen to your notes on the go.",
-      "Available in English, Russian, Armenian, and Korean."
-    ],
-    ctaTitle: "Ready to Ace Your Exams?",
-    ctaSubtitle: "Join the students using Aide to study smarter and remember more.",
     readGuide: "How to Prompt",
-    footer: "© 2026 Aide. Built for students, by AI.",
-    plans: "Plans",
-    shipped: "Live Now",
     featureCards: [
       {
         icon: Sparkles,
@@ -230,7 +152,7 @@ const copy: Record<Language, LandingCopy> = {
     contact: "문의",
     help: "도움말",
     signIn: "로그인",
-        heroEyebrow: "AI 기반 학습 비서",
+    heroEyebrow: "AI 기반 학습 비서",
     heroTitle: "받아쓰기는 끝. 이제는 기억할 시간.",
     heroSubtitle: "Aide는 복잡한 노트를 신경망 맵, 모의고사, AI 팟캐스트로 바꿔줍니다. 2시간 준비할 내용을 10분 만에 끝내세요.",
     startNow: "지금 바로 시작",
@@ -246,61 +168,16 @@ const copy: Record<Language, LandingCopy> = {
     previewStream: "분석 중...",
     previewWidgetQuizNotes: "퀴즈 및 노트",
     previewWidgetPodcast: "팟캐스트",
-    previewNodeCore: "핵심 개념",
-    previewNodeQuiz: "퀴즈 포인트",
-    previewNodeChat: "튜터 팁",
     flowTitle: "더 스마트한 학습",
     flowSubtitle: "완벽한 이해를 위한 3단계.",
-    transitionTitle: "집중 모드",
-    transitionSubtitle: "스크롤하면 Aide가 라이트 모드에서 딥 스터디 모드로 전환됩니다.",
     step1Title: "업로드",
     step1Desc: "PDF를 올리거나 텍스트를 붙여넣으세요. 음성 입력도 가능합니다.",
     step2Title: "맞춤 설정",
     step2Desc: "맵, 플래시카드, 팟캐스트 중 필요한 것을 선택하세요.",
     step3Title: "마스터",
     step3Desc: "나만의 AI 튜터와 함께 시험을 완벽하게 대비하세요.",
-    featuresTitle: "강력한 도구",
     featuresSubtitle: "모든 과목을 정복하기 위한 필수 기능.",
-    capabilitiesTitle: "Aide 핵심 기능",
-    capabilitiesSubtitle: "당신의 학습을 돕는 강력한 기술들.",
-    capabilityIngestionTitle: "멀티모달 입력",
-    capabilityIngestionDesc: "말하기, 업로드, 붙여넣기로 바로 시작하세요.",
-    capabilityControlsTitle: "적응형 퀴즈 엔진",
-    capabilityControlsDesc: "문항 수와 플래시카드를 조정하며 능동 회상 학습을 진행합니다.",
-    capabilityTutorTitle: "24/7 AI 튜터",
-    capabilityTutorDesc: "내 자료를 이해하고 오답 이유를 실시간으로 설명하는 맞춤형 튜터.",
-    capabilityMapTitle: "인터랙티브 지식 맵",
-    capabilityMapDesc: "개념 연결을 시각화하고 학습 공백을 빠르게 찾아 정리합니다.",
-    capabilityPodcastTitle: "AI 팟캐스트",
-    capabilityPodcastDesc: "노트를 이동 중에도 들을 수 있는 오디오 학습 세션으로 변환.",
-    capabilityLibraryExportTitle: "라이브러리 & Pro 내보내기",
-    capabilityLibraryExportDesc: "Notion, PDF, Markdown을 검색 가능한 학습 아카이브에서 즉시 생성.",
-    capabilityLanguagesTitle: "4개 언어",
-    capabilityLanguagesDesc: "한국어, 영어, 러시아어, 아르메니아어",
-    capabilityOneClickTitle: "원클릭 내보내기",
-    capabilityOneClickDesc: "최종 노트를 즉시 공유",
-    capabilityItems: [
-      "PDF, 텍스트, 사진 업로드 및 텍스트 추출(OCR).",
-      "노트와 대화하기: 실시간 음성-학습 변환.",
-      "맞춤형 퀴즈, 플래시카드, 인터랙티브 지식 맵.",
-      "난이도 조절 가능: 문항 수 직접 선택.",
-      "7일 맞춤형 구조화 학습 플랜 제공.",
-      "오답 이유까지 설명해주는 스마트 퀴즈.",
-      "학습 진도를 추적하는 지능형 플래시카드.",
-      "내 공부 내용을 전부 꿰고 있는 24/7 AI 튜터.",
-      "개념 간의 연결고리를 보여주는 시각적 신경망 맵.",
-      "갭 스캔: 노트에서 놓친 부분을 AI가 직접 찾아줍니다.",
-      "한 번의 클릭으로 PDF, Notion, Markdown 내보내기.",
-      "과목별로 깔끔하게 정리되는 라이브러리.",
-      "AI 팟캐스트: 이동 중에도 공부 내용을 귀로 들으세요.",
-      "지원 언어: 한국어, 영어, 러시아어, 아르메니아어."
-    ],
-    ctaTitle: "시험 점수를 올릴 준비가 되셨나요?",
-    ctaSubtitle: "더 스마트하게 공부하고 더 많이 기억하는 학생이 되어보세요.",
     readGuide: "사용 가이드",
-    footer: "© 2026 Aide. 학생들을 위해 AI가 만들었습니다.",
-    plans: "요금제",
-    shipped: "지금 사용 가능",
     featureCards: [
       {
         icon: Sparkles,
@@ -350,7 +227,7 @@ const copy: Record<Language, LandingCopy> = {
     contact: "Контакт",
     help: "Помощь",
     signIn: "Войти",
-        heroEyebrow: "Ваш AI-помощник в учебе",
+    heroEyebrow: "Ваш AI-помощник в учебе",
     heroTitle: "Хватит переписывать. Пора запоминать.",
     heroSubtitle: "Aide превращает гору заметок в тесты, карты знаний и подкасты. Учись за 10 минут, а не за 2 часа.",
     startNow: "Начать учиться",
@@ -366,61 +243,16 @@ const copy: Record<Language, LandingCopy> = {
     previewStream: "Анализирую...",
     previewWidgetQuizNotes: "Тесты и заметки",
     previewWidgetPodcast: "Подкаст",
-    previewNodeCore: "Главное",
-    previewNodeQuiz: "Вопрос",
-    previewNodeChat: "Совет тьютора",
     flowTitle: "Учись проще",
     flowSubtitle: "Три шага к успеху.",
-    transitionTitle: "Режим фокуса",
-    transitionSubtitle: "Смотри, как Aide подстраивается под твой ритм при скролле.",
     step1Title: "Загрузи",
     step1Desc: "PDF, текст или просто наговори голосом. Остальное за Aide.",
     step2Title: "Настрой",
     step2Desc: "Выбери: карта, карточки или аудио-подкаст.",
     step3Title: "Выучи",
     step3Desc: "Сдавай экзамены на отлично с личным AI-наставником.",
-    featuresTitle: "Твои суперсилы",
     featuresSubtitle: "Инструменты для победы над любым предметом.",
-    capabilitiesTitle: "Функции Aide",
-    capabilitiesSubtitle: "Что умеет твой помощник.",
-    capabilityIngestionTitle: "Мультимодальный старт",
-    capabilityIngestionDesc: "Говори, загружай или вставляй материал и начинай сразу.",
-    capabilityControlsTitle: "Адаптивный движок тестов",
-    capabilityControlsDesc: "Настраивай количество вопросов, карточки и цикл активного повторения.",
-    capabilityTutorTitle: "AI-тьютор 24/7",
-    capabilityTutorDesc: "Контекстный помощник, который знает твои материалы и объясняет ошибки сразу.",
-    capabilityMapTitle: "Интерактивные карты знаний",
-    capabilityMapDesc: "Визуализируй связи между темами, находи пробелы и строй целостную картину.",
-    capabilityPodcastTitle: "AI-подкасты",
-    capabilityPodcastDesc: "Преобразуй конспекты в удобный аудиоформат для повторения в дороге.",
-    capabilityLibraryExportTitle: "Библиотека и Pro-экспорт",
-    capabilityLibraryExportDesc: "Notion, PDF и Markdown из единого структурированного архива.",
-    capabilityLanguagesTitle: "4 языка",
-    capabilityLanguagesDesc: "RU, EN, HY, KO",
-    capabilityOneClickTitle: "Экспорт в один клик",
-    capabilityOneClickDesc: "Мгновенно делись готовыми материалами",
-    capabilityItems: [
-      "Загрузка PDF, текста и фото (через OCR).",
-      "Голосовой ввод: превращай слова в учебные материалы.",
-      "Тесты, карточки и интерактивные карты знаний.",
-      "Ты сам выбираешь сложность и количество вопросов.",
-      "Готовые планы подготовки на 7 дней.",
-      "Умные тесты с объяснением каждой ошибки.",
-      "Карточки, которые следят за твоим прогрессом.",
-      "AI-Тьютор 24/7, который знает твой материал.",
-      "Карты связей для визуального обучения.",
-      "Поиск пробелов: Aide найдет, что ты упустил.",
-      "Экспорт в PDF, Notion или Markdown одним кликом.",
-      "Удобная библиотека для всех предметов.",
-      "AI-подкасты: слушай лекции в дороге.",
-      "Поддержка: RU, EN, HY, KO."
-    ],
-    ctaTitle: "Готов сдать всё на отлично?",
-    ctaSubtitle: "Учись умнее и запоминай больше с Aide.",
     readGuide: "Как пользоваться",
-    footer: "© 2026 Aide. Создано для студентов.",
-    plans: "Тарифы",
-    shipped: "Уже работает",
     featureCards: [
       {
         icon: Sparkles,
@@ -470,7 +302,7 @@ const copy: Record<Language, LandingCopy> = {
     contact: "Կապ",
     help: "Օգնություն",
     signIn: "Մուտք",
-        heroEyebrow: "AI ուսումնական օգնական",
+    heroEyebrow: "AI ուսումնական օգնական",
     heroTitle: "Մի՛ արտագրիր: Սկսի՛ հիշել:",
     heroSubtitle: "Aide-ը քո նշումները վերածում է թեստերի, քարտեզների և պոդկաստների: Սովորիր 10 րոպեում, ոչ թե 2 ժամում:",
     startNow: "Սկսել հիմա",
@@ -486,61 +318,16 @@ const copy: Record<Language, LandingCopy> = {
     previewStream: "Վերլուծում եմ...",
     previewWidgetQuizNotes: "Թեստեր և նշումներ",
     previewWidgetPodcast: "Պոդկաստ",
-    previewNodeCore: "Գլխավոր միտք",
-    previewNodeQuiz: "Թեստի հարց",
-    previewNodeChat: "Օգնություն",
     flowTitle: "Սովորիր ավելի հեշտ",
     flowSubtitle: "3 քայլ դեպի հաջողություն:",
-    transitionTitle: "Կենտրոնացման ռեժիմ",
-    transitionSubtitle: "Տես, թե ինչպես է Aide-ին փոխում մտածելակերպդ դպրոցի մասին այն օգտագործելիս:",
     step1Title: "Վերբեռնիր",
     step1Desc: "PDF, տեքստ կամ պարզապես ձայնագրիր քո խոսքը: Aide-ին կանի մնացածը:",
     step2Title: "Ընտրիր",
     step2Desc: "Ի՞նչ է պետք՝ թեստե՞ր, քարտեզնե՞ր, թե՞ աուդիո պոդկաստ:",
     step3Title: "Յուրացրու",
     step3Desc: "Պատրաստվիր քննություններին քո անձնական AI ուսուցչի հետ:",
-    featuresTitle: "Հզոր գործիքներ",
     featuresSubtitle: "Այն ամենը, ինչ պետք է ցանկացած առարկա հաղթահարելու համար:",
-    capabilitiesTitle: "Aide-ի հնարավորությունները",
-    capabilitiesSubtitle: "Տեխնոլոգիաներ, որոնք կօգնեն քեզ սովորել:",
-    capabilityIngestionTitle: "Բազմամոդալ մեկնարկ",
-    capabilityIngestionDesc: "Խոսիր, վերբեռնիր կամ տեղադրիր տեքստը և անմիջապես սկսիր:",
-    capabilityControlsTitle: "Հարմարվող թեստային շարժիչ",
-    capabilityControlsDesc: "Կառավարիր հարցերի քանակը, քարտերը և ակտիվ հիշողության ցիկլը:",
-    capabilityTutorTitle: "24/7 AI ուսուցիչ",
-    capabilityTutorDesc: "Քո նյութը հասկանում է և սխալները բացատրում է իրական ժամանակում:",
-    capabilityMapTitle: "Ինտերակտիվ գիտելիքի քարտեզներ",
-    capabilityMapDesc: "Տես գաղափարների կապերը, գտիր բացթողումները և կառուցիր ամբողջական պատկեր:",
-    capabilityPodcastTitle: "AI պոդկաստներ",
-    capabilityPodcastDesc: "Նշումները փոխակերպիր աուդիո դասերի՝ ճանապարհին կրկնելու համար:",
-    capabilityLibraryExportTitle: "Գրադարան և Pro արտահանում",
-    capabilityLibraryExportDesc: "Notion, PDF և Markdown՝ մեկ որոնելի ուսումնական արխիվից:",
-    capabilityLanguagesTitle: "4 լեզու",
-    capabilityLanguagesDesc: "Հայերեն, անգլերեն, ռուսերեն, կորեերեն",
-    capabilityOneClickTitle: "Արտահանում մեկ քլիքով",
-    capabilityOneClickDesc: "Կիսվիր պատրաստ նյութերով ակնթարթորեն",
-    capabilityItems: [
-      "PDF-ի, տեքստի և նկարների վերբեռնում:",
-      "Ձայնային մուտք. խոսիր նշումներիդ հետ և ստացիր նյութեր:",
-      "Ինտերակտիվ թեստեր, քարտեր և գիտելիքի քարտեզներ:",
-      "Դու ես որոշում բարդությունը և հարցերի քանակը:",
-      "7-օրյա պատրաստի ուսումնական պլաններ:",
-      "Խելացի թեստեր, որոնք բացատրում են սխալները:",
-      "Ֆլեշքարտեր, որոնք հետևում են քո առաջընթացին:",
-      "AI ուսուցիչ 24/7, որը գիտի քո նյութը ամբողջությամբ:",
-      "Գիտելիքի նեյրոնային քարտեզներ՝ տեսողական սովորելու համար:",
-      "Բացթողումների որոնում. Aide-ին կգտնի այն, ինչ բաց ես թողել:",
-      "Արտահանում դեպի PDF, Notion կամ Markdown մեկ հպումով:",
-      "Հարմար գրադարան բոլոր առարկաները կազմակերպելու համար:",
-      "AI պոդկաստներ. լսիր դասերդ ճանապարհին:",
-      "Հասանելի է հայերենով, անգլերենով, ռուսերենով և կորեերենով:"
-    ],
-    ctaTitle: "Պատրա՞ստ ես փայլել քննություններին:",
-    ctaSubtitle: "Սովորիր ավելի խելամտորեն և հիշողությունդ բարելավիր Aide-ի հետ:",
     readGuide: "Ինչպես օգտվել",
-    footer: "© 2026 Aide. Ստեղծված է ուսանողների համար:",
-    plans: "Պլաններ",
-    shipped: "Արդեն աշխատում է",
     featureCards: [
       {
         icon: Sparkles,
@@ -587,7 +374,6 @@ const copy: Record<Language, LandingCopy> = {
     ],
   },
 };
-
 
 const accessCards: Array<{ icon: LucideIcon; title: string; description: string }> = [
   {
@@ -662,31 +448,15 @@ const Landing = () => {
       window.addEventListener("scroll", onScroll);
       gsap.ticker.lagSmoothing(500, 33);
       const media = gsap.matchMedia();
-      const isDarkTheme = theme === "dark";
-      const baseBodyBackground = isDarkTheme ? "#050816" : "#f9fafb";
-      const baseBodyColor = isDarkTheme ? "#f8fafc" : "#111827";
-      const targetBodyBackground = isDarkTheme ? "#1e1b4b" : "#eef2ff";
-      const targetBodyColor = isDarkTheme ? "#eef2ff" : "#0f172a";
-      const body = document.body;
-      if (!body) return;
-      const previousBodyBackground = body.style.backgroundColor;
-      const previousBodyColor = body.style.color;
-      const previousRootColor = root.style.color;
-
-      gsap.set(body, { backgroundColor: baseBodyBackground, color: baseBodyColor });
-      gsap.set(root, { color: baseBodyColor });
       const blueSection = root.querySelector<HTMLElement>("#blue-section");
-      const transitionTarget = blueSection || root;
-
       const ctx = gsap.context(() => {
         if (prefersReducedMotion) {
-          gsap.set("[data-hero-word], [data-hero-subtitle], [data-hero-cta], [data-hero-badges], [data-preview-panel], [data-reveal], [data-capability-tile], [data-bento-card], [data-mascot-shell]", {
+          gsap.set("[data-hero-word], [data-hero-subtitle], [data-hero-cta], [data-hero-badges], [data-preview-panel], [data-reveal], [data-bento-card]", {
             autoAlpha: 1,
             y: 0,
             scale: 1,
             clearProps: "all",
           });
-          gsap.set("[data-mascot-glow]", { autoAlpha: 0 });
           return;
         }
 
@@ -736,127 +506,6 @@ const Landing = () => {
           );
         });
 
-        // remove the rectangular preview panel parallax motion on initial scroll
-        // gsap.to("[data-depth='panel']", {
-        //   yPercent: -9,
-        //   ease: "none",
-        //   scrollTrigger: {
-        //     trigger: root,
-        //     start: "top top",
-        //     end: "bottom top",
-        //     scrub: 0.5,
-        //   },
-        // });
-
-        // disable the halo parallax motion to keep the hero section static
-        // gsap.to("[data-depth='halo']", {
-        //   yPercent: -14,
-        //   ease: "none",
-        //   scrollTrigger: {
-        //     trigger: root,
-        //     start: "top top",
-        //     end: "bottom top",
-        //     scrub: 0.6,
-        //   },
-        // });
-
-        if (blueSection) {
-          gsap.to(body, {
-            backgroundColor: targetBodyBackground,
-            color: targetBodyColor,
-            ease: "none",
-            scrollTrigger: {
-              trigger: blueSection,
-              start: "top 92%",
-              end: "top 22%",
-              scrub: true,
-            },
-          });
-
-          const transitionTextColor = isDarkTheme ? "#e2e8f0" : "#334155";
-
-          gsap.to("#transition-zone [data-invert]", {
-            color: transitionTextColor,
-            ease: "none",
-            scrollTrigger: {
-              trigger: transitionTarget,
-              start: "top 92%",
-              end: "top 22%",
-              scrub: true,
-            },
-          });
-
-          gsap.to("#transition-zone [data-reveal]", {
-            backgroundColor: isDarkTheme ? "rgba(15,23,42,0.72)" : "rgba(248,250,252,0.92)",
-            borderColor: isDarkTheme ? "rgba(255,255,255,0.16)" : "rgba(203,213,225,0.7)",
-            ease: "none",
-            scrollTrigger: {
-              trigger: transitionTarget,
-              start: "top 92%",
-              end: "top 22%",
-              scrub: true,
-            },
-          });
-
-          gsap.to("[data-nav]", {
-            backgroundColor: isDarkTheme ? "rgba(22, 27, 63, 0.78)" : "rgba(255, 255, 255, 0.92)",
-            borderColor: isDarkTheme ? "rgba(255,255,255,0.22)" : "rgba(148,163,184,0.35)",
-            ease: "none",
-            scrollTrigger: {
-              trigger: blueSection,
-              start: "top 90%",
-              end: "top 15%",
-              scrub: true,
-            },
-          });
-
-          gsap.to("[data-nav-muted]", {
-            color: isDarkTheme ? "#dfe5ff" : "#475569",
-            ease: "none",
-            scrollTrigger: {
-              trigger: blueSection,
-              start: "top 90%",
-              end: "top 15%",
-              scrub: true,
-            },
-          });
-
-          gsap.to("[data-nav-strong]", {
-            color: isDarkTheme ? "#ffffff" : "#0f172a",
-            ease: "none",
-            scrollTrigger: {
-              trigger: blueSection,
-              start: "top 90%",
-              end: "top 15%",
-              scrub: true,
-            },
-          });
-
-          gsap.to("[data-mascot-glow]", {
-            autoAlpha: 1,
-            scale: 1.08,
-            ease: "none",
-            scrollTrigger: {
-              trigger: blueSection,
-              start: "top 86%",
-              end: "top 24%",
-              scrub: true,
-            },
-          });
-
-          gsap.to("[data-mascot-shell]", {
-            filter: "drop-shadow(0 0 42px rgba(139,92,246,0.66)) saturate(1.22)",
-            scale: 1.035,
-            ease: "none",
-            scrollTrigger: {
-              trigger: blueSection,
-              start: "top 86%",
-              end: "top 24%",
-              scrub: true,
-            },
-          });
-        }
-
         media.add("(max-width: 1023px)", () => {
           gsap.utils.toArray<HTMLElement>("[data-bento-card]").forEach((card, index) => {
             gsap.fromTo(
@@ -903,57 +552,15 @@ const Landing = () => {
             );
           }
 
-          gsap.utils.toArray<HTMLElement>("[data-speed]").forEach((el) => {
-            const speed = Number(el.dataset.speed || "1");
-            const amplitude = (speed - 1) * 420;
-            gsap.to(el, {
-              y: amplitude,
-              ease: "none",
-              scrollTrigger: {
-                trigger: root,
-                start: "top top",
-                end: "bottom bottom",
-                scrub: true,
-              },
-            });
-          });
         });
-
-        const capabilityTiles = gsap.utils.toArray<HTMLElement>("[data-capability-tile]");
-        if (capabilityTiles.length > 0) {
-          gsap.fromTo(
-            capabilityTiles,
-            { autoAlpha: 0, y: 38, scale: 0.985 },
-            {
-              autoAlpha: 1,
-              y: 0,
-              scale: 1,
-              duration: 0.82,
-              stagger: 0.1,
-              ease: "power3.out",
-              scrollTrigger: {
-                trigger: "#capability-bento",
-                start: "top 82%",
-                end: "top 42%",
-                toggleActions: "play none none reverse",
-              },
-            }
-          );
-        }
       }, root);
 
-      const handleResize = () => ScrollTrigger.refresh();
-      window.addEventListener("resize", handleResize);
       ScrollTrigger.refresh();
 
       cleanup = () => {
-        window.removeEventListener("resize", handleResize);
         window.removeEventListener("scroll", onScroll);
         ctx.revert();
         media.kill();
-        body.style.backgroundColor = previousBodyBackground;
-        body.style.color = previousBodyColor;
-        root.style.color = previousRootColor;
       };
     };
 
@@ -965,30 +572,32 @@ const Landing = () => {
       cancelled = true;
       cleanup?.();
     };
-  }, [language, theme]);
+  }, [language]);
 
   return (
     <div
       ref={rootRef}
-      className="min-h-screen overflow-x-hidden bg-[radial-gradient(ellipse_120%_80%_at_50%_-10%,rgba(56,189,248,0.42),rgba(199,220,255,0.5)_28%,rgba(240,247,255,0.85)_55%,rgba(255,255,255,1)_85%)] text-[#111827] dark:bg-[radial-gradient(ellipse_120%_80%_at_50%_-10%,rgba(129,140,248,0.38),rgba(59,89,152,0.32)_26%,rgba(20,30,58,0.98)_60%,rgba(10,15,32,1)_88%)] dark:text-slate-100"
+      className="landing-page min-h-screen overflow-x-hidden bg-background text-foreground"
     >
       <nav
         data-nav
-        className="sticky top-0 z-50 border-b border-slate-200/90 bg-transparent backdrop-blur-xl dark:border-white/10 dark:bg-transparent"
+        className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur-xl"
       >
-        <div className="container mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
+        <div className="container mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-3">
           <div className="flex items-center gap-2">
             <img src="/logo.png" alt="Aide AI study assistant logo" className="h-8 w-8 rounded-full object-contain" />
 
-            <span data-nav-strong className="text-lg font-semibold tracking-tight text-slate-950 dark:text-zinc-50">
+            <span data-nav-strong className="text-lg font-semibold text-foreground">
               Aide
             </span>
           </div>
 
-          <div className="flex items-center gap-2">
-            <div className="flex items-center rounded-full border border-slate-300/90 bg-white/88 p-1 dark:border-white/15 dark:bg-white/[0.06]">
+          <div className="flex flex-wrap items-center justify-end gap-2">
+            <div className="flex items-center rounded-full border border-border bg-card p-1">
               {languageSwitch.map((item) => (
-                <button
+                <Button
+                  variant="ghost"
+                  size="sm"
                   key={item.code}
                   type="button"
                   onClick={() => setLanguage(item.code)}
@@ -996,14 +605,14 @@ const Landing = () => {
                   aria-label={`Switch language to ${item.label}`}
                   data-nav-muted={language !== item.code ? "true" : undefined}
                   data-nav-strong={language === item.code ? "true" : undefined}
-                  className={`rounded-full px-2.5 py-1 text-xs transition-colors ${
+                  className={`h-8 rounded-full px-2.5 py-1 text-xs hover:scale-100 ${
                     language === item.code
-                      ? "bg-sky-600 text-white dark:bg-sky-400/35 dark:text-sky-50"
-                      : "text-slate-600 hover:text-slate-900 dark:text-zinc-300 dark:hover:text-white"
+                      ? "bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground"
+                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
                   }`}
                 >
                   {item.label}
-                </button>
+                </Button>
               ))}
             </div>
 
@@ -1011,7 +620,7 @@ const Landing = () => {
               variant="ghost"
               size="sm"
               asChild
-              className="hidden text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-zinc-300 dark:hover:bg-white/12 dark:hover:text-white sm:flex"
+              className="hidden text-muted-foreground hover:bg-secondary hover:text-foreground sm:flex"
             >
               <a data-nav-muted href="mailto:myaide.study@gmail.com">
                 <Mail className="h-4 w-4" />
@@ -1022,7 +631,7 @@ const Landing = () => {
               variant="ghost"
               size="sm"
               asChild
-              className="hidden text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-zinc-300 dark:hover:bg-white/12 dark:hover:text-white sm:flex"
+              className="hidden text-muted-foreground hover:bg-secondary hover:text-foreground sm:flex"
             >
               <Link data-nav-muted to="/help">
                 <HelpCircle className="h-4 w-4" />
@@ -1034,11 +643,11 @@ const Landing = () => {
               size="icon"
               onClick={() => setSettingsOpen(true)}
               aria-label="Open settings"
-              className="rounded-full border-slate-300/90 bg-white/85 text-slate-700 hover:bg-slate-100 dark:border-white/18 dark:bg-white/[0.06] dark:text-zinc-200 dark:hover:bg-white/12"
+              className="rounded-full border-border bg-card text-muted-foreground hover:bg-secondary"
             >
               <Settings className="h-4 w-4" />
             </Button>
-            <Button asChild size="sm" className="rounded-full bg-sky-600 text-white hover:bg-sky-500 dark:bg-sky-500 dark:text-white dark:hover:bg-sky-400">
+            <Button asChild size="sm" className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90">
               <Link data-nav-strong to="/auth">{t.signIn}</Link>
             </Button>
           </div>
@@ -1046,16 +655,16 @@ const Landing = () => {
       </nav>
 
       <section className="container mx-auto max-w-7xl px-4 pb-14 pt-16 md:pt-20">
-        <div className="relative p-0 md:p-0 bg-transparent shadow-none border-none rounded-none">
+        <div className="relative">
 
           <div className="relative grid items-center gap-8 lg:grid-cols-12 xl:gap-10">
             <div className="lg:col-span-6 xl:col-span-7">
-              <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-sky-200/90 bg-white/62 px-3.5 py-1.5 text-xs font-medium text-slate-700 shadow-sm shadow-sky-100/75 backdrop-blur-xl dark:border-white/18 dark:bg-slate-900/58 dark:text-slate-100 dark:shadow-black/35">
-                <Brain className="h-3.5 w-3.5 text-sky-600 dark:text-sky-200" />
+              <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-border bg-card px-3.5 py-1.5 text-xs font-medium text-muted-foreground shadow-sm backdrop-blur-xl">
+                <Brain className="h-3.5 w-3.5 text-primary" />
                 {t.heroEyebrow}
               </div>
 
-              <h1 className="max-w-[14ch] text-[clamp(2.4rem,7vw,5.5rem)] font-black leading-[0.93] tracking-[-0.042em] text-[#111827] dark:text-white">
+              <h1 className="max-w-[16ch] text-[40px] font-black leading-[1.05] text-foreground sm:text-5xl lg:text-7xl">
                 {heroWords.map((word, index) => (
                   <span
                     key={`${word}-${index}`}
@@ -1069,7 +678,7 @@ const Landing = () => {
 
               <p
                 data-hero-subtitle
-                className="mt-5 max-w-2xl text-base leading-relaxed text-slate-600 md:text-lg dark:text-slate-300/92"
+                className="mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground md:text-lg"
               >
                 {t.heroSubtitle}
               </p>
@@ -1078,7 +687,7 @@ const Landing = () => {
                 <Button
                   asChild
                   size="lg"
-                  className="h-12 rounded-full bg-sky-600 px-7 text-base text-white shadow-lg shadow-sky-500/35 transition-all hover:bg-sky-500 hover:shadow-sky-400/35 dark:bg-indigo-500 dark:text-white dark:shadow-indigo-500/40 dark:hover:bg-indigo-400"
+                  className="h-12 rounded-full bg-primary px-7 text-base text-primary-foreground shadow-sm transition-all hover:bg-primary/90 hover:shadow-sm"
                 >
                   <Link to="/auth">
                     {t.startNow}
@@ -1089,7 +698,7 @@ const Landing = () => {
                   asChild
                   size="lg"
                   variant="outline"
-                  className="h-12 rounded-full border-sky-300/80 bg-white/60 px-7 text-base text-sky-700 transition-colors hover:bg-white/88 dark:border-sky-200/40 dark:bg-slate-900/58 dark:text-sky-100 dark:hover:bg-slate-900/86"
+                  className="h-12 rounded-full border-border bg-card px-7 text-base text-primary transition-colors hover:bg-muted"
                 >
                   <a href="#how-it-works">{t.seeFlow}</a>
                 </Button>
@@ -1099,7 +708,7 @@ const Landing = () => {
                 {[t.freeBadge, t.langBadge, t.uploadBadge].map((badge) => (
                   <span
                     key={badge}
-                    className="rounded-full border border-slate-300/85 bg-white/74 px-3 py-1.5 text-xs font-medium text-slate-700 shadow-sm shadow-slate-200/75 backdrop-blur-xl dark:border-white/16 dark:bg-slate-900/54 dark:text-slate-100"
+                    className="rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground shadow-sm backdrop-blur-xl"
                   >
                     {badge}
                   </span>
@@ -1109,20 +718,15 @@ const Landing = () => {
 
             <div data-preview-panel className="lg:col-span-6 xl:col-span-5">
               <div className="relative mx-auto w-full max-w-[34rem]">
-                <div
-                  data-mascot-glow
-                  className="pointer-events-none absolute inset-x-12 top-10 h-56 rounded-full opacity-0 blur-3xl"
-                />
-                <Card className="relative overflow-hidden rounded-[2.25rem] border border-slate-200/70 bg-white/80 p-7 shadow-[0_24px_80px_rgba(15,23,42,0.14)] backdrop-blur-xl dark:border-white/12 dark:bg-slate-950/60 dark:shadow-[0_24px_80px_rgba(2,6,23,0.6)]">
+                <Card className="relative overflow-hidden rounded-lg border border-border bg-card p-5 sm:p-7 shadow-sm backdrop-blur-xl">
 
-
-                  <div className="relative mb-5 flex items-center justify-between">
+                  <div className="relative mb-5 flex flex-wrap items-center justify-between gap-3">
                     <div>
-                      <p className="text-base font-semibold text-slate-800 dark:text-slate-100">{t.previewTitle}</p>
-                      <p className="text-sm text-slate-500 dark:text-slate-300/86">{t.previewSubtitle}</p>
+                      <p className="text-base font-semibold text-foreground">{t.previewTitle}</p>
+                      <p className="text-sm text-muted-foreground">{t.previewSubtitle}</p>
                     </div>
-                    <div className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/35 bg-emerald-500/10 px-3 py-1.5 text-xs font-medium text-emerald-700 dark:text-emerald-200">
-                      <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" />
+                    <div className="inline-flex items-center gap-1.5 rounded-full border border-border bg-primary px-3 py-1.5 text-xs font-medium text-foreground">
+                      <span className="h-2 w-2 animate-pulse rounded-full bg-primary" />
                       {t.previewStream}
                     </div>
                   </div>
@@ -1135,17 +739,17 @@ const Landing = () => {
                     height={352}
                     fetchPriority="high"
                     decoding="async"
-                    className="relative mx-auto w-full max-w-[22rem] drop-shadow-[0_28px_48px_rgba(56,189,248,0.3)] dark:drop-shadow-[0_28px_52px_rgba(15,23,42,0.74)]"
+                    className="relative mx-auto w-full max-w-[22rem] landing-mascot"
                   />
 
-                  <div className="mt-5 grid grid-cols-3 gap-3">
+                  <div className="mt-5 grid grid-cols-3 gap-2">
                     {[t.previewTab1, t.previewTab2, t.previewTab3].map((tab, idx) => (
                       <div
                         key={tab}
-                        className={`rounded-xl px-3 py-2 text-center text-xs font-medium ${
+                        className={`rounded-lg px-2 py-2 text-center text-xs font-medium ${
                           idx === 0
-                            ? "bg-sky-600 text-white dark:bg-sky-500/35 dark:text-sky-50"
-                            : "bg-white/82 text-slate-600 dark:bg-slate-900/78 dark:text-zinc-200"
+                            ? "bg-primary text-primary-foreground"
+                            : "bg-muted text-muted-foreground"
                         }`}
                       >
                         {tab}
@@ -1154,12 +758,12 @@ const Landing = () => {
                   </div>
 
                   <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                    <div className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white/84 p-2.5 text-xs text-slate-700 dark:border-white/12 dark:bg-slate-900/74 dark:text-zinc-200">
-                      <FileText className="h-4 w-4 text-sky-500 dark:text-sky-300" />
+                    <div className="flex items-center gap-2 rounded-lg border border-border bg-card p-2.5 text-xs text-muted-foreground">
+                      <FileText className="h-4 w-4 text-primary" />
                       {t.previewWidgetQuizNotes}
                     </div>
-                    <div className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white/84 p-2.5 text-xs text-slate-700 dark:border-white/12 dark:bg-slate-900/74 dark:text-zinc-200">
-                      <Mic className="h-4 w-4 text-indigo-500 dark:text-indigo-300" />
+                    <div className="flex items-center gap-2 rounded-lg border border-border bg-card p-2.5 text-xs text-muted-foreground">
+                      <Mic className="h-4 w-4 text-primary" />
                       {t.previewWidgetPodcast}
                     </div>
                   </div>
@@ -1171,17 +775,15 @@ const Landing = () => {
         </div>
       </section>
 
-
-
       <section id="how-it-works" className="container mx-auto max-w-7xl px-4 pb-16">
         <div data-reveal className="mb-8">
-          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-sky-600 dark:text-sky-300">
+          <p className="text-xs font-semibold uppercase text-primary">
             How it works
           </p>
-          <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-950 md:text-4xl dark:text-zinc-50">
+          <h2 className="mt-2 text-2xl font-semibold text-foreground md:text-4xl">
             {t.flowTitle}
           </h2>
-          <p className="mt-3 max-w-2xl text-slate-600 dark:text-zinc-300">{t.flowSubtitle}</p>
+          <p className="mt-3 max-w-2xl text-muted-foreground">{t.flowSubtitle}</p>
         </div>
         <div className="grid gap-4 md:grid-cols-3">
           {[
@@ -1194,18 +796,18 @@ const Landing = () => {
               <Card
                 key={item.title}
                 data-reveal
-                className="h-full rounded-2xl border border-slate-200/85 bg-white/88 p-5 shadow-[0_16px_36px_rgba(15,23,42,0.08)] backdrop-blur-xl transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_24px_42px_rgba(79,70,229,0.14)] dark:border-white/14 dark:bg-slate-950/52 dark:shadow-[0_16px_36px_rgba(2,6,23,0.5)]"
+                className="h-full rounded-lg border border-border bg-card p-5 shadow-sm backdrop-blur-xl transition-all duration-500 hover:-translate-y-1 hover:shadow-sm"
               >
                 <div className="mb-4 flex items-center justify-between">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-sky-100 text-sky-700 dark:bg-sky-500/15 dark:text-sky-200">
-                    <Icon className="h-4.5 w-4.5 text-sky-700 dark:text-sky-200" />
+                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-secondary text-primary">
+                    <Icon className="h-4.5 w-4.5 text-primary" />
                   </div>
-                  <span className="rounded-full border border-sky-200/85 bg-white px-2.5 py-1 text-[11px] font-semibold text-sky-600 dark:border-white/18 dark:bg-white/[0.05] dark:text-sky-100">
+                  <span className="rounded-full border border-border bg-card px-2.5 py-1 text-[11px] font-semibold text-primary">
                     Step {index + 1}
                   </span>
                 </div>
-                <p className="mb-2 text-sm font-semibold text-slate-900 dark:text-zinc-100">{item.title}</p>
-                <p className="text-sm leading-relaxed text-slate-600 dark:text-zinc-300">{item.desc}</p>
+                <p className="mb-2 text-sm font-semibold text-foreground">{item.title}</p>
+                <p className="text-sm leading-relaxed text-muted-foreground">{item.desc}</p>
               </Card>
             );
           })}
@@ -1214,12 +816,12 @@ const Landing = () => {
 
       {/* TODO: INSERT REAL TESTIMONIALS HERE — requires verified student data */}
 
-<section id="blue-section" className="relative pb-16 pt-6 text-slate-900 dark:text-slate-100">
+<section id="blue-section" className="relative pb-16 pt-6 text-foreground">
 
         <section id="what-you-can-do" className="container mx-auto max-w-7xl px-4 pb-16">
           <div data-reveal className="mb-8 max-w-3xl">
-            <h2 className="text-2xl font-semibold tracking-tight text-slate-800 md:text-4xl dark:text-zinc-50">What you can do with Aide</h2>
-            <p className="mt-3 text-slate-600 dark:text-zinc-300">{t.featuresSubtitle}</p>
+            <h2 className="text-2xl font-semibold text-foreground md:text-4xl">What you can do with Aide</h2>
+            <p className="mt-3 text-muted-foreground">{t.featuresSubtitle}</p>
           </div>
 
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
@@ -1229,16 +831,16 @@ const Landing = () => {
                 <Card
                   key={card.title}
                   data-bento-card
-                  className="h-full rounded-2xl border border-slate-200/50 bg-white/90 p-5 backdrop-blur-xl transition-all duration-500 hover:-translate-y-1 hover:border-sky-300/60 hover:bg-sky-50 dark:border-white/10 dark:bg-slate-950/50"
+                  className="h-full rounded-lg border border-border bg-card p-5 backdrop-blur-xl transition-all duration-500 hover:-translate-y-1 hover:border-border hover:bg-secondary"
                 >
-                  <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-sky-100/80 dark:bg-sky-500/20">
-                    <Icon className="h-5 w-5 text-sky-600 dark:text-sky-300" />
+                  <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-secondary">
+                    <Icon className="h-5 w-5 text-primary" />
                   </div>
-                  <h3 className="mb-2 text-base font-semibold text-slate-800 dark:text-white">{card.title}</h3>
-                  <p className="mb-4 text-sm leading-relaxed text-slate-600 dark:text-slate-300">{card.description}</p>
+                  <h3 className="mb-2 text-base font-semibold text-foreground">{card.title}</h3>
+                  <p className="mb-4 text-sm leading-relaxed text-muted-foreground">{card.description}</p>
                   <div className="flex flex-wrap gap-2">
                     {card.chips.map((chip) => (
-                      <span key={chip} className="rounded-full border border-slate-200/60 bg-slate-100/85 px-2.5 py-1 text-[11px] text-slate-700 dark:border-white/20 dark:bg-slate-900/50 dark:text-slate-100">
+                      <span key={chip} className="rounded-full border border-border bg-secondary px-2.5 py-1 text-[11px] text-muted-foreground">
                         {chip}
                       </span>
                     ))}
@@ -1252,12 +854,12 @@ const Landing = () => {
         <section id="access-anywhere" className="container mx-auto max-w-7xl px-4 pb-16">
           <div
             data-reveal
-            className="relative overflow-hidden rounded-[2rem] border border-white/18 bg-transparent p-6 backdrop-blur-xl md:p-10"
+            className="relative py-6 md:py-10"
           >
-            <h2 className="text-2xl font-semibold tracking-tight text-slate-800 md:text-4xl dark:text-slate-50">
+            <h2 className="text-2xl font-semibold text-foreground md:text-4xl">
               Access the Aide AI Study Tool Anywhere, Anytime
             </h2>
-            <p className="mt-3 max-w-3xl text-slate-600 dark:text-blue-100/84">
+            <p className="mt-3 max-w-3xl text-muted-foreground">
               Start on desktop, continue on mobile, and keep your progress synced across every study session.
             </p>
 
@@ -1265,19 +867,19 @@ const Landing = () => {
               {accessCards.map((item) => {
                 const Icon = item.icon;
                 return (
-                  <Card key={item.title} className="h-full rounded-2xl border border-slate-200/60 bg-white/90 p-4 backdrop-blur-xl dark:border-white/15 dark:bg-slate-950/60">
-                    <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-sky-500 text-white">
+                  <Card key={item.title} className="h-full rounded-lg border border-border bg-card p-4 backdrop-blur-xl">
+                    <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground">
                       <Icon className="h-4.5 w-4.5" />
                     </div>
-                    <p className="mb-1.5 text-sm font-semibold text-slate-950 dark:text-white">{item.title}</p>
-                    <p className="text-sm text-slate-700 dark:text-slate-300">{item.description}</p>
+                    <p className="mb-1.5 text-sm font-semibold text-foreground">{item.title}</p>
+                    <p className="text-sm text-muted-foreground">{item.description}</p>
                   </Card>
                 );
               })}
             </div>
 
             <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-              <Button asChild size="lg" className="bg-white text-blue-700 hover:bg-blue-50">
+              <Button asChild size="lg" className="bg-card text-primary hover:bg-muted">
                 <Link to="/auth">
                   {t.startNow}
                   <ArrowRight className="ml-2 h-5 w-5" />
@@ -1287,7 +889,7 @@ const Landing = () => {
                 asChild
                 size="lg"
                 variant="outline"
-                className="border-blue-300 bg-white/70 text-blue-700 hover:bg-white/90 dark:border-white/28 dark:bg-white/5 dark:text-slate-50 dark:hover:bg-white/16"
+                className="border-border bg-card text-primary hover:bg-muted"
               >
                 <Link to="/help">
                   <HelpCircle className="mr-2 h-5 w-5" />
@@ -1301,32 +903,32 @@ const Landing = () => {
         <section id="transition-zone" className="container mx-auto max-w-7xl px-4 pb-16">
           <div
             data-reveal
-            className="rounded-[2rem] border border-slate-200/70 bg-transparent p-6 backdrop-blur-xl md:p-10 dark:border-white/15 dark:bg-transparent"
+            className="py-6 md:py-10"
           >
-            <h2 data-invert className="text-2xl font-bold tracking-tight text-slate-950 md:text-4xl dark:text-white">
+            <h2 data-invert className="text-2xl font-bold text-foreground md:text-4xl">
               Why Our AI Study Tool Outperforms Traditional Methods
             </h2>
-            <p data-invert className="mt-3 max-w-4xl text-sm leading-relaxed text-slate-700 md:text-base dark:text-slate-300">
+            <p data-invert className="mt-3 max-w-4xl text-sm leading-relaxed text-muted-foreground md:text-base">
               Experience the advantages of AI-powered studying compared to conventional methods. Our approach is
               designed to save you time, boost retention, and make learning more effective.
             </p>
 
-            <div className="mt-7 overflow-hidden rounded-2xl border border-white/16">
-              <div className="hidden grid-cols-3 bg-slate-100/80 text-xs font-semibold uppercase tracking-[0.14em] text-slate-700 md:grid dark:bg-slate-900/40 dark:text-blue-100/85">
+            <div className="mt-7 overflow-hidden rounded-lg border border-border">
+              <div className="hidden grid-cols-3 bg-secondary text-xs font-semibold uppercase text-muted-foreground md:grid">
                 <div className="px-4 py-3">Category</div>
                 <div className="px-4 py-3">Aide AI</div>
                 <div className="px-4 py-3">Traditional Methods</div>
               </div>
               {comparisonRows.map((row) => (
-                <div key={row.metric} className="grid border-t border-slate-200/40 md:grid-cols-3 md:items-center dark:border-white/10">
-                  <div className="px-4 pt-4 text-sm font-semibold text-slate-950 md:py-4 dark:text-white">{row.metric}</div>
-                  <div className="px-4 py-2 text-sm text-slate-700 md:py-4 dark:text-emerald-200">
+                <div key={row.metric} className="grid border-t border-border md:grid-cols-3 md:items-center">
+                  <div className="px-4 pt-4 text-sm font-semibold text-foreground md:py-4">{row.metric}</div>
+                  <div className="px-4 py-2 text-sm text-muted-foreground md:py-4">
                     <span className="inline-flex items-center gap-1.5">
-                      <Check className="h-4 w-4 text-slate-700 dark:text-emerald-200" />
+                      <Check className="h-4 w-4 text-muted-foreground" />
                       {row.aide}
                     </span>
                   </div>
-                  <div className="px-4 pb-4 text-sm text-slate-700 md:py-4 dark:text-slate-100">{row.traditional}</div>
+                  <div className="px-4 pb-4 text-sm text-muted-foreground md:py-4">{row.traditional}</div>
                 </div>
               ))}
             </div>
@@ -1335,67 +937,67 @@ const Landing = () => {
 
         <section id="faq" className="container mx-auto max-w-7xl px-4 pb-16">
           <div data-reveal className="mb-8">
-            <h2 className="text-2xl font-semibold tracking-tight text-slate-800 md:text-4xl dark:text-slate-50">FAQ</h2>
+            <h2 className="text-2xl font-semibold text-foreground md:text-4xl">FAQ</h2>
           </div>
           <div className="space-y-3">
             {faqItems.map((item) => (
               <details
                 key={item.q}
                 data-reveal
-                className="group rounded-3xl border border-slate-200/60 bg-white/90 dark:border-white/10 dark:bg-slate-950/50"
+                className="group rounded-lg border border-border bg-card"
               >
-                <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-5 py-4 text-sm font-medium text-slate-950 transition-colors duration-300 hover:text-slate-900 dark:text-white dark:hover:text-slate-100">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-5 py-4 text-sm font-medium text-foreground transition-colors duration-300 hover:text-foreground">
                   <span>{item.q}</span>
-                  <span className="text-lg leading-none text-slate-950 transition-transform duration-300 group-open:rotate-45 dark:text-white">+</span>
+                  <span className="text-lg leading-none text-foreground transition-transform duration-300 group-open:rotate-45">+</span>
                 </summary>
-                <p className="px-5 pb-5 text-sm leading-relaxed text-slate-700 dark:text-slate-300">{item.a}</p>
+                <p className="px-5 pb-5 text-sm leading-relaxed text-muted-foreground">{item.a}</p>
               </details>
             ))}
           </div>
         </section>
 
         <footer className="container mx-auto max-w-7xl px-4 pb-10">
-          <div className="rounded-3xl border-t border-slate-200/60 bg-slate-100/90 px-6 py-8 shadow-sm shadow-slate-400/10 transition-colors duration-300 dark:border-white/10 dark:bg-slate-950/95 dark:shadow-none md:px-8 md:py-10">
+          <div className="border-t border-border py-8 md:py-10">
             <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
               <div>
-                <h4 className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-950/90 dark:text-white/90">Product</h4>
+                <h4 className="text-xs font-semibold uppercase text-foreground">Product</h4>
                 <div className="mt-4 flex flex-col gap-2.5 text-sm font-medium">
-                  <Link to="/homework-helper" className="text-slate-700 transition-colors duration-300 hover:text-slate-950 dark:text-slate-300 dark:hover:text-white">
+                  <Link to="/homework-helper" className="text-muted-foreground transition-colors duration-300 hover:text-foreground">
                     AI Homework Helper
                   </Link>
-                  <Link to="/study-guide-maker" className="text-slate-700 transition-colors duration-300 hover:text-slate-950 dark:text-slate-300 dark:hover:text-white">
+                  <Link to="/study-guide-maker" className="text-muted-foreground transition-colors duration-300 hover:text-foreground">
                     Study Guide Maker
                   </Link>
-                  <Link to="/blog/how-to-do-active-recall-with-notes" className="text-slate-700 transition-colors duration-300 hover:text-slate-950 dark:text-slate-300 dark:hover:text-white">
+                  <Link to="/blog/how-to-do-active-recall-with-notes" className="text-muted-foreground transition-colors duration-300 hover:text-foreground">
                     How to Do Active Recall with Notes
                   </Link>
-                  <Link to="/help" className="text-slate-700 transition-colors duration-300 hover:text-slate-950 dark:text-slate-300 dark:hover:text-white">
+                  <Link to="/help" className="text-muted-foreground transition-colors duration-300 hover:text-foreground">
                     About Page
                   </Link>
-                  <a href="#how-it-works" className="text-slate-700 transition-colors duration-300 hover:text-slate-950 dark:text-slate-300 dark:hover:text-white">
+                  <a href="#how-it-works" className="text-muted-foreground transition-colors duration-300 hover:text-foreground">
                     How it Works
                   </a>
-                  <a href="#what-you-can-do" className="text-slate-700 transition-colors duration-300 hover:text-slate-950 dark:text-slate-300 dark:hover:text-white">
+                  <a href="#what-you-can-do" className="text-muted-foreground transition-colors duration-300 hover:text-foreground">
                     What You Can Do
                   </a>
                 </div>
               </div>
 
               <div>
-                <h4 className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-950/90 dark:text-white/90">Support</h4>
+                <h4 className="text-xs font-semibold uppercase text-foreground">Support</h4>
                 <div className="mt-4 flex flex-col gap-2.5 text-sm font-medium">
-                  <Link to="/help" className="text-slate-700 transition-colors duration-300 hover:text-slate-950 dark:text-slate-300 dark:hover:text-white">
+                  <Link to="/help" className="text-muted-foreground transition-colors duration-300 hover:text-foreground">
                     Help Center
                   </Link>
                   <a
                     href="mailto:myaide.study@gmail.com?subject=Aide%20Support"
-                    className="text-slate-700 transition-colors duration-300 hover:text-slate-950 dark:text-slate-300 dark:hover:text-white"
+                    className="text-muted-foreground transition-colors duration-300 hover:text-foreground"
                   >
                     Support
                   </a>
                   <a
                     href="mailto:myaide.study@gmail.com"
-                    className="text-slate-700 transition-colors duration-300 hover:text-slate-950 dark:text-slate-300 dark:hover:text-white"
+                    className="text-muted-foreground transition-colors duration-300 hover:text-foreground"
                   >
                     Contact Us
                   </a>
@@ -1403,28 +1005,28 @@ const Landing = () => {
               </div>
 
               <div>
-                <h4 className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-950/90 dark:text-white/90">Legal</h4>
+                <h4 className="text-xs font-semibold uppercase text-foreground">Legal</h4>
                 <div className="mt-4 flex flex-col gap-2.5 text-sm font-medium">
-                  <Link to="/help#privacy-policy" className="text-slate-700 transition-colors duration-300 hover:text-slate-950 dark:text-slate-300 dark:hover:text-white">
+                  <Link to="/help#privacy-policy" className="text-muted-foreground transition-colors duration-300 hover:text-foreground">
                     Privacy Policy
                   </Link>
-                  <Link to="/help#terms-of-service" className="text-slate-700 transition-colors duration-300 hover:text-slate-950 dark:text-slate-300 dark:hover:text-white">
+                  <Link to="/help#terms-of-service" className="text-muted-foreground transition-colors duration-300 hover:text-foreground">
                     Terms of Service
                   </Link>
-                  <Link to="/help#community-guidelines" className="text-slate-700 transition-colors duration-300 hover:text-slate-950 dark:text-slate-300 dark:hover:text-white">
+                  <Link to="/help#community-guidelines" className="text-muted-foreground transition-colors duration-300 hover:text-foreground">
                     Community Guidelines
                   </Link>
                 </div>
               </div>
 
               <div>
-                <h4 className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-950/90 dark:text-white/90">Social</h4>
+                <h4 className="text-xs font-semibold uppercase text-foreground">Social</h4>
                 <div className="mt-4 flex flex-col gap-2.5 text-sm font-medium">
                   <a
                     href="https://www.instagram.com/myaide.study/"
                     target="_blank"
                     rel="noreferrer"
-                    className="text-slate-700 transition-colors duration-300 hover:text-slate-950 dark:text-slate-300 dark:hover:text-white"
+                    className="text-muted-foreground transition-colors duration-300 hover:text-foreground"
                   >
                     Instagram
                   </a>
@@ -1432,7 +1034,7 @@ const Landing = () => {
                     href="https://www.facebook.com/profile.php?id=61587146428880"
                     target="_blank"
                     rel="noreferrer"
-                    className="text-slate-700 transition-colors duration-300 hover:text-slate-950 dark:text-slate-300 dark:hover:text-white"
+                    className="text-muted-foreground transition-colors duration-300 hover:text-foreground"
                   >
                     Facebook
                   </a>
@@ -1440,7 +1042,7 @@ const Landing = () => {
               </div>
             </div>
 
-            <div className="mt-8 border-t border-slate-200/60 pt-4 text-xs tracking-wide text-slate-700/80 dark:border-white/10 dark:text-slate-300">
+            <div className="mt-8 border-t border-border pt-4 text-xs text-muted-foreground">
               © 2026 Aide. All rights reserved.
             </div>
           </div>
